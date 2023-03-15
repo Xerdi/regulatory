@@ -22,34 +22,35 @@
 
 % Markdown support
 \ifthenelse{\boolean{regulatory@usemarkdown}}{
-    \RequirePackage[hashEnumerators,definitionLists,hybrid,headerAttributes=true]{markdown}
-    \def\@uitlijning{Lorem Ipsum dolor sit amet.}%
-    \newcommand{\uitlijning}[1]{\def\@uitlijning{#1}}%
-    \setkeys{markdownRenderers}{
-        headingOne={\artikel{#1}},
-        olItemWithNumber={\item{}},
-        olBeginTight={\begin{leden}},
-        olEndTight={\end{leden}},
-        olBegin={\begin{leden}},
-        olEnd={\end{leden}},
-        dlBeginTight={\begin{labeling}{\@uitlijning}},
-        dlEndTight={\end{labeling}},
-        dlBegin={\begin{labeling}{\@uitlijning}},
-        dlEnd={\end{labeling}}%
-    \renewcommand\markdownRendererOlItemWithNumber[1]{\item{}\label{ml:##1}}
+\RequirePackage[hashEnumerators,definitionLists,hybrid,headerAttributes=true]{markdown}
+\def\@uitlijning{Lorem Ipsum dolor sit amet.}%
+\newcommand{\uitlijning}[1]{\def\@uitlijning{#1}}%
+\setkeys{markdownRenderers}{
+headingOne={\artikel{#1}},
+olItemWithNumber={\item{}},
+olBeginTight={\begin{leden}},
+olEndTight={\end{leden}},
+olBegin={\begin{leden}},
+olEnd={\end{leden}},
+dlBeginTight={\begin{labeling}{\@uitlijning}},
+dlEndTight={\end{labeling}},
+dlBegin={\begin{labeling}{\@uitlijning}},
+dlEnd={\end{labeling}}%
+\renewcommand\markdownRendererOlItemWithNumber[1]{\item{}\label{ml:##1}}
 }
 }{}
 
 % Pakketten ná markdown (anders gaat enumitem kapot)
 \RequirePackage{xcolor}
+\RequirePackage{xassoccnt}
+\RequirePackage{xpatch}
 \RequirePackage{titlesec} % voor artikelen
 \RequirePackage{enumitem} % voor leden/subleden
 \RequirePackage{fmtcount} % voor tekstuele leden
 \RequirePackage{scrextend} % voor definitie lijsten
-
 \RequirePackage[hidelinks]{hyperref}
+\RequirePackage[user,counter,hyperref]{zref}
 \RequirePackage{cleveref}
-
 
 %\RequirePackage[dutch]{cleveref} % voor verwijzingen
 
@@ -73,6 +74,7 @@
 \titleclass{\lid}{straight}[\part]
 \titleformat{\lid}{\normalfont\color{lidtitle}}{\normalfont\color{lidlabel}\theartikel.\thelid.\quad}{1em}{}
 \titlespacing*{\lid}{0pt}{3.5ex plus 1ex minus .2ex}{5pt}
+\counterwithin{lid}{artikel}
 
 \renewcommand{\theartikel}{\arabic{artikel}}
 \makeatletter
@@ -96,77 +98,77 @@
 \newcommand{\crefpairconjunction}{ en }
 \newcommand{\creflastconjunction}{ en }
 \newcommand\setconjunction{%
-    \ifthenelse{\boolean{regulatory@usejuncto}}%
-    {\renewcommand\crefpairconjunction{ jo.~}\renewcommand\creflastconjunction{ jo.~}}%
-    {\renewcommand\crefpairconjunction{ en~}\renewcommand\creflastconjunction{ en~}}}
+\ifthenelse{\boolean{regulatory@usejuncto}}%
+{\renewcommand\crefpairconjunction{ jo.~}\renewcommand\creflastconjunction{ jo.~}}%
+{\renewcommand\crefpairconjunction{ en~}\renewcommand\creflastconjunction{ en~}}}
 
 \newcommand\resetformats{%
-    \setconjunction%
-    \crefformat{artikel}{##2art.~##1##3}%
-    \crefrangeformat{artikel}{art.~##3##1##4 tot ##5##2##6}%
-    \crefmultiformat{artikel}{art.~##2##1##3}{ en~##2##1##3}{, ##2##1##3}{ en ##2##1##3}%
-    \crefformat{ledeni}{##2lid ##1##3}%
-    \crefrangeformat{ledeni}{##3lid~##1##4 tot ##5##2##6}%
-    \crefmultiformat{ledeni}{##2lid~##1##3}{\crefpairconjunction lid~##2##1##3}{, ##2##1##3}{\creflastconjunction##2##1##3}%
+\setconjunction%
+\crefformat{artikel}{##2art.~##1##3}%
+\crefrangeformat{artikel}{art.~##3##1##4 tot ##5##2##6}%
+\crefmultiformat{artikel}{art.~##2##1##3}{ en~##2##1##3}{, ##2##1##3}{ en ##2##1##3}%
+\crefformat{ledeni}{##2lid ##1##3}%
+\crefrangeformat{ledeni}{##3lid~##1##4 tot ##5##2##6}%
+\crefmultiformat{ledeni}{##2lid~##1##3}{\crefpairconjunction lid~##2##1##3}{, ##2##1##3}{\creflastconjunction##2##1##3}%
 }
 \resetformats%
 \makeatletter
 
 \newcommand{\lref}{%
-    \setconjunction
-    \@ifstar{\lrefStar}{\lrefNoStar}}
+\setconjunction
+\@ifstar{\lrefStar}{\lrefNoStar}}
 \newcommand{\Lref}{%
-    \setconjunction
-    \@ifstar{\LrefStar}{\LrefNoStar}}
+\setconjunction
+\@ifstar{\LrefStar}{\LrefNoStar}}
 \newcommand{\sref}{%
-    \setconjunction
-    \@ifstar{\srefStar}{\srefNoStar}}
+\setconjunction
+\@ifstar{\srefStar}{\srefNoStar}}
 \newcommand{\Sref}{%
-    \setconjunction
-    \@ifstar{\SrefStar}{\SrefNoStar}}
+\setconjunction
+\@ifstar{\SrefStar}{\SrefNoStar}}
 
 
 % Woordelijke verwijzingen
 \newcommand\wref[1]{%
-    \crefformat{artikel}{##2artikel ##1##3}%
-    \crefrangeformat{artikel}{##3artikelen \ordinalstringnum{##1}##4 tot en met ##5\ordinalstringnum{##2}##6}%
-    \crefmultiformat{artikel}{##2artikel ##1##3}{\crefpairconjunction##2##1##3}{, ##2##1##3}{\creflastconjunction##2##1##3}%
-    \crefformat{ledeni}{##2\ordinalstringnum{##1} lid##3}%
-    \crefrangeformat{ledeni}{##3\ordinalstringnum{##1}##4 tot en met ##5\ordinalstringnum{##2}##6 lid}%
-    \crefmultiformat{ledeni}{##2\ordinalstringnum{##1}##3}{\crefpairconjunction##2\ordinalstringnum{##1} lid##3}{, ##2\ordinalstringnum{##1}##3}{\creflastconjunction##2\ordinalstringnum{##1} lid##3}%
-    \crefformat{ledenii}{##2onderdeel ##1##3}%
-    \crefrangeformat{ledenii}{##3onderdelen~##1##4 tot en met ##5##2##6}%
-    \crefmultiformat{ledenii}{##2onderdelen~##1##3}{\crefpairconjunction##2##1##3}{, ##2##1##3}{\creflastconjunction##2##1##3}%
-    \cref{#1}%
-    \resetformats%
+\crefformat{artikel}{##2artikel ##1##3}%
+\crefrangeformat{artikel}{##3artikelen \ordinalstringnum{##1}##4 tot en met ##5\ordinalstringnum{##2}##6}%
+\crefmultiformat{artikel}{##2artikel ##1##3}{\crefpairconjunction##2##1##3}{, ##2##1##3}{\creflastconjunction##2##1##3}%
+\crefformat{ledeni}{##2\ordinalstringnum{##1} lid##3}%
+\crefrangeformat{ledeni}{##3\ordinalstringnum{##1}##4 tot en met ##5\ordinalstringnum{##2}##6 lid}%
+\crefmultiformat{ledeni}{##2\ordinalstringnum{##1}##3}{\crefpairconjunction##2\ordinalstringnum{##1} lid##3}{, ##2\ordinalstringnum{##1}##3}{\creflastconjunction##2\ordinalstringnum{##1} lid##3}%
+\crefformat{ledenii}{##2onderdeel ##1##3}%
+\crefrangeformat{ledenii}{##3onderdelen~##1##4 tot en met ##5##2##6}%
+\crefmultiformat{ledenii}{##2onderdelen~##1##3}{\crefpairconjunction##2##1##3}{, ##2##1##3}{\creflastconjunction##2##1##3}%
+\cref{#1}%
+\resetformats%
 }
 
 \makeatother
 
 \newcommand\aref{%
-    \setconjunction
-    \cref}
+\setconjunction
+\cref}
 \newcommand\Aref{%
-    \setconjunction
-    \Cref}
+\setconjunction
+\Cref}
 
 \newcommand\lrefNoStar[2]{%
-    \hyperref[#2]{\aref*{#1} \aref*{#2}}}
+\hyperref[#2]{\aref*{#1} \aref*{#2}}}
 \newcommand\lrefStar[2]{%
-    \aref*{#1} \aref*{#2}}% TODO wref star
+\aref*{#1} \aref*{#2}}% TODO wref star
 \newcommand\LrefNoStar[2]{%
-    \hyperref[#2]{\Aref*{#1} \aref*{#2}}}% TODO Wref
+\hyperref[#2]{\Aref*{#1} \aref*{#2}}}% TODO Wref
 \newcommand\LrefStar[2]{%
-    \Aref*{#1} \aref*{#2}}% TODO Wref star
+\Aref*{#1} \aref*{#2}}% TODO Wref star
 
 \newcommand\srefNoStar[3]{%
-    \hyperref[#3]{\lref*{#1}{#2} \aref*{#3}}}
+\hyperref[#3]{\lref*{#1}{#2} \aref*{#3}}}
 \newcommand\srefStar[2]{%
-    \aref*{#1} \aref*{#2}}
+\aref*{#1} \aref*{#2}}
 \newcommand\SrefNoStar[3]{%
-    \hyperref[#3]{\Lref*{#1}{#2} \aref*{#3}}}
+\hyperref[#3]{\Lref*{#1}{#2} \aref*{#3}}}
 \newcommand\SrefStar[2]{%
-    \Aref*{#1} \aref*{#2}}
+\Aref*{#1} \aref*{#2}}
 
 
 % Schakelbepalingen
@@ -174,14 +176,63 @@
 \RequirePackage{attachfile}
 \makeatletter
 \newcommand*{\addFileDependency}[1]{% argument=file name and extension
-  \typeout{(#1)}
-  \@addtofilelist{#1}
-  \IfFileExists{#1}{}{\typeout{No file #1.}}
+\typeout{(#1)}
+\@addtofilelist{#1}
+\IfFileExists{#1}{}{\typeout{No file #1.}}
 }
 
 \makeatother
 \newcommand{\extdoc}[2][ext-]{%
-    \externaldocument[#1]{../../#2/out/main}%
-    \addFileDependency{../../#2/src/main.tex}%
-    \addFileDependency{../../#2/out/main.aux}%
+\externaldocument[#1]{../../#2/out/main}%
+\addFileDependency{../../#2/src/main.tex}%
+\addFileDependency{../../#2/out/main.aux}%
 }
+
+\makeatletter
+
+\zref@newprop{artikel}[-1]{\number\value{artikel}}
+\zref@newprop{lid}[-1]{\number\value{ledeni}}
+\zref@newprop{sub}[-1]{\number\value{ledenii}}
+\zref@addprops{main}{artikel,lid,sub}
+
+\newcommand{\artnum}[1]{%
+\zref@extract{#1}{artikel}%
+}
+
+\newcommand{\artformat}[1]{%
+\cref@artikel@name~\artnum{#1}%
+}
+
+\newcommand{\lidnum}[1]{%
+\zref@extract{#1}{lid}%
+}
+
+\newcommand{\lidformat}[1]{%
+\ordinalstringnum{\lidnum{#1}}~\cref@ledeni@name%
+}
+
+\newcommand{\subnum}[1]{%
+\zref@extract{#1}{sub}%
+}
+
+\newcommand{\subformat}[1]{%
+\cref@ledenii@name~\abalphnum{\subnum{#1}}%
+}
+
+\newcommand{\xref}[1]{%
+\ifnum\artnum{#1}>0
+\artformat{#1}%
+\fi%
+\ifnum\lidnum{#1}>0%
+, \lidformat{#1}%
+\fi%
+\ifnum\subnum{#1}>0%
+, \subformat{#1}%
+\fi%
+}
+
+
+\GetAllResetLists
+\RegisterPostLabelHook{\zlabel}
+
+\makeatother
