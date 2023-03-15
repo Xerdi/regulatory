@@ -1,0 +1,187 @@
+\NeedsTeXFormat{LaTeX2e}
+
+\ProvidesPackage{regulatory}[2022/06/19 Xerdi's Regulatory Package]
+\RequirePackage{xifthen}
+\RequirePackage{keyval}
+\RequirePackage{xstring}
+
+\newboolean{regulatory@usemarkdown}
+\setboolean{regulatory@usemarkdown}{false}
+\DeclareOption{markdown}{%
+    \setboolean{regulatory@usemarkdown}{true}
+}
+
+\newboolean{regulatory@usejuncto}
+\setboolean{regulatory@usejuncto}{false}
+\DeclareOption{juncto}{%
+    \setboolean{regulatory@usejuncto}{true}}
+
+% Let every unkown option throw an error
+\DeclareOption*{\PackageError{regulatory}{Unknown option}{Options are markdown}}
+\ProcessOptions*
+
+% Markdown support
+\ifthenelse{\boolean{regulatory@usemarkdown}}{
+    \RequirePackage[hashEnumerators,definitionLists,hybrid,headerAttributes=true]{markdown}
+    \def\@uitlijning{Lorem Ipsum dolor sit amet.}%
+    \newcommand{\uitlijning}[1]{\def\@uitlijning{#1}}%
+    \setkeys{markdownRenderers}{
+        headingOne={\artikel{#1}},
+        olItemWithNumber={\item{}},
+        olBeginTight={\begin{leden}},
+        olEndTight={\end{leden}},
+        olBegin={\begin{leden}},
+        olEnd={\end{leden}},
+        dlBeginTight={\begin{labeling}{\@uitlijning}},
+        dlEndTight={\end{labeling}},
+        dlBegin={\begin{labeling}{\@uitlijning}},
+        dlEnd={\end{labeling}}%
+    \renewcommand\markdownRendererOlItemWithNumber[1]{\item{}\label{ml:##1}}
+}
+}{}
+
+% Pakketten ná markdown (anders gaat enumitem kapot)
+\RequirePackage{xcolor}
+\RequirePackage{titlesec} % voor artikelen
+\RequirePackage{enumitem} % voor leden/subleden
+\RequirePackage{fmtcount} % voor tekstuele leden
+\RequirePackage{scrextend} % voor definitie lijsten
+
+\RequirePackage[hidelinks]{hyperref}
+\RequirePackage{cleveref}
+
+
+%\RequirePackage[dutch]{cleveref} % voor verwijzingen
+
+
+% Kleuren
+\colorlet{artlabel}{black}
+\colorlet{arttitle}{black}
+\colorlet{lidlabel}{black}
+\colorlet{lidtitle}{black}
+\colorlet{sublabel}{black}
+\colorlet{subtitle}{black}
+
+
+% Artikelen
+\newcounter{artikel}
+\titleclass{\artikel}{straight}[\part]
+\titleformat{\artikel}{\normalfont\color{arttitle}}{\bfseries\color{artlabel}Artikel \theartikel.\quad}{1em}{}
+\titlespacing*{\artikel}{0pt}{3.5ex plus 1ex minus .2ex}{5pt}
+
+\newcounter{lid}
+\titleclass{\lid}{straight}[\part]
+\titleformat{\lid}{\normalfont\color{lidtitle}}{\normalfont\color{lidlabel}\theartikel.\thelid.\quad}{1em}{}
+\titlespacing*{\lid}{0pt}{3.5ex plus 1ex minus .2ex}{5pt}
+
+\renewcommand{\theartikel}{\arabic{artikel}}
+\makeatletter
+\newcommand{\l@artikel}{\@dottedtocline{1}{1.5em}{2.3em}}
+\def\toclevel@artikel{2}
+\makeatother
+
+% Leden en subleden
+\newlist{leden}{enumerate}{2}
+\setlist[leden,1]{label=\theartikel.\arabic*.,ref=\arabic*,align=left,itemsep=0pt}
+\setlist[leden,2]{label=\abalphnum{\arabic*}),ref=\abalphnum{\arabic*},itemsep=0pt}
+\counterwithin{ledeni}{artikel}
+\counterwithin{ledenii}{ledeni}
+
+% Verwijzingsnaam naar leden en subleden (lid/sub)
+\crefname{artikel}{art.}{artikelen}
+\crefname{ledeni}{lid\unskip}{leden\unskip}
+\crefname{ledenii}{onderdeel\unskip}{onderdelen\unskip}
+
+% Verwijzingen koppelen met (standaard) , en afbreken met juncto (zie \setconjunction)
+\newcommand{\crefpairconjunction}{ en }
+\newcommand{\creflastconjunction}{ en }
+\newcommand\setconjunction{%
+    \ifthenelse{\boolean{regulatory@usejuncto}}%
+    {\renewcommand\crefpairconjunction{ jo.~}\renewcommand\creflastconjunction{ jo.~}}%
+    {\renewcommand\crefpairconjunction{ en~}\renewcommand\creflastconjunction{ en~}}}
+
+\newcommand\resetformats{%
+    \setconjunction%
+    \crefformat{artikel}{##2art.~##1##3}%
+    \crefrangeformat{artikel}{art.~##3##1##4 tot ##5##2##6}%
+    \crefmultiformat{artikel}{art.~##2##1##3}{ en~##2##1##3}{, ##2##1##3}{ en ##2##1##3}%
+    \crefformat{ledeni}{##2lid ##1##3}%
+    \crefrangeformat{ledeni}{##3lid~##1##4 tot ##5##2##6}%
+    \crefmultiformat{ledeni}{##2lid~##1##3}{\crefpairconjunction lid~##2##1##3}{, ##2##1##3}{\creflastconjunction##2##1##3}%
+}
+\resetformats%
+\makeatletter
+
+\newcommand{\lref}{%
+    \setconjunction
+    \@ifstar{\lrefStar}{\lrefNoStar}}
+\newcommand{\Lref}{%
+    \setconjunction
+    \@ifstar{\LrefStar}{\LrefNoStar}}
+\newcommand{\sref}{%
+    \setconjunction
+    \@ifstar{\srefStar}{\srefNoStar}}
+\newcommand{\Sref}{%
+    \setconjunction
+    \@ifstar{\SrefStar}{\SrefNoStar}}
+
+
+% Woordelijke verwijzingen
+\newcommand\wref[1]{%
+    \crefformat{artikel}{##2artikel ##1##3}%
+    \crefrangeformat{artikel}{##3artikelen \ordinalstringnum{##1}##4 tot en met ##5\ordinalstringnum{##2}##6}%
+    \crefmultiformat{artikel}{##2artikel ##1##3}{\crefpairconjunction##2##1##3}{, ##2##1##3}{\creflastconjunction##2##1##3}%
+    \crefformat{ledeni}{##2\ordinalstringnum{##1} lid##3}%
+    \crefrangeformat{ledeni}{##3\ordinalstringnum{##1}##4 tot en met ##5\ordinalstringnum{##2}##6 lid}%
+    \crefmultiformat{ledeni}{##2\ordinalstringnum{##1}##3}{\crefpairconjunction##2\ordinalstringnum{##1} lid##3}{, ##2\ordinalstringnum{##1}##3}{\creflastconjunction##2\ordinalstringnum{##1} lid##3}%
+    \crefformat{ledenii}{##2onderdeel ##1##3}%
+    \crefrangeformat{ledenii}{##3onderdelen~##1##4 tot en met ##5##2##6}%
+    \crefmultiformat{ledenii}{##2onderdelen~##1##3}{\crefpairconjunction##2##1##3}{, ##2##1##3}{\creflastconjunction##2##1##3}%
+    \cref{#1}%
+    \resetformats%
+}
+
+\makeatother
+
+\newcommand\aref{%
+    \setconjunction
+    \cref}
+\newcommand\Aref{%
+    \setconjunction
+    \Cref}
+
+\newcommand\lrefNoStar[2]{%
+    \hyperref[#2]{\aref*{#1} \aref*{#2}}}
+\newcommand\lrefStar[2]{%
+    \aref*{#1} \aref*{#2}}% TODO wref star
+\newcommand\LrefNoStar[2]{%
+    \hyperref[#2]{\Aref*{#1} \aref*{#2}}}% TODO Wref
+\newcommand\LrefStar[2]{%
+    \Aref*{#1} \aref*{#2}}% TODO Wref star
+
+\newcommand\srefNoStar[3]{%
+    \hyperref[#3]{\lref*{#1}{#2} \aref*{#3}}}
+\newcommand\srefStar[2]{%
+    \aref*{#1} \aref*{#2}}
+\newcommand\SrefNoStar[3]{%
+    \hyperref[#3]{\Lref*{#1}{#2} \aref*{#3}}}
+\newcommand\SrefStar[2]{%
+    \Aref*{#1} \aref*{#2}}
+
+
+% Schakelbepalingen
+\RequirePackage{xr}
+\RequirePackage{attachfile}
+\makeatletter
+\newcommand*{\addFileDependency}[1]{% argument=file name and extension
+  \typeout{(#1)}
+  \@addtofilelist{#1}
+  \IfFileExists{#1}{}{\typeout{No file #1.}}
+}
+
+\makeatother
+\newcommand{\extdoc}[2][ext-]{%
+    \externaldocument[#1]{../../#2/out/main}%
+    \addFileDependency{../../#2/src/main.tex}%
+    \addFileDependency{../../#2/out/main.aux}%
+}
