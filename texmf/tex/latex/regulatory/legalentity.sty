@@ -68,16 +68,16 @@
     {\tiny Handtekening:}\\[-1em]
     \rule{\linewidth}{.1pt}
     \\[1em]
-    \begin{tabular}{@{}p{.2\linewidth}@{}p{.8\linewidth}@{}}
+    \begin{tabularx}{\linewidth}{@{}p{\widthof{Functie:\quad}}@{}X@{}}
         Naam:    & \nameFor{#1}      \\
         Functie: & \titleFor{#1}     \\
         Datum:   & \signdateFor{#1}  \\
         Plaats:  & \signplaceFor{#1} \\
-    \end{tabular}
+    \end{tabularx}
 }
 
 \newcommand\contact[1]{%
-    \artikel{Contactgegevens \companyFor{#1}, \nameFor{#1}}\label{art:contact}
+%    \artikel{Contactgegevens \companyFor{#1}, \nameFor{#1}}\label{art:contact}
     \begin{tabularx}{\linewidth}{@{}l l X l l@{}}
         Bedrijfsnaam:       & \companyFor{#1}               & & KvK-nummer: & \kvkFor{#1}     \\
         Adres:              & \addressFor{#1}               & & E-mail:     & \emailFor{#1}   \\
