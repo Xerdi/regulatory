@@ -76,11 +76,11 @@ dlEnd={\end{labeling}}%
 \RequirePackage{enumitem} % voor leden/subleden
 \RequirePackage{fmtcount} % voor tekstuele leden
 \RequirePackage{scrextend} % voor definitie lijsten
-\RequirePackage{xr-hyper}
+%\RequirePackage{xr-hyper} % TODO: kan weg?
 \RequirePackage{hyperref} % voor linkjes
-\RequirePackage[user,counter,hyperref]{zref} % voor verwijzingen
-\RequirePackage{zref-xr,zref-user,zref-clever}
-\RequirePackage{cleveref} % voor verwijzingen
+\RequirePackage[user,counter,hyperref,xr]{zref} % voor verwijzingen
+\RequirePackage{zref-xr,zref-user,zref-clever,zref-hyperref}
+%\RequirePackage{cleveref} % voor verwijzingen
 \RequirePackage{pgf} % voor entities
 \RequirePackage{suffix} % voor macro's met asterisk
 \RequirePackage[sanitize=none,nonumberlist]{glossaries} % voor definitie lijsten
@@ -130,154 +130,192 @@ dlEnd={\end{labeling}}%
 \counterwithin{ledenii}{ledeni}
 
 % Verwijzingsnaam naar leden en subleden (lid/sub)
-\crefname{artikel}{artikel}{artikelen}
-\crefname{lid}{lid\unskip}{leden\unskip}
-\crefname{ledeni}{lid\unskip}{leden\unskip}
-\crefname{ledenii}{onderdeel\unskip}{onderdelen\unskip}
+%\crefname{artikel}{artikel}{artikelen}
+%\crefname{lid}{lid\unskip}{leden\unskip}
+%\crefname{ledeni}{lid\unskip}{leden\unskip}
+%\crefname{ledenii}{onderdeel\unskip}{onderdelen\unskip}
 
 \zref@newprop{artikel}[-1]{\number\value{artikel}}
 \zref@newprop{lid}[-1]{\ifnum\value{lid}>0\number\value{lid}\else\number\value{ledeni}\fi}
 \zref@newprop{sub}[-1]{\number\value{ledenii}}
 \zref@addprops{main}{artikel,lid,sub}
 
-\newcommand{\artnum}[1]{%
-\zref@extract{#1}{artikel}%
+\makeatother
+{\catcode`\#=12 \gdef\hashchar{#}}
+\makeatletter
+%\newcommand\@aref@hl[2]{\edef\next{%
+%    \noexpand\href{%
+%    \zref@extractdefault{#1}{url}{}%
+%    \zref@ifrefcontainsprop{#1}{anchor}{\hashchar\zref@extract{#1}{anchor}}{}}%
+%      {#2}}\next}
+\newcommand\@aref@hl[1]{\edef\next{%
+    \noexpand\href{\@aref@fullurl}{#1}}\next}
+\newcommand\test[1]{\@aref@setvars{#1}\@aref@hl{TEST}}
+
+% Artikel labels
+\def\@aref@artikel@prefix{artikel~}
+\def\@Aref@artikel@prefix{Artikel~}
+\def\@aref@artikel@postfix{}
+\def\@aref@artikel@format{\@aref@artikel}
+\def\@aref@artikel@formathl{\@aref@hl{\@aref@artikel@format}}
+\def\@aref@artikel@nformat{\@aref@artikel@prefix\@aref@artikel}
+\def\@Aref@artikel@nformat{\@Aref@artikel@prefix\@aref@artikel}
+\def\@aref@artikel@nformathl{\@aref@artikel@prefix\@aref@artikel@formathl}
+\def\@Aref@artikel@nformathl{\@Aref@artikel@prefix\@aref@artikel@formathl}
+
+
+% Lid labels
+\def\@aref@lid@prefix{}
+\def\@Aref@lid@prefix{}
+\def\@aref@lid@postfix{~lid}
+\def\@aref@lid@format{\ordinalstringnum{\@aref@lid}}
+\def\@Aref@lid@format{\Ordinalstringnum{\@aref@lid}}
+\def\@aref@lid@formathl{\@aref@hl{\@aref@lid@format}}
+\def\@Aref@lid@formathl{\@aref@hl{\@Aref@lid@format}}
+\def\@aref@lid@nformat{\@aref@lid@format\@aref@lid@postfix}
+\def\@aref@lid@nformathl{\@aref@lid@formathl\@aref@lid@postfix}
+\def\@Aref@lid@nformat{\@Aref@lid@format\@aref@lid@postfix}
+\def\@Aref@lid@nformathl{\@Aref@lid@formathl\@aref@lid@postfix}
+
+% Sub labels
+\def\@aref@sub@prefix{onderdeel~}
+\def\@Aref@sub@prefix{Onderdeel~}
+\def\@aref@sub@postfix{}
+\def\@aref@sub@format{\abalphnum{\@aref@sub}}
+\def\@aref@sub@formathl{\@aref@hl{\@aref@sub@format}}
+\def\@aref@sub@nformat{\@aref@sub@prefix\@aref@sub@format}
+\def\@aref@sub@nformathl{\@aref@sub@prefix\@aref@sub@formathl}
+\def\@Aref@sub@nformat{\@Aref@sub@prefix\@aref@sub@format}
+\def\@Aref@sub@nformathl{\@Aref@sub@prefix\@aref@sub@formathl}
+
+
+
+\newcommand\@aref@setvars[1]{%
+    \def\@aref@count{\zref@extract{#1}{counter}}%
+    \def\@aref@artikel{\zref@extract{#1}{artikel}}%
+    \def\@aref@lid{\zref@extract{#1}{lid}}%
+    \def\@aref@sub{\zref@extract{#1}{sub}}%
+    \def\@aref@anchor{\zref@extract{#1}{anchor}}%
+    \def\@aref@url{\zref@extractdefault{#1}{url}{}}%
+    \def\@aref@fullurl{\@aref@url\hashchar\@aref@anchor}%
+    \ifthenelse{\equal{\@aref@count}{artikel}}{%
+        \def\@aref@type{artikel}%
+        \def\@aref@format{\@aref@artikel@formathl}%
+        \def\@aref@formatn{\@ifacap{\@Aref@artikel@prefix}{\@aref@artikel@prefix}\@aref@format}%
+        \def\@aref@prefix{\@ifacap{\@Aref@artikel@prefix}{\@aref@artikel@prefix}}%
+        \def\@aref@postfix{}%
+    }{%
+        \ifthenelse{\equal{\@aref@count}{ledeni}\OR\equal{\@aref@count}{lid}}{%
+            \def\@aref@type{lid}%
+            \def\@aref@format{\@ifacap{\@Aref@lid@formathl}{\@aref@lid@formathl}}%
+            \def\@aref@formatn{\@aref@format\@aref@lid@postfix}%
+            \def\@aref@prefix{%
+                \@ifacap{\@Aref@artikel@prefix}{\@aref@artikel@prefix}\@aref@artikel@format,~%
+            }%
+            \def\@aref@postfix{\@aref@lid@postfix}%
+        }{%
+            \ifthenelse{\equal{\@aref@count}{ledenii}}{%
+                \def\@aref@type{sub}%
+                \def\@aref@format{\@aref@sub@formathl}%
+                \def\@aref@prefix{%
+                    \@ifacap{\@Aref@artikel@prefix}{\@aref@artikel@prefix}\@aref@artikel@format,~%
+                    \@ifacap{\@Aref@lid@format}{\@aref@lid@format}\@aref@lid@postfix,~%
+                    \@ifacap{\@Aref@sub@prefix}{\@aref@sub@prefix}%
+                }%
+                \def\@aref@postfix{}%
+            }{%
+                \def\@aref@type{page}%
+                \def\@aref@format{??}%
+                \def\@aref@prefix{}%
+                \def\@aref@postfix{}%
+            }%
+        }%
+    }%
+    \def\@aref@number##1{\zref@extractdefault{##1}{\@aref@type}{-1}}%
 }
 
-\newcommand{\artformat}[1]{%
-\cref@artikel@name~#1%
-}
+\newboolean{aref@cap}
+\def\@ifacap#1#2{\ifthenelse{\boolean{aref@cap}}{#1\setboolean{aref@cap}{false}}{#2}}
 
-\newcommand{\Artformat}[1]{%
-\Cref@artikel@name~#1%
-}
-
-\newcommand{\lidnum}[1]{%
-\zref@extract{#1}{lid}%
-}
-
-\newcommand{\lidformat}[1]{%
-\ordinalstringnum{#1}~\cref@ledeni@name%
-}
-
-\newcommand{\Lidformat}[1]{%
-\Ordinalstringnum{#1}~\cref@ledeni@name%
-}
-
-\newcommand{\lidprefix}[2]{%
-\ifnum\artnum{#1}=\value{artikel}%
-\cref{#2}, van dit artikel%
-\else%
-\artformat{\artnum{#1}}, \cref{#2}%
-\fi%
-}
-
-\newcommand{\subnum}[1]{%
-\zref@extract{#1}{sub}%
-}
-
-\newcommand{\subformat}[1]{%
-\cref@ledenii@name~\abalphnum{#1}%
-}
-
-\newcommand{\Subformat}[1]{%
-\Cref@ledenii@name~\abalphnum{#1}%
-}
-
-\newcommand{\subprefix}[2]{%
-\ifnum\artnum{#1}=\value{artikel}%
-\ifnum\lidnum{#1}=\value{ledeni}%
-\cref{#2} van dit lid%
-\else%
-\lidformat{\lidnum{#1}}, \cref{#2}, van dit artikel%
-\fi%
-\else%
-\artformat{\artnum{#1}}, \lidformat{\lidnum{#1}}, \cref{#2}%
-\fi%
-}
-
-\newcommand{\Subprefix}[2]{%
-\ifnum\artnum{#1}=\value{artikel}%
-\ifnum\lidnum{#1}=\value{ledeni}%
-\Cref{#2} van dit lid%
-\else%
-\Lidformat{\lidnum{#1}}, \cref{#2}, van dit artikel%
-\fi%
-\else%
-\Artformat{\artnum{#1}}, \lidformat{\lidnum{#1}}, \cref{#2}%
-\fi%
-}
-
+% https://tex.stackexchange.com/questions/164118/special-case-for-last-element-with-foreach
 \newcommand{\aref}[1]{%
-\IfSubStr{#1}{,}{%
-\StrBefore[1]{#1}{,}[\firstarg]%
-}{%
-\def\firstarg{#1}%
-}%
-\ifthenelse{\equal{\zref@extract{\firstarg}{counter}}{ledeni}}{%
-\lidprefix{\firstarg}{#1}%
-}{%
-\ifthenelse{\equal{\zref@extract{\firstarg}{counter}}{lid}}{%
-\lidprefix{\firstarg}{#1}%
-}{%
-\ifthenelse{\equal{\zref@extract{\firstarg}{counter}}{ledenii}}{%
-\subprefix{\firstarg}{#1}%
-}{%
-\cref{#1}%
-}%
-}%
-}%
+    \IfSubStr{#1}{,}{%
+        \StrBefore[1]{#1}{,}[\firstarg]%
+    }{%
+        \def\firstarg{#1}%
+    }%
+    \@aref@setvars{\firstarg}%
+    \@aref@prefix\aref@group{#1}\@aref@postfix%
 }
 
 \newcommand{\Aref}[1]{%
-\IfSubStr{#1}{,}{%
-\StrBefore[1]{#1}{,}[\Firstarg]%
-}{%
-\def\Firstarg{#1}%
-}%
-\ifthenelse{\equal{\zref@extract{\Firstarg}{counter}}{ledeni}}{%
-\Lidprefix{\Firstarg}{#1}%
-}{%
-\ifthenelse{\equal{\zref@extract{\Firstarg}{counter}}{lid}}{%
-\Lidprefix{\Firstarg}{#1}%
-}{%
-\ifthenelse{\equal{\zref@extract{\Firstarg}{counter}}{ledenii}}{%
-\Subprefix{\Firstarg}{#1}%
-}{%
-\Cref{#1}%
-}%
-}%
-}%
+    \setboolean{aref@cap}{true}%
+    \IfSubStr{#1}{,}{%
+        \StrBefore[1]{#1}{,}[\Firstarg]%
+    }{%
+        \def\Firstarg{#1}%
+    }%
+    \@aref@setvars{\Firstarg}%
+    \@aref@prefix\aref@group{#1}\@aref@postfix%
 }
 
-% Cleveref formats
-\crefformat{artikel}{#2\artformat{#1}#3}%
-\Crefformat{artikel}{#2\Artformat{#1}#3}%
-\crefrangeformat{artikel}{#3\cref@artikel@name@plural~#1#4 \crefrangeconjunction #5#2#6}%
-\Crefrangeformat{artikel}{#3\Cref@artikel@name@plural~#1#4 \crefrangeconjunction #5#2#6}%
-\crefmultiformat{artikel}{#2\cref@artikel@name@plural~#1#3}{\crefpairconjunction#2#1#3}{\crefmiddleconjunction#2#1#3}{\creflastconjunction#2#1#3}%
-\Crefmultiformat{artikel}{#2\Cref@artikel@name@plural~#1#3}{\crefpairconjunction#2#1#3}{\crefmiddleconjunction#2#1#3}{\creflastconjunction#2#1#3}%
 
-\crefformat{ledeni}{#2\lidformat{#1}#3}%
-\Crefformat{ledeni}{#2\Lidformat{#1}#3}%
-\crefrangeformat{ledeni}{#3\ordinalstringnum{#1}#4 \crefrangeconjunction #5\lidformat{#2}#6}%
-\Crefrangeformat{ledeni}{#3\Ordinalstringnum{#1}#4 \crefrangeconjunction #5\lidformat{#2}#6}%
-\crefmultiformat{ledeni}{#2\ordinalstringnum{#1}#3}{\crefpairconjunction #2\lidformat{#1}#3}{\crefmiddleconjunction#2\ordinalstringnum{#1}#3}{\creflastconjunction#2\lidformat{#1}#3}%
-\Crefmultiformat{ledeni}{#2\Ordinalstringnum{#1}#3}{\crefpairconjunction #2\lidformat{#1}#3}{\crefmiddleconjunction#2\ordinalstringnum{#1}#3}{\creflastconjunction#2\lidformat{#1}#3}%
-
-\crefformat{lid}{#2\lidformat{#1}#3}%
-\Crefformat{lid}{#2\Lidformat{#1}#3}%
-\crefrangeformat{lid}{#3\ordinalstringnum{#1}#4 \crefrangeconjunction #5\lidformat{#2}#6}%
-\Crefrangeformat{lid}{#3\Ordinalstringnum{#1}#4 \crefrangeconjunction #5\lidformat{#2}#6}%
-\crefmultiformat{lid}{#2\ordinalstringnum{#1}#3}{\crefpairconjunction #2\lidformat{#1}#3}{\crefmiddleconjunction#2\ordinalstringnum{#1}#3}{\creflastconjunction#2\lidformat{#1}#3}%
-\Crefmultiformat{lid}{#2\Ordinalstringnum{#1}#3}{\crefpairconjunction #2\lidformat{#1}#3}{\crefmiddleconjunction#2\ordinalstringnum{#1}#3}{\creflastconjunction#2\lidformat{#1}#3}%
-
-\crefformat{ledenii}{#2\subformat{#1}#3}%
-\Crefformat{ledenii}{#2\Subformat{#1}#3}%
-\crefrangeformat{ledenii}{#3\cref@ledenii@name@plural~\abalphnum{#1}#4 \crefrangeconjunction #5\abalphnum{#2}#6}%
-\Crefrangeformat{ledenii}{#3\Cref@ledenii@name@plural~\abalphnum{#1}#4 \crefrangeconjunction #5\abalphnum{#2}#6}%
-\crefmultiformat{ledenii}{#2\cref@ledenii@name@plural~\abalphnum{#1}#3}{\crefpairconjunction#2\abalphnum{#1}#3}{\crefmiddleconjunction#2\abalphnum{#1}#3}{\creflastconjunction#2\abalphnum{#1}#3}%
-\Crefmultiformat{ledenii}{#2\Cref@ledenii@name@plural~\abalphnum{#1}#3}{\crefpairconjunction#2\abalphnum{#1}#3}{\crefmiddleconjunction#2\abalphnum{#1}#3}{\creflastconjunction#2\abalphnum{#1}#3}%
+\def\listterminator{-1}% SET TO *ANY* VALUE KNOWN NOT TO BE IN LIST (POSITIVE OR NEGATIVE)
+\newcommand\middleconjunction{,\ }
+\newcommand\lastconjunction{ en }
+\newcommand\rangeconjunction{ t/m }
+\newcommand\aref@group[1]{%
+    \bubblesort{#1}%
+    \expandafter\begincompaction\sortedlist,\listterminator,\relax%
+}
+\def\begincompaction#1,#2\relax{%
+    \def\startlist{#1}%
+    \def\currentendlist{#1}%
+    \findendlist#2\relax%
+}
+\def\findendlist#1,#2\relax{%
+    \@aref@setvars{#1}%
+    \ifnum\numexpr\@aref@number{\currentendlist}+1\relax=\@aref@number{#1}\relax%
+        \def\currentendlist{#1}%
+        \findendlist#2\relax%
+    \else%
+        \@aref@setvars{\startlist}%
+        \ifnum\@aref@number{\startlist}=\@aref@number{\currentendlist}\relax%
+            \ignorespaces\@aref@format\unskip%
+        \else%
+            \ifnum\numexpr\@aref@number{\startlist}+1\relax=\@aref@number{\currentendlist}\relax%
+                \ignorespaces\@aref@format\unskip%
+                \ifnum\@aref@number{#1}=\listterminator\relax%
+                    \lastconjunction%
+                \else%
+                    \middleconjunction%
+                \fi\ignorespaces\@aref@setvars{\currentendlist}\@aref@format\unskip%
+            \else%
+                \ignorespaces\@aref@format\unskip\rangeconjunction\ignorespaces\@aref@setvars{\currentendlist}\@aref@format\unskip%
+            \fi%
+        \fi%
+        \ifnum\@aref@number{#1}=\listterminator%
+        \else%
+            \IfStrEq{#2}{\listterminator,}{\lastconjunction}{\middleconjunction}\begincompaction#1,#2\relax%
+        \fi%
+    \fi%
+}
+\newcommand\bubblesort[1]{\def\sortedlist{}\sortlist#1,\listterminator,\relax}
+\def\sortlist#1,#2,#3\relax{%
+    \@aref@setvars{#1}%
+    \ifnum\@aref@number{#2}=\listterminator\relax%
+        \edef\sortedlist{\sortedlist#1}%
+    \else%
+        \ifnum\@aref@number{#1}<\@aref@number{#2}\relax%
+            \edef\sortedlist{\sortedlist#1,}%
+            \sortlist#2,#3\relax%
+        \else%
+            \let\tmp\sortedlist%
+            \def\sortedlist{}%
+            \expandafter\sortlist\tmp#2,#1,#3\relax%
+        \fi%
+    \fi%
+}
 
 \GetAllResetLists
 \RegisterPostLabelHook{\zlabel}

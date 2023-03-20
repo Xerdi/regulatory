@@ -1,0 +1,55 @@
+%! Author = erik
+%! Date = 18-03-2023
+
+% Preamble
+\documentclass[11pt,dutch]{article}
+
+% Packages
+\usepackage{babel}
+\usepackage{amsmath}
+\usepackage[bibdefs,alldefs]{regulatory}
+\usepackage{blindtext}
+
+%\zexternaldocument[ex2-]{example2}
+%\addFileDependency{example2.tex}
+%\addFileDependency{example2.aux}
+
+% Document
+\begin{document}
+
+    \artikel{Definities}\label{art:defs}
+    \printdefs{Overeenkomst van Opdracht}
+    \artikel{Asd}
+    \begin{leden}
+        \item \label{lid:defs}
+        \item \label{lid:defs2}
+        \begin{leden}
+            \item \label{sub:defs}
+            \item \blindtext
+            \item \blindtext
+            \item \blindtext
+            \item \blindtext
+            \item \blindtext
+            \item \blindtext
+            \item \blindtext
+            \item \blindtext
+        \end{leden}
+    \end{leden}
+    \artikel{Dsa}
+    \begin{leden}
+        \item
+        \begin{leden}
+            \item \label{sub:defs2} \blindtext
+            \item  \blindtext
+            \item  \blindtext
+            \item  \blindtext
+            \item  \blindtext
+            \item  \blindtext
+            \item  \blindtext
+            \item  \blindtext
+            \item  \blindtext
+        \end{leden}
+    \end{leden}
+%    \aref{ex2-lid:lorem}
+
+\end{document}
