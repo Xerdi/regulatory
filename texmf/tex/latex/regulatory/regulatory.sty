@@ -13,8 +13,9 @@
 }
 
 \newboolean{regulatory@usebib2gls}
-\setboolean{regulatory@usebib2gls}{false}
+\setboolean{regulatory@usebib2gls}{true}
 \DeclareOption{bibdefs}{\setboolean{regulatory@usebib2gls}{true}}
+\DeclareOption{nobibdefs}{\setboolean{regulatory@usebib2gls}{false}}
 
 \DeclareOption{hidelinks}{%
     \PassOptionsToPackage{hidelinks}{hyperref}}
@@ -23,36 +24,40 @@
 \setboolean{regulatory@alldefs}{false}
 \DeclareOption{alldefs}{\setboolean{regulatory@alldefs}{true}}
 
-% Verwijzingen koppelen met (standaard) , en afbreken met juncto (zie \setconjunction)
-\newcommand{\crefpairconjunction}{ en~}
-\newcommand{\creflastconjunction}{ en~}
-\newcommand{\crefrangeconjunction}{tot~}
+
+\newcommand\middleconjunction{, }
+\newcommand\lastconjunction{ en }
+\newcommand\rangeconjunction{ t/m }
+
+\newcommand\setmiddleconjunction[1]{\renewcommand\middleconjunction{#1}}
+\newcommand\setlastconjunction[1]{\renewcommand\lastconjunction{#1}}
+\newcommand\setrangeconjunction[1]{\renewcommand\rangeconjunction{#1}}
+
+\newcommand\setconjunction[3]{%
+    \setmiddleconjunction{#1}%
+    \setlastconjunction{#1}%
+    \setrangeconjunction{#1}%
+}
 
 \newcommand\setjuncto{%
-\renewcommand{\crefpairconjunction}{ jo.\ }%
-\renewcommand{\creflastconjunction}{ jo.\ }%
+\setlastconjunction{ jo.\ }%
 }
 
 \newcommand\unsetjuncto{%
-\renewcommand{\crefpairconjunction}{ en~}%
-\renewcommand{\creflastconjunction}{ en~}%
+\setlastconjunction{ en~}%
 }
 
 \DeclareOption{juncto}{%
     \setjuncto}
 
-\DeclareOption*{\PackageError{regulatory}{Unknown option}{Options are markdown}}
-%\ProcessOptionsX
+\DeclareOption*{\PackageError{regulatory}{Unknown option}{Options are markdown,bibdefs,nobibdefs,alldefs,hidelinks}}
 \ProcessOptions*
-
-\edef\@regulatory@bib@selection{}
-\ifthenelse{\boolean{regulatory@alldefs}}{\edef\@regulatory@bib@selection{,selection=all}}{}
 
 % Markdown support
 \ifthenelse{\boolean{regulatory@usemarkdown}}{
 \RequirePackage[hashEnumerators,definitionLists,hybrid,headerAttributes=true]{markdown}
-\def\@uitlijning{Lorem ipsum dolor sit amet.}%
-\newcommand{\uitlijning}[1]{\def\@uitlijning{#1}}%
+\RequirePackage{regulatory}
+\newcommand{\uitlijning}[1]{\glssetwidest{#1}}%
 \setkeys{markdownRenderers}{
 headingOne={\artikel{#1}},
 olItemWithNumber={\item{}},
@@ -60,9 +65,9 @@ olBeginTight={\begin{leden}},
 olEndTight={\end{leden}},
 olBegin={\begin{leden}},
 olEnd={\end{leden}},
-dlBeginTight={\begin{labeling}{\@uitlijning}},
+dlBeginTight={\begin{labeling}{\@glswidestname}},
 dlEndTight={\end{labeling}},
-dlBegin={\begin{labeling}{\@uitlijning}},
+dlBegin={\begin{labeling}{\@glswidestname}},
 dlEnd={\end{labeling}}%
 \renewcommand\markdownRendererOlItemWithNumber[1]{\item{}\label{ml:##1}}
 }
@@ -76,14 +81,19 @@ dlEnd={\end{labeling}}%
 \RequirePackage{enumitem} % voor leden/subleden
 \RequirePackage{fmtcount} % voor tekstuele leden
 \RequirePackage{scrextend} % voor definitie lijsten
-%\RequirePackage{xr-hyper} % TODO: kan weg?
+\RequirePackage{xr-hyper} %
 \RequirePackage{hyperref} % voor linkjes
 \RequirePackage[user,counter,hyperref,xr]{zref} % voor verwijzingen
 \RequirePackage{zref-xr,zref-user,zref-clever,zref-hyperref}
-%\RequirePackage{cleveref} % voor verwijzingen
 \RequirePackage{pgf} % voor entities
 \RequirePackage{suffix} % voor macro's met asterisk
-\RequirePackage[sanitize=none,nonumberlist]{glossaries} % voor definitie lijsten
+\RequirePackage[sanitize=none,nonumberlist,nopostdot]{glossaries} % voor definitie lijsten
+\ifthenelse{\boolean{regulatory@usebib2gls}}{%
+    \RequirePackage[record,style=alttree]{glossaries-extra}
+}{%
+    \PackageWarning{regulatory}{Using glossaries for definitions without bib2gls. This is mostly untested.}
+}
+\RequirePackage{attachfile2}
 
 \newboolean{regulatory@defslisted}
 \setboolean{regulatory@defslisted}{false}
@@ -129,28 +139,41 @@ dlEnd={\end{labeling}}%
 \counterwithin{ledeni}{artikel}
 \counterwithin{ledenii}{ledeni}
 
-% Verwijzingsnaam naar leden en subleden (lid/sub)
-%\crefname{artikel}{artikel}{artikelen}
-%\crefname{lid}{lid\unskip}{leden\unskip}
-%\crefname{ledeni}{lid\unskip}{leden\unskip}
-%\crefname{ledenii}{onderdeel\unskip}{onderdelen\unskip}
-
 \zref@newprop{artikel}[-1]{\number\value{artikel}}
 \zref@newprop{lid}[-1]{\ifnum\value{lid}>0\number\value{lid}\else\number\value{ledeni}\fi}
 \zref@newprop{sub}[-1]{\number\value{ledenii}}
 \zref@addprops{main}{artikel,lid,sub}
 
+\zcRefTypeSetup{artikel}{%
+    Name-sg = Artikel,
+    name-sg = artikel,
+    Name-pl = Artikelen,
+    name-pl = artikelen
+}
+\zcRefTypeSetup{lid}{%
+    Name-sg = Lid,
+    name-sg = lid,
+    Name-pl = Leden,
+    name-pl = leden
+}
+\zcRefTypeSetup{ledeni}{%
+    Name-sg = Lid,
+    name-sg = lid,
+    Name-pl = Leden,
+    name-pl = leden
+}
+\zcRefTypeSetup{ledenii}{%
+    Name-sg = Onderdeel,
+    name-sg = onderdeel,
+    Name-pl = Onderdelen,
+    name-pl = onderdelen
+}
+
 \makeatother
 {\catcode`\#=12 \gdef\hashchar{#}}
 \makeatletter
-%\newcommand\@aref@hl[2]{\edef\next{%
-%    \noexpand\href{%
-%    \zref@extractdefault{#1}{url}{}%
-%    \zref@ifrefcontainsprop{#1}{anchor}{\hashchar\zref@extract{#1}{anchor}}{}}%
-%      {#2}}\next}
 \newcommand\@aref@hl[1]{\edef\next{%
     \noexpand\href{\@aref@fullurl}{#1}}\next}
-\newcommand\test[1]{\@aref@setvars{#1}\@aref@hl{TEST}}
 
 % Artikel labels
 \def\@aref@artikel@prefix{artikel~}
@@ -188,7 +211,9 @@ dlEnd={\end{labeling}}%
 \def\@Aref@sub@nformat{\@Aref@sub@prefix\@aref@sub@format}
 \def\@Aref@sub@nformathl{\@Aref@sub@prefix\@aref@sub@formathl}
 
-
+\def\@ifartifactisset#1#2#3{%
+    \pgfkeysifdefined{/artifact/#1/.is family}{#2}{#3}%
+}
 
 \newcommand\@aref@setvars[1]{%
     \def\@aref@count{\zref@extract{#1}{counter}}%
@@ -198,6 +223,16 @@ dlEnd={\end{labeling}}%
     \def\@aref@anchor{\zref@extract{#1}{anchor}}%
     \def\@aref@url{\zref@extractdefault{#1}{url}{}}%
     \def\@aref@fullurl{\@aref@url\hashchar\@aref@anchor}%
+    \zref@ifrefcontainsprop{#1}{externaldocument}{%
+        \def\@aref@filelabel{\zref@extract{#1}{externaldocument}}%
+        \def\@aref@postlink{%
+            \ifthenelse{\equal{\artifactfootnote{\@aref@filelabel}}{true}\and\equal{\artifactreferred{\@aref@filelabel}}{false}}{%
+                \reffootnotelabel{\@aref@filelabel}%
+            }{}%
+        }%
+    }{%
+        \def\@aref@postlink{}%
+    }%
     \ifthenelse{\equal{\@aref@count}{artikel}}{%
         \def\@aref@type{artikel}%
         \def\@aref@format{\@aref@artikel@formathl}%
@@ -245,7 +280,7 @@ dlEnd={\end{labeling}}%
         \def\firstarg{#1}%
     }%
     \@aref@setvars{\firstarg}%
-    \@aref@prefix\aref@group{#1}\@aref@postfix%
+    \@aref@prefix\aref@group{#1}\@aref@postfix\@aref@postlink%
 }
 
 \newcommand{\Aref}[1]{%
@@ -256,14 +291,11 @@ dlEnd={\end{labeling}}%
         \def\Firstarg{#1}%
     }%
     \@aref@setvars{\Firstarg}%
-    \@aref@prefix\aref@group{#1}\@aref@postfix%
+    \@aref@prefix\aref@group{#1}\@aref@postfix\@aref@postlink%
 }
 
+\def\listterminator{-1}
 
-\def\listterminator{-1}% SET TO *ANY* VALUE KNOWN NOT TO BE IN LIST (POSITIVE OR NEGATIVE)
-\newcommand\middleconjunction{,\ }
-\newcommand\lastconjunction{ en }
-\newcommand\rangeconjunction{ t/m }
 \newcommand\aref@group[1]{%
     \bubblesort{#1}%
     \expandafter\begincompaction\sortedlist,\listterminator,\relax%
@@ -320,142 +352,61 @@ dlEnd={\end{labeling}}%
 \GetAllResetLists
 \RegisterPostLabelHook{\zlabel}
 
-\newcommand\newentity[2]{
-    \pgfkeys{
-        /entity/#1/.is family,
-        /entity/#1,
-        name/.initial=<naam>,
-        title/.initial=<functie titel>,
-        gender/.initial=<male|female>,
-        company/.initial=<bedrijf>,
-        kvk/.initial=<kvk nummer>,
-        website/.initial=<website>,
-        email/.initial=<e-mail>,
-        address/.initial=<adres>,
-        postal/.initial=<postcode>,
-        place/.initial=<plaats>,
-        iban/.initial=<iban>,
-        sign date/.initial=<datum>,
-        sign place/.initial=<plaats>
-    }
-    \pgfkeys{/entity/#1,#2}
-}
-\newcommand\entityval[2]{\pgfkeysvalueof{/entity/#1/#2}\xspace}
-\newcommand\nameOf[1]{\entityval{#1}{name}}
-\newcommand\titleOf[1]{\entityval{#1}{title}}
-\newcommand\companyOf[1]{\entityval{#1}{company}}
-\newcommand\kvkOf[1]{\entityval{#1}{kvk}}
-\newcommand\websiteOf[1]{\entityval{#1}{website}}
-\newcommand\emailOf[1]{\entityval{#1}{email}}
-\newcommand\addressOf[1]{\entityval{#1}{address}}
-\newcommand\postalOf[1]{\entityval{#1}{postal}}
-\newcommand\placeOf[1]{\entityval{#1}{place}}
-\newcommand\ibanOf[1]{\entityval{#1}{iban}}
-\newcommand\signdateOf[1]{\entityval{#1}{sign date}}
-\newcommand\signplaceOf[1]{\entityval{#1}{sign place}}
-
-\newcommand\salute[1]{%
-    \ifthenelse{\equal{\pgfkeysvalueof{/entity/#1/gender}}{female}}{mevrouw }{de heer }%
-    \nameOf{#1}%
-}
-\WithSuffix\newcommand\salute*[1]{%
-    \ifthenelse{\equal{\pgfkeysvalueof{/entity/#1/gender}}{female}}{mevr.\ }{dhr.\ }%
-    \nameOf{#1}%
-}
-
-\newcommand\Salute[1]{%
-    \ifthenelse{\equal{\pgfkeysvalueof{/entity/#1/gender}}{female}}{Mevrouw }{De heer }%
-    \nameOf{#1}%
-}
-
-\WithSuffix\newcommand\Salute*[1]{%
-    \ifthenelse{\equal{\pgfkeysvalueof{/entity/#1/gender}}{female}}{Mevr.\ }{Dhr.\ }%
-    \nameOf{#1}%
-}
-
-\newcommand\signature[1]{
-    \@ifpackageloaded{tabularx}{%
-    \noindent\textbf{\companyOf{#1}} \\
-    \vspace{3cm}\\
-    {\tiny Handtekening:}\\[-1em]
-    \rule{\linewidth}{.1pt}
-    \\[1em]
-    \begin{tabularx}{\linewidth}{@{}p{\widthof{Functie:\quad}}@{}X@{}}
-        Naam:    & \nameOf{#1}      \\
-        Functie: & \titleOf{#1}     \\
-        Datum:   & \signdateOf{#1}  \\
-        Plaats:  & \signplaceOf{#1} \\
-    \end{tabularx}
-    }{\PackageError{regulatory}{Missing tabularx}{The package tabularx needs to be loaded}}
-}
-
-\newcommand\contact[1]{%
-%    \artikel{Contactgegevens \companyOf{#1}, \nameOf{#1}}\label{art:contact}
-    \@ifpackageloaded{tabularx}{%
-    \begin{tabularx}{\linewidth}{@{}l l X l l@{}}
-        Bedrijfsnaam:       & \companyOf{#1}               & & KvK-nummer: & \kvkOf{#1}     \\
-        Adres:              & \addressOf{#1}               & & E-mail:     & \emailOf{#1}   \\
-        Postcode en plaats: & \postalOf{#1}, \placeOf{#1} & & Website:    & \websiteOf{#1} \\
-    \end{tabularx}
-    }{\PackageError{regulatory}{Missing tabularx}{The package tabularx needs to be loaded}}
-}
-
-\newcommand*\contractor{contractor}
-\newcommand\client{client}
-
-\newcommand\myname{\nameOf{\contractor}}
-\newcommand\mytitle{\titleOf{\contractor}}
-\newcommand\mycompany{\companyOf{\contractor}}
-\newcommand\mykvk{\kvkOf{\contractor}}
-\newcommand\mywebsite{\websiteOf{\contractor}}
-\newcommand\myemail{\pgfkeysvalueof{/entity/\contractor/email}}
-\newcommand\myaddress{\pgfkeysvalueof{/entity/\contractor/address}}
-\newcommand\mypostal{\pgfkeysvalueof{/entity/\contractor/postal}}
-\newcommand\myplace{\pgfkeysvalueof{/entity/\contractor/place}}
-\newcommand\myiban{\pgfkeysvalueof{/entity/\contractor/iban}}
-\newcommand\mysigndate{\pgfkeysvalueof{/entity/\contractor/sign date}}
-\newcommand\mysignplace{\pgfkeysvalueof{/entity/\contractor/sign place}}
-
-%\newcommand\contractor{contractor}
-\newcommand\setcontractor[1]{\renewcommand\contractor{#1}}
-%\newcommand\client{client}
-\newcommand\setclient[1]{\renewcommand\client{#1}}
-
-\IfFileExists{entities.tex}{%
-    \input{entities.tex}
-}{\PackageWarning{regulatory}{No entities.tex found}}
-
-% Schakelbepalingen
-%\RequirePackage{attachfile}
-\makeatletter
-\newcommand*{\addFileDependency}[1]{% argument=file name and extension
-\typeout{(#1)}
-\@addtofilelist{#1}
-\IfFileExists{#1}{}{\typeout{No file #1.}}
-}
-% https://www.overleaf.com/learn/how-to/Cross_referencing_with_the_xr_package_in_Overleaf
-\makeatother
-\newcommand{\extdoc}[2][ext-]{%
-\externaldocument[#1]{../../#2/out/main}%
-\addFileDependency{../../#2/src/main.tex}%
-\addFileDependency{../../#2/out/main.aux}%
-}
-
-\makeatletter
-
 \newglossary*{definitions}{Definitions}
 \newglossary*{externals}{Externals}
-\newignoredglossary{externals}
-% Macro's
-\newcommand\describe[1]{\glstarget{#1}{\glsentrydesc{#1}.}}
-%\newcommand\describe[1]{\setboolean{regulatory@defslisted}{true}\glstarget{#1}{\glsentrydesc{#1}.}}
+
+
+\newcommand\newartifact[2]{%
+    \pgfkeys{
+        /artifact/#1/.is family,
+        /artifact/#1,
+        name/.initial = #1,
+        filename/.initial = #1.pdf,
+        footnote/.initial = true,
+        url/.initial=,
+        referred/.initial = false,
+        defs/.initial=,
+        author/.initial=<author>,
+        subject/.initial=<subject>,
+        description/.initial=<description>
+    }
+    \pgfkeys{/artifact/#1,#2}
+}
+\newcommand\@aget[2]{\pgfkeysvalueof{/artifact/#1/#2}}
+\newcommand\artifactname[1]{\@aget{#1}{name}}
+\newcommand\artifactfilename[1]{\@aget{#1}{filename}}
+\newcommand\artifactfootnote[1]{\@aget{#1}{footnote}}
+\newcommand\artifacturl[1]{\@aget{#1}{url}}
+\newcommand\artifactreferred[1]{\@aget{#1}{referred}}
+\newcommand\artifactdefs[1]{\@aget{#1}{defs}}
+\newcommand\artifactauthor[1]{\@aget{#1}{author}}
+\newcommand\artifactsubject[1]{\@aget{#1}{subject}}
+\newcommand\artifactdescription[1]{\@aget{#1}{description}}
+
+\newcommand\describe[1]{\setboolean{regulatory@defslisted}{true}\glstarget{#1}{\glsentrydesc{#1}.}}
 \newcommand\printdefs[1]{%
     \setboolean{regulatory@defslisted}{true}%
     \glssetwidest{#1\quad}%
     \ifthenelse{\boolean{regulatory@usebib2gls}}{\printunsrtglossary[type=definitions]}{\printglossary[type=definitions]}}
 
-\newcommand\@regulatory@extradefs{}
-\newcommand\extradefs[1]{\renewcommand\@regulatory@extradefs{,#1}}
+\attachfilesetup{color=black}
+
+\newcommand\reffootnotelabel[1]{%
+\pgfkeys{/artifact/#1,referred=true}%
+\def\@tmpfile{\artifactfilename{#1}}%
+, van \artifactsubject{#1}\footnote{Bijlage: \textattachfile[description={\artifactdescription{#1}},subject={\artifactsubject{#1}},author={\artifactauthor{#1}}]{\@tmpfile}{\@tmpfile}}%
+}
+
+\newcommand\deffootnotelabel[1]{%
+    \pgfkeys{/artifact/#1,referred=true}%
+    \def\@tmpfile{\artifactfilename{#1}}%
+    ~(zie \artifactsubject{#1}\footnote{Bijlage: \textattachfile[description={\artifactdescription{#1}},subject={\artifactsubject{#1}},author={\artifactauthor{#1}}]{\@tmpfile}{\@tmpfile}})%
+}
+
+\edef\@regulatory@bib@selection{}
+\ifthenelse{\boolean{regulatory@alldefs}}{\edef\@regulatory@bib@selection{,selection=all}}{}
+%\newcommand\@regulatory@extradefs{}
+%\newcommand\extradefs[1]{\renewcommand\@regulatory@extradefs{,#1}}
 
 \newcommand\loadglsdefs[1]{%
     \setboolean{regulatory@defslisted}{true}%
@@ -466,44 +417,39 @@ dlEnd={\end{labeling}}%
     }%
 }
 
-%\glssetcategoryattribute{external}{targeturl}{algemene_voorwaarden.pdf}
-%\glssetcategoryattribute{external}{targetname}{\glolinkprefix\glslabel}
-%\glssetcategoryattribute{external}{refered}{false}
-%\newignoredglossary*{external}
-%\glsdefpostlink{external}{%
-%    \glsxtrifwasfirstuse{% true case
-%        \ifthenelse{\equal{\glsgetcategoryattribute{defs}{refered}}{false}}{%
-%        \glssetcategoryattribute{defs}{refered}{true}%
-%        \glsifcategory{\glslabel}{defs}{%
-%%        \glsxtrifhasfield{useri}{\glslabel}{\space%
-%        % \glscurrentfieldvalue needs to be expanded
-%        % before being passed to \cite.
-%            ~(zie Algemene Voorwaarden\footnote{\href{\glsgetcategoryattribute{defs}{targeturl}}{Algemene Voorwaarden}})}%
-%        }{}% false refered
-%%        {}% false glsxtrifhasfield
-%    }% end true glsxtrifwasfirstuse
-%    {}%{<false>} glsxtrifwasfirstuse
-%} % end glsdefpostlink
-
-%\newignoredglossary{ignored}
-%\GlsXtrLoadResources[
-%src=example-glossaries-acronym,
-%trigger-type=ignored,
-%category=abbreviation
-%]
-
-\ifthenelse{\boolean{regulatory@usebib2gls}}{%
-    \RequirePackage[record,style=alttree]{glossaries-extra}
-    \setboolean{regulatory@defslisted}{true}
-    \AtEndPreamble{\loadglsdefs{defs\@regulatory@extradefs}}
-}{%
-    \IfFileExists{defs.tex}{%
-        \AtEndPreamble{
-        \setboolean{regulatory@defslisted}{true}%
-        \loadglsentries{defs.tex}\makeglossaries}}{%
-        \PackageWarning{regulatory}{No defs.tex found}}%
+\newcommand\loadextdefs[2][externals]{%
+    \ifthenelse{\boolean{regulatory@usebib2gls}}{%
+        \GlsXtrLoadResources[type=externals,src={#2},sort={nl-NL},category={#1}]%
+    }{%
+        \loadglsentries[externals]{#2}%
+    }%
+    \glsdefpostlink{#1}{%
+        \ifthenelse{\equal{\artifactreferred{#1}}{true}}{}{%
+            \deffootnotelabel{#1}%
+        }%
+    }%
 }
-\ifthenelse{\boolean{regulatory@defslisted}}{}{\glsdisablehyper}
+
+\newcommand\refdocument[2][ext-]{%
+    \newartifact{#2}{footnote=false}%
+    \zexternaldocument[#1]{#2}%
+}
+
+\newcommand\masterdocument[3][ext-]{%
+    \newartifact{#2}{#3}%
+    \zexternaldocument[#1]{#2}%
+    \ifthenelse{\equal{\string\artifactdefs{#2}}{}}{%
+        \PackageWarning{regulatory}{No definitions given to the master document. \the\gls commands will therefore not work.}%
+    }{%
+        \loadextdefs[#2]{\artifactdefs{#2}}%
+        \ifthenelse{\boolean{regulatory@usebib2gls}}{%
+            \glssetcategoryattribute{#2}{targeturl}{\artifactfilename{#2}}%
+            \glssetcategoryattribute{#2}{targetname}{\glolinkprefix\glslabel}%
+        }{}%
+    }%
+}
+
+\AtEndPreamble{\ifthenelse{\boolean{regulatory@usebib2gls}}{}{\ifthenelse{\boolean{regulatory@defslisted}}{\makeglossaries}{}}}
 \AtEndDocument{\ifthenelse{\boolean{regulatory@alldefs}}{\glsaddallunused}{}}
 
 \makeatother

@@ -44,5 +44,6 @@
 \renewcommand*{\glstextformat}{\textit}
 
 % Macro's
-\newcommand{\describe}[1]{\glstarget{#1}{\glsentrydesc{#1}.}}
+% \@glswidestname
+\newcommand\describe[1]{\glstarget{#1}{\glsentrydesc{#1}.}}
 \newcommand\printdefs[1]{\glssetwidest{#1\quad}\printglossary[nonumberlist]}

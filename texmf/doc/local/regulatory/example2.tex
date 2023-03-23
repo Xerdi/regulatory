@@ -1,95 +1,37 @@
-%! Author = erik
-%! Date = 18-03-2023
+\documentclass[12pt,dutch]{article}
 
-% Preamble
-\documentclass[11pt,dutch]{article}
-
-% Packages
-\usepackage{babel}
-\usepackage{amsmath}
 \usepackage[bibdefs]{regulatory}
-% TODO: gls parent
-\zexternaldocument[ex1-]{example1}
+\usepackage{lipsum}
 
-\zcRefTypeSetup{artikel}{
-    Name-sg = Artikel,
-    name-sg = artikel,
-    Name-pl = Artikelen,
-    name-pl = artikelen,
-}
-\zcRefTypeSetup{ledeni}{
-    Name-sg = Lid,
-    name-sg = lid,
-    Name-pl = Leden,
-    name-pl = leden,
-    lastsep = jo.\ ,
-}
-\zcRefTypeSetup{lid}{
-    Name-sg = Lid,
-    name-sg = lid,
-    Name-pl = Leden,
-    name-pl = leden,
-}
-\zcRefTypeSetup{ledenii}{
-    Name-sg = Onderedeel,
-    name-sg = onderdeel,
-    Name-pl = Onderdelen,
-    name-pl = onderdelen,
+\newcounter{lip}
+\setcounter{lip}{1}
+\newcommand\tekstvulling{\lipsum[\arabic{lip}]\stepcounter{lip}}
+
+\loadglsdefs{example2}
+\masterdocument[ex1-]{example1}{%
+    defs=example1,%
+    author=E. Nijenhuis,%
+    subject= Voorbeeld Één,%
+    description = Het éérste voorbeeld document,
 }
 
-%\newcommand\test[1]{\zref@extract{#1}{urluse}}
-%\newcommand{\xurl}[2]{\href{#1}{#2}}
-%\newcommand\test[1]{\hyperlink{artikel.1}{TEST}}
-
-% https://tex.stackexchange.com/questions/326115/using-latex-to-compact-a-list-of-numbers/326133#326133
-%\makeatletter
-%\def\erefs#1{%
-%\count@\z@
-%\@for\tmp:=#1\do{\advance\count@\@ne}%
-%\edef\xtmp{\ifcase\count@\or\or\ and\ \else~and\ \fi}%
-%\@for\tmp:=#1\do{%
-%\advance\count@\m@ne
-%\edef\tmp{%
-%  \noexpand\zcref[noname]{\expandafter\zap@space\tmp\@gobble{} \@empty}}%
-%\tmp
-%\ifnum\count@>\@ne, %
-%\else
-%\ifnum\count@=\@ne\xtmp
-%\fi\fi}}
-%
-%\makeatother
-
-
-%\def\testt{\@aformat{art:agreement}{ref}{art:agreement}}
-% Document
 \begin{document}
-
-    \artikel{Overeenkomst van Opdracht}\label{art:agreement}
+    \begin{center}
+        \Huge Voorbeeld Twee
+    \end{center}
+    \artikel{Pactum}\label{art:agreement}
     \begin{leden}
-        \item \label{lid:lorem} Lorem Ipsum
-        \item \label{lid:lorem2} Lorem Ipsum
-        \item \label{lid:lorem3} Lorem Ipsum
-        \item \label{lid:lorem4} Lorem Ipsum
-        \item \label{lid:lorem5} Lorem Ipsum
+        \item \label{lid:lorem} \tekstvulling
+        \item \label{lid:lorem2} \tekstvulling
+        \item \label{lid:lorem3} \tekstvulling
+        \item \label{lid:lorem4} \tekstvulling
+        \item \label{lid:lorem5} \tekstvulling~\Gls{def1} ipsum dolor sit amed.
         \begin{leden}
-            \item \label{sub:lorem} Lorem Ipsum
-            \item \label{sub:lorem2} Lorem Ipsum
-            \item \label{sub:lorem3} Lorem Ipsum
-            \item \label{sub:lorem4} Lorem Ipsum
-            \item \label{sub:lorem5} Lorem Ipsum
+            \item \label{sub:lorem} \tekstvulling
+            \item \label{sub:lorem2} \tekstvulling
+            \item \label{sub:lorem3} \tekstvulling
+            \item \label{sub:lorem4} \tekstvulling
         \end{leden}
     \end{leden}
-    Hello World. \Aref{ex1-art:defs}\\
-    \Aref{ex1-lid:defs,ex1-lid:defs2}\\
-    \newpage
-    \test{ex1-sub:defs}
-    \test{lid:lorem5}\\
-    \verb|\aref|\\
-    \Aref{lid:lorem}\\
-    \aref{lid:lorem,lid:lorem4,lid:lorem5}\\
-    \aref{lid:lorem,lid:lorem2,lid:lorem5}\\
-    \aref{lid:lorem5,lid:lorem3,lid:lorem}\\
-    \aref{lid:lorem5,lid:lorem3,lid:lorem,lid:lorem2}\\
-    \Aref{ex1-sub:defs}\\
 
 \end{document}
