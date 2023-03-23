@@ -86,7 +86,7 @@ dlEnd={\end{labeling}}%
 \RequirePackage{zref-xr,zref-user,zref-clever,zref-hyperref}
 \RequirePackage{pgf} % voor entities
 \RequirePackage{suffix} % voor macro's met asterisk
-\RequirePackage[sanitize=none,nonumberlist,nopostdot]{glossaries} % voor definitie lijsten
+\RequirePackage[sanitize=none,nopostdot]{glossaries} % voor definitie lijsten
 \ifthenelse{\boolean{regulatory@usebib2gls}}{%
     \RequirePackage[record,style=alttree]{glossaries-extra}
 }{%
@@ -96,11 +96,6 @@ dlEnd={\end{labeling}}%
 
 \newboolean{regulatory@defslisted}
 \setboolean{regulatory@defslisted}{false}
-% Glossary overrides
-\setglossarystyle{alttree}
-\renewcommand{\glossarysection}[2][]{}
-\renewcommand*{\glsnamefont}[1]{\textmd{\textit{#1}}}
-\renewcommand*{\glstextformat}{\textit}
 
 % Kleuren
 \colorlet{artlabel}{black}
@@ -271,7 +266,6 @@ dlEnd={\end{labeling}}%
 \newboolean{aref@cap}
 \def\@ifacap#1#2{\ifthenelse{\boolean{aref@cap}}{#1\setboolean{aref@cap}{false}}{#2}}
 
-% https://tex.stackexchange.com/questions/164118/special-case-for-last-element-with-foreach
 \newcommand{\aref}[1]{%
     \IfSubStr{#1}{,}{%
         \StrBefore[1]{#1}{,}[\firstarg]%
@@ -386,7 +380,7 @@ dlEnd={\end{labeling}}%
 \newcommand\printdefs[1]{%
     \setboolean{regulatory@defslisted}{true}%
     \glssetwidest{#1\quad}%
-    \ifthenelse{\boolean{regulatory@usebib2gls}}{\printunsrtglossary[type=definitions]}{\printglossary[type=definitions]}}
+    \ifthenelse{\boolean{regulatory@usebib2gls}}{\printunsrtglossary[type=definitions,style=alttree,title={},nonumberlist=true]}{\printglossary[type=definitions,style=alttree,title={},nonumberlist=true]}}
 
 \attachfilesetup{color=black}
 
@@ -404,8 +398,6 @@ dlEnd={\end{labeling}}%
 
 \edef\@regulatory@bib@selection{}
 \ifthenelse{\boolean{regulatory@alldefs}}{\edef\@regulatory@bib@selection{,selection=all}}{}
-%\newcommand\@regulatory@extradefs{}
-%\newcommand\extradefs[1]{\renewcommand\@regulatory@extradefs{,#1}}
 
 \newcommand\loadglsdefs[1]{%
     \setboolean{regulatory@defslisted}{true}%
