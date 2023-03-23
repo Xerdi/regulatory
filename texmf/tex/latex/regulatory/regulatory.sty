@@ -56,7 +56,6 @@
 % Markdown support
 \ifthenelse{\boolean{regulatory@usemarkdown}}{
 \RequirePackage[hashEnumerators,definitionLists,hybrid,headerAttributes=true]{markdown}
-\RequirePackage{regulatory}
 \newcommand{\uitlijning}[1]{\glssetwidest{#1}}%
 \setkeys{markdownRenderers}{
 headingOne={\artikel{#1}},
@@ -383,7 +382,7 @@ dlEnd={\end{labeling}}%
 \newcommand\artifactsubject[1]{\@aget{#1}{subject}}
 \newcommand\artifactdescription[1]{\@aget{#1}{description}}
 
-\newcommand\describe[1]{\setboolean{regulatory@defslisted}{true}\glstarget{#1}{\glsentrydesc{#1}.}}
+\newcommand\describe[1]{\setboolean{regulatory@defslisted}{true}\glstarget{#1}{\glsentrydesc{#1}}}
 \newcommand\printdefs[1]{%
     \setboolean{regulatory@defslisted}{true}%
     \glssetwidest{#1\quad}%

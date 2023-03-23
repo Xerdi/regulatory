@@ -1,0 +1,20 @@
+\documentclass[11pt,dutch]{article}
+
+\usepackage[markdown,alldefs]{regulatory}
+\usepackage{lipsum}
+
+\newcounter{lip}
+\setcounter{lip}{1}
+\newcommand\tekstvulling{\lipsum[\arabic{lip}]\stepcounter{lip}}
+
+\refdocument[ex2-]{example2}
+\loadglsdefs{example1}
+
+\begin{document}
+    \begin{center}
+        \Huge Voorbeeld Markdown
+    \end{center}
+
+    \markdownInput{example.md}
+
+\end{document}

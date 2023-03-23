@@ -1,7 +1,7 @@
 \documentclass[11pt,dutch]{ltxdoc}
 
 %! suppress = InclusionLoop
-\usepackage{regulatory}
+\usepackage[markdown]{regulatory}
 
 \usepackage{babel}
 \usepackage{codelist}
@@ -19,6 +19,7 @@
 
 \definecolor{greycolor}{HTML}{BFBFBF}
 \definecolor{brandcolor}{HTML}{174A67}
+\definecolor{darkcolor}{HTML}{091D28}
 \colorlet{artlabel}{brandcolor}
 
 \masterdocument[ex1-]{example1}{%
@@ -82,7 +83,7 @@
     Waar \option{markdown} Markdown support activeert, \option{alldefs} alle definities opsomt (handig voor Algemene Voorwaarden waarin niet alle definities voorkomen), \option{hidelinks} alle gekleurde kaders van hyperlinks verbergt.\\
 
     Het voorbeeld van \zcref{code:simple} kan als volgt gegenereerd worden naar PDF:
-    \begin{lstlisting}[language=Bash,caption={Commandline voorbeeld}]
+    \begin{lstlisting}[style=Bash,caption={Commandline voorbeeld}]
 $ pdflatex main
 # Of
 $ lualatex main
@@ -91,7 +92,7 @@ $ latexmk -pvc -lualatex -interaction=nonstopmode main
     \end{lstlisting}
 
     Stel er worden definitie lijsten gebruikt, dan komen er nog extra stappen bij in het generatieproces, namelijk:
-    \begin{lstlisting}[language=Bash,caption={Commandline met definities}]
+    \begin{lstlisting}[style=Bash,caption={Commandline met definities}]
 $ lualatex main
 $ bib2gls main
 $ lualatex main
@@ -146,7 +147,7 @@ $ lualatex main
 %    TODO
 
     \subsection{Markdown}
-    TODO
+%    \lstinputlisting[style=Markdown]{example.md}
 
     \clearpage
     \section{Definities}
@@ -374,9 +375,17 @@ $ lualatex main
 
     \clearpage
     \section{Voorbeelden}\label{sec:example}
+
     \lstinputlisting[style=TeX,numbers=left,caption={example1.tex},label={code:example1}]{example1.tex}\clearpage
+
     \lstinputlisting[style=TeX,numbers=left,caption={example2.tex},label={code:example2}]{example2.tex}\clearpage
+
+    \lstinputlisting[style=TeX,numbers=left,caption={md-example.tex},label={code:md-example}]{md-example.tex}
+
+    \lstinputlisting[style=Markdown,numbers=left,caption={example.md},label={code:example-md}]{example.md}\clearpage
+
     \lstinputlisting[style=BiBTeX,numbers=left,caption={example1.bib}]{example1.bib}
+
     \lstinputlisting[style=BiBTeX,numbers=left,caption={example2.bib}]{example2.bib}
 
 
