@@ -4,11 +4,72 @@
 \usepackage[markdown]{regulatory}
 
 \usepackage{babel}
-\usepackage{codelist}
+\usepackage{listings}
 
 \usepackage{fontspec}
 \usepackage{textcomp}
-\usepackage{listings}
+
+\definecolor{greycolor}{HTML}{BFBFBF}
+\definecolor{brandcolor}{HTML}{174A67}
+\definecolor{darkcolor}{HTML}{091D28}
+\colorlet{artlabel}{brandcolor}
+
+\zcRefTypeSetup{listing}{%
+    Name-sg = Codelijst,
+    name-sg = codelijst,
+    Name-pl = Codelijsten,
+    name-pl = codelijsten
+}
+
+\lstdefinestyle{tex}{%
+    language=[LaTeX]TeX,
+    keywordsprefix={\\},
+    alsoletter={\\},
+    morekeywords={article,para,textfill,masterdocument,refdocument,loadglsdefs,printdefs,setmiddleconjunction,setlastconjunction,setrangeconjunction,setconjunction,markdownInput}
+}
+
+\lstdefinestyle{bash}{%
+    language=bash,
+    morekeywords={pdflatex,lualatex,latexmk,makeglossaries,bib2gls}
+}
+
+\lstdefinelanguage{Markdown}[LaTeX]{TeX}{%
+    morekeywords={\regulatorykeys},
+    sensitive=false
+}
+
+\lstdefinestyle{md}{%
+    language=Markdown
+}
+
+\lstdefinelanguage{BibTeX}{%
+    keywords={%
+        article,book,collectedbook,conference,electronic,entry,ieeetranbstctl,%
+        inbook,incollectedbook,incollection,injournal,inproceedings,%
+        manual,mastersthesis,misc,patent,periodical,phdthesis,preamble,%
+        proceedings,standard,string,techreport,unpublished%
+    },
+    keywordsprefix={@},
+    comment=[l][\itshape]{@comment},
+    sensitive=false,
+}
+
+\lstdefinestyle{bib}{%
+    language=BibTeX
+}
+
+\lstset{
+    title=\lstname,
+    basicstyle=\ttfamily,
+    numberstyle=\ttfamily,
+    numbersep=5pt,
+    rulecolor=\color{greycolor},
+    stringstyle=\color{pink},
+    keywordstyle=\bfseries\color{brandcolor},
+    commentstyle=\itshape\color{darkcolor},
+    breaklines=true,
+    captionpos=b
+}
 
 \newcommand\package{\texttt}
 \newcommand\file{\texttt}
@@ -16,11 +77,6 @@
 
 \def\packagedate{17-03-2023}
 \def\packageversion{0.0.1}
-
-\definecolor{greycolor}{HTML}{BFBFBF}
-\definecolor{brandcolor}{HTML}{174A67}
-\definecolor{darkcolor}{HTML}{091D28}
-\colorlet{artlabel}{brandcolor}
 
 \masterdocument[ex1-]{example1}{%
     defs=example1,%
@@ -69,11 +125,11 @@
     Het pakket \package{regulatory} is uitdrukkelijk bedoeld voor het genereren van PDF-document met \LaTeX{}.
     Gebruik daarom \texttt{pdflatex} of \texttt{lualatex}.
 
-    \begin{lstlisting}[style=TeX,caption={main.tex},label=code:simple]
+    \begin{lstlisting}[style=tex,caption={main.tex},label=code:simple]
 \documentclass[dutch]{article}
 \usepackage{regulatory}
 \begin{document}
-    \artikel{Mijn eerste artikel}
+    \article{Mijn eerste artikel}
 \end{document}
     \end{lstlisting}
     Het voorbeeld gebruikt geen opties.
@@ -83,7 +139,7 @@
     Waar \option{markdown} Markdown support activeert, \option{alldefs} alle definities opsomt (handig voor Algemene Voorwaarden waarin niet alle definities voorkomen), \option{hidelinks} alle gekleurde kaders van hyperlinks verbergt.\\
 
     Het voorbeeld van \zcref{code:simple} kan als volgt gegenereerd worden naar PDF:
-    \begin{lstlisting}[style=Bash,caption={Commandline voorbeeld}]
+    \begin{lstlisting}[style=bash,caption={Commandline voorbeeld}]
 pdflatex main
 # Of
 lualatex main
@@ -110,36 +166,36 @@ lualatex main
 
     \section{Structuur}\label{sec:struct}
     Dit pakket levert bekende structuren, zonder bestaande functionaliteiten te breken.
-    \DescribeMacro{\artikel\marg{title}}
-    \DescribeMacro{\lid\marg{title}}
+    \DescribeMacro{\article\marg{title}}
+    \DescribeMacro{\para\marg{title}}
     Neem bijvoorbeeld \cmd{\artikel\marg{title}} en \cmd{\lid\marg{title}}.
     Deze zijn als aparte macro's gedefinieerd en opgemaakt met behulp van \package{titlesec}.
 
-    \DescribeEnv{leden}
-    Voor de \option{leden} en ``onderdelen'' is een nieuwe environment aangemaakt met behulp van \package{enumitem}.
+    \DescribeEnv{paras}
+    Voor de \option{paras} en ``onderdelen'' is een nieuwe environment aangemaakt met behulp van \package{enumitem}.
     De labels van de leden zijn aangepast naar \verb|\theartikel.\arabic*|, voor leden en, \verb|\abalphnum{\arabic*})|, voor onderdelen.
     Voor onderdelen wordt er gebruik gemaakt van \cmd{\abalpnum} uit pakket \package{fmtcount} om meerdere onderdelen te kunnen opsommen.
-    Stel er zou gebruik gemaakt worden van \cmd{\alph}, dan is \option{leden} beperkt tot 26 onderdelen.
+    Stel er zou gebruik gemaakt worden van \cmd{\alph}, dan is \option{paras} beperkt tot 26 onderdelen.
     Bij \cmd{\abalphnum} met bijvoorbeeld een waarde van 125 is `\texttt{du}' de uitkomst.
 
     \noindent\textbf{Voorbeeld:}
-    \begin{lstlisting}[style=TeX]
-\artikel{Voorbeeld}
-\begin{leden}
-   \item \tekstvulling
-   \begin{leden} % leden en onderdelen maken gebruik van dezelfde environment
-     \item \tekstvulling
-   \end{leden}
-   \item \tekstvulling
-\end{leden}
+    \begin{lstlisting}[style=tex]
+\article{Voorbeeld}
+\begin{paras}
+   \item \textfill
+   \begin{paras} % leden en onderdelen maken gebruik van dezelfde environment
+     \item \textfill
+   \end{paras}
+   \item \textfill
+\end{paras}
 
 % Of leden met titels, zoals in een Privacyverklaring
 
-\artikel{Voorbeeld2}
-\tekstvulling
+\article{Voorbeeld2}
+\textfill
 
-\lid{Voorbeeld3}
-\tekstvulling
+\para{Voorbeeld3}
+\textfill
     \end{lstlisting}
     Zie \zcref{code:example1,code:example2} voor meer \LaTeX{} voorbeelden.
 
@@ -159,14 +215,13 @@ lualatex main
     Om conflicten tussen begrippen, afkortingen en definities te voorkomen voegt dit pakket twee \texttt{glossary} types toe.
     Voor definities binnen hetzelfde bestand worden ze onder het type \option{definitions} geplaatst, waar bij definities van andere documenten ze geplaatst worden onder \option{externals} (zie \zcref{sec:extern}).\\
 
-    \DescribeMacro{\uitlijning\marg{width of text}}
     \DescribeMacro{\describe\marg{label}}
     \DescribeMacro{\printdefs\marg{width of text}\\}
     Om definities op te sommen zijn er verschillende macro's toegevoegd.
     De meest voor de hand liggende, \cmd{\printdefs}, worden de definities met aangepaste stijl opgesomd.
     Het argument \marg{width of text} wordt meegegeven om wille van de uitlijning van definitie aanduidingen en beschrijvingen.
 
-    De macro \cmd{\uitlijning} is gelijkwaardig aan \cmd{\glssetwidest} en is alleen nodig als de definitielijst handmatig wordt gespecificeerd in bijvoorbeeld Markdown formaat.
+    Om hetzelfde resultaat te behalen met \cmd{\describe} is het eerst nodig om \cmd{\glssetwidest} aan te roepen in bijvoorbeeld Markdown (zie \zcref{code:example-md}).
     De macro \cmd{\describe} leent zich uitstekend om handmatig definitie beschrijvingen te plaatsen.
     Deze macro voegt namelijk een ankerpunt toe, vereist voor werkende hyperlinks.\\
 
@@ -234,7 +289,7 @@ lualatex main
     \DescribeMacro{\setconjunction\\\marg{middle}\\\marg{last}\\\marg{range}\\}
     Het koppelen van de labels gebeurt via \package{zref}.
     Er zijn echter dankzij de herimplementatie andere macro's geschreven op een vergelijkbare manier als \package{cleveref} dat doet, namelijk:
-    \begin{lstlisting}[style=TeX]
+    \begin{lstlisting}[style=tex]
 \setmiddleconjunction}{, }
 \setlastconjunction}{ en }
 \setrangeconjunction}{ t/m }
@@ -269,7 +324,7 @@ lualatex main
         \item een voetnoot met het document als bijlage bij de eerste verschijning van een verwijzing of definitie.
     \end{enumerate}
     Het kan zelfs dat een document meerdere `master' documenten heeft, zoals dit document:
-    \begin{lstlisting}[style=TeX]
+    \begin{lstlisting}[style=tex]
 \masterdocument[ex1-]{example1}{
     defs=example1,
     author=E. Nijenhuis,
@@ -309,84 +364,20 @@ lualatex main
     `\aref{ex1-sub:lorem}\reffootnotelabel{example1}'.
     En voor \verb|\gls{def4}\deffootnotelabel{example2}| is de uitkomst `\gls{def4}\deffootnotelabel{example2}'.
 
-%    \clearpage
-%
-%    \section{Entiteiten}\label{sec:entities}
-%    \DescribeMacro{\newentity\marg{...}}
-%    \blindtext
-%
-%    \DescribeMacro{\nameOf\marg{entity}}
-%    \DescribeMacro{\titleOf\marg{entity}}
-%    \DescribeMacro{\companyOf\marg{entity}}
-%    \DescribeMacro{\kvkOf\marg{entity}}
-%    \DescribeMacro{\websiteOf\marg{entity}}
-%    \DescribeMacro{\emailOf\marg{entity}}
-%    \DescribeMacro{\addressOf\marg{entity}}
-%    \DescribeMacro{\postalOf\marg{entity}}
-%    \DescribeMacro{\placeOf\marg{entity}}
-%    \DescribeMacro{\ibanOf\marg{entity}}
-%    \DescribeMacro{\signdateOf\marg{entity}}
-%    \DescribeMacro{\signplaceOf\marg{entity}}
-%    \blindtext
-%
-%    \subsection{Aanhef}
-%    \DescribeMacro{\salute\marg{entity}}
-%    \DescribeMacro{\salute*\marg{entity}}
-%    \DescribeMacro{\Salute\marg{entity}}
-%    \DescribeMacro{\Salute*\marg{entity}}
-%    Om entiteiten aan te halen in tekst kan er gebruik gemaakt worden van de \cmd{\salute\marg{entiteit}} macro.
-%    De macro kent in totaal vier verschillende varianten.
-%    Voor een aanhaling beginnend met een hoofdletter is er \cmd{\Salute} en beginnend met kleine letter \cmd{\salute}.
-%    Voor een afgekorte titel is een asterisk/\textasteriskcentered~nodig (\cmd{\salute*}).\\
-%
-%    \noindent\textbf{Voorbeeld:}
-%    \begin{lstlisting}[style=TeX]
-%\newentity{opdrachtnemer}{name = E. Nijenhuis}
-%\newentity{opdrachtgever}{name = A. Richt, gender = female}
-%\Salute{opdrachtnemer} en \salute*{opdrachtgever}
-%    \end{lstlisting}
-%    \newentity{opdrachtnemer}{name = E. Nijenhuis}
-%    \newentity{opdrachtgever}{name = A. Richt, gender = female}
-%    \textbf{Resultaat:}
-%
-%    \Salute{opdrachtnemer} en \salute*{opdrachtgever}
-%
-%    \vfill
-%
-%    \subsection{Hantekeningen}
-%    \DescribeMacro{\signature\marg{entity}}
-%%    Voor handtekening velden is er één macro — \verb|\signature{<entiteit>}| — die een entiteit als argument verwacht.
-%%    \verb|\signature{<entiteit>}|\\
-%
-%    \noindent
-%    \begin{minipage}{.49\linewidth}
-%        \signature{contractor}
-%    \end{minipage}%
-%    \hfill
-%    \begin{minipage}{.49\linewidth}
-%        \signature{client}
-%    \end{minipage}\\
-%
-%    \vfill
-%
-%    \subsection{Contactinformatie}
-%    \DescribeMacro{\contact\marg{entiteit}}
-%    \contact{contractor}
-
     \clearpage
     \section{Voorbeelden}\label{sec:example}
 
-    \lstinputlisting[style=TeX,numbers=left,caption={example1.tex},label={code:example1}]{example1.tex}\clearpage
+    \lstinputlisting[style=tex,numbers=left,caption={example1.tex},label={code:example1}]{example1.tex}\clearpage
 
-    \lstinputlisting[style=TeX,numbers=left,caption={example2.tex},label={code:example2}]{example2.tex}\clearpage
+    \lstinputlisting[style=tex,numbers=left,caption={example2.tex},label={code:example2}]{example2.tex}\clearpage
 
-    \lstinputlisting[style=TeX,numbers=left,caption={md-example.tex},label={code:md-example}]{md-example.tex}
+    \lstinputlisting[style=tex,numbers=left,caption={md-example.tex},label={code:md-example}]{md-example.tex}\clearpage
 
-    \lstinputlisting[style=Markdown,numbers=left,caption={example.md},label={code:example-md}]{example.md}\clearpage
+    \lstinputlisting[style=md,numbers=left,caption={example.md},label={code:example-md}]{example.md}\clearpage
 
-    \lstinputlisting[style=BiBTeX,numbers=left,caption={example1.bib}]{example1.bib}
+    \lstinputlisting[style=bib,numbers=left,caption={example1.bib}]{example1.bib}
 
-    \lstinputlisting[style=BiBTeX,numbers=left,caption={example2.bib}]{example2.bib}
+    \lstinputlisting[style=bib,numbers=left,caption={example2.bib}]{example2.bib}
 
 
 \end{document}

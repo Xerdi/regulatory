@@ -1,11 +1,11 @@
 \documentclass[12pt,dutch]{article}
-
+\usepackage{babel}
 \usepackage[bibdefs]{regulatory}
 \usepackage{lipsum}
 
 \newcounter{lip}
 \setcounter{lip}{1}
-\newcommand\tekstvulling{\lipsum[\arabic{lip}]\stepcounter{lip}}
+\newcommand\textfill{\lipsum[\arabic{lip}]\stepcounter{lip}}
 
 \loadglsdefs{example2}
 \masterdocument[ex1-]{example1}{%
@@ -19,19 +19,22 @@
     \begin{center}
         \Huge Voorbeeld Twee
     \end{center}
-    \artikel{Pactum}\label{art:agreement}
-    \begin{leden}
-        \item \label{lid:lorem} \tekstvulling
-        \item \label{lid:lorem2} \tekstvulling
-        \item \label{lid:lorem3} \tekstvulling
-        \item \label{lid:lorem4} \tekstvulling
-        \item \label{lid:lorem5} \tekstvulling~\Gls{def1} ipsum dolor sit amed.
-        \begin{leden}
-            \item \label{sub:lorem} \tekstvulling
-            \item \label{sub:lorem2} \tekstvulling
-            \item \label{sub:lorem3} \tekstvulling
-            \item \label{sub:lorem4} \tekstvulling
-        \end{leden}
-    \end{leden}
+    \article{Pactum}\label{art:agreement}
+    \begin{paras}
+        \item \label{lid:lorem} \textfill
+        \item \label{lid:lorem2} \textfill
+        \item \label{lid:lorem3} \textfill
+        \item \label{lid:lorem4} \textfill
+        \item \label{lid:lorem5} \textfill~\Gls{def1} ipsum dolor sit amed.
+        \begin{paras}
+            \item \label{sub:lorem} \textfill
+            \item \label{sub:lorem2} \textfill
+            \item \label{sub:lorem3} \textfill
+            \item \label{sub:lorem4} \textfill
+        \end{paras}
+    \end{paras}
+    \article{Suspendisse}
+    \para{Aliquam}
+    \textfill
 
 \end{document}

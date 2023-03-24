@@ -56,14 +56,13 @@
 % Markdown support
 \ifthenelse{\boolean{regulatory@usemarkdown}}{
 \RequirePackage[hashEnumerators,definitionLists,hybrid,headerAttributes=true]{markdown}
-\newcommand{\uitlijning}[1]{\glssetwidest{#1}}%
 \setkeys{markdownRenderers}{
-headingOne={\artikel{#1}},
+headingOne={\article{#1}},
 olItemWithNumber={\item{}},
-olBeginTight={\begin{leden}},
-olEndTight={\end{leden}},
-olBegin={\begin{leden}},
-olEnd={\end{leden}},
+olBeginTight={\begin{paras}},
+olEndTight={\end{paras}},
+olBegin={\begin{paras}},
+olEnd={\end{paras}},
 dlBeginTight={\begin{labeling}{\@glswidestname}},
 dlEndTight={\end{labeling}},
 dlBegin={\begin{labeling}{\@glswidestname}},
@@ -76,17 +75,17 @@ dlEnd={\end{labeling}}%
 \RequirePackage{xcolor}
 \RequirePackage{xassoccnt}
 \RequirePackage{xpatch}
-\RequirePackage{titlesec} % voor artikelen
-\RequirePackage{enumitem} % voor leden/subleden
-\RequirePackage{fmtcount} % voor tekstuele leden
-\RequirePackage{scrextend} % voor definitie lijsten
-\RequirePackage{xr-hyper} %
-\RequirePackage{hyperref} % voor linkjes
-\RequirePackage[user,counter,hyperref,xr]{zref} % voor verwijzingen
+\RequirePackage[loadonly]{titlesec}
+\RequirePackage{enumitem}
+\RequirePackage{fmtcount}
+\RequirePackage{scrextend}
+\RequirePackage{xr-hyper}
+\RequirePackage{hyperref}
+\RequirePackage[user,counter,hyperref,xr]{zref}
 \RequirePackage{zref-xr,zref-user,zref-clever,zref-hyperref}
-\RequirePackage{pgf} % voor entities
-\RequirePackage{suffix} % voor macro's met asterisk
-\RequirePackage[sanitize=none,nopostdot]{glossaries} % voor definitie lijsten
+\RequirePackage{pgf}
+%\RequirePackage{suffix}
+\RequirePackage[sanitize=none,nopostdot]{glossaries}
 \ifthenelse{\boolean{regulatory@usebib2gls}}{%
     \RequirePackage[record,style=alttree]{glossaries-extra}
 }{%
@@ -100,63 +99,62 @@ dlEnd={\end{labeling}}%
 % Kleuren
 \colorlet{artlabel}{black}
 \colorlet{arttitle}{black}
-\colorlet{lidlabel}{black}
-\colorlet{lidtitle}{black}
+\colorlet{paralabel}{black}
+\colorlet{paratitle}{black}
 \colorlet{sublabel}{black}
 \colorlet{subtitle}{black}
 
 
 % Artikelen
-\newcounter{artikel}
-\titleclass{\artikel}{straight}[\part]
-\titleformat{\artikel}{\normalfont\color{arttitle}}{\bfseries\color{artlabel}Artikel \theartikel.\quad}{1em}{}
-\titlespacing*{\artikel}{0pt}{3.5ex plus 1ex minus .2ex}{5pt}
+\newcounter{article}
+\titleclass{\article}[0]{straight}
+\titleformat{\article}{\normalfont\color{arttitle}}{\bfseries\color{artlabel}Artikel \thearticle.\quad}{1em}{}
+\titlespacing*{\article}{0pt}{3.5ex plus 1ex minus .2ex}{5pt}
 
-\newcounter{lid}
-\titleclass{\lid}{straight}[\part]
-\titleformat{\lid}{\normalfont\color{lidtitle}}{\normalfont\color{lidlabel}\theartikel.\thelid.\quad}{1em}{}
-\titlespacing*{\lid}{0pt}{3.5ex plus 1ex minus .2ex}{5pt}
-\counterwithin{lid}{artikel}
+\newcounter{para}
+\titleclass{\para}{straight}[\article]
+\titleformat{\para}{\normalfont\color{paratitle}}{\normalfont\color{paralabel}\thearticle.\thepara.\quad}{1em}{}
+\titlespacing*{\para}{0pt}{3.5ex plus 1ex minus .2ex}{5pt}
+\counterwithin{para}{article}
 
-\renewcommand{\theartikel}{\arabic{artikel}}
-\renewcommand{\thelid}{\arabic{lid}}
+\renewcommand{\thearticle}{\arabic{article}}
+\renewcommand{\thepara}{\arabic{para}}
 \makeatletter
-\newcommand{\l@artikel}{\@dottedtocline{1}{1.5em}{2.3em}}
-\def\toclevel@artikel{2}
-\newcommand{\l@lid}{\@dottedtocline{1}{3.8em}{2.3em}}
-\def\toclevel@lid{3}
+\newcommand{\l@article}{\@dottedtocline{1}{1.5em}{2.3em}}
+\def\toclevel@article{2}
+\newcommand{\l@para}{\@dottedtocline{1}{3.8em}{2.3em}}
+\def\toclevel@para{3}
 
-% Leden en subleden
-\newlist{leden}{enumerate}{2}
-\setlist[leden,1]{label=\theartikel.\arabic*.,ref=\arabic*,align=left,itemsep=0pt}
-\setlist[leden,2]{label=\abalphnum{\arabic*}),ref=\arabic*,itemsep=0pt}
-\counterwithin{ledeni}{artikel}
-\counterwithin{ledenii}{ledeni}
+\newlist{paras}{enumerate}{2}
+\setlist[paras,1]{label=\thearticle.\arabic*.,ref=\arabic*,align=left,itemsep=0pt}
+\setlist[paras,2]{label=\abalphnum{\arabic*}),ref=\arabic*,itemsep=0pt}
+\counterwithin{parasi}{article}
+\counterwithin{parasii}{parasi}
 
-\zref@newprop{artikel}[-1]{\number\value{artikel}}
-\zref@newprop{lid}[-1]{\ifnum\value{lid}>0\number\value{lid}\else\number\value{ledeni}\fi}
-\zref@newprop{sub}[-1]{\number\value{ledenii}}
-\zref@addprops{main}{artikel,lid,sub}
+\zref@newprop{article}[-1]{\number\value{article}}
+\zref@newprop{para}[-1]{\ifnum\value{para}>0\number\value{para}\else\number\value{parasi}\fi}
+\zref@newprop{sub}[-1]{\number\value{parasii}}
+\zref@addprops{main}{article,para,sub}
 
-\zcRefTypeSetup{artikel}{%
+\zcRefTypeSetup{article}{%
     Name-sg = Artikel,
     name-sg = artikel,
     Name-pl = Artikelen,
     name-pl = artikelen
 }
-\zcRefTypeSetup{lid}{%
+\zcRefTypeSetup{para}{%
     Name-sg = Lid,
     name-sg = lid,
     Name-pl = Leden,
     name-pl = leden
 }
-\zcRefTypeSetup{ledeni}{%
+\zcRefTypeSetup{parasi}{%
     Name-sg = Lid,
     name-sg = lid,
     Name-pl = Leden,
     name-pl = leden
 }
-\zcRefTypeSetup{ledenii}{%
+\zcRefTypeSetup{parasii}{%
     Name-sg = Onderdeel,
     name-sg = onderdeel,
     Name-pl = Onderdelen,
@@ -170,29 +168,29 @@ dlEnd={\end{labeling}}%
     \noexpand\href{\@aref@fullurl}{#1}}\next}
 
 % Artikel labels
-\def\@aref@artikel@prefix{artikel~}
-\def\@Aref@artikel@prefix{Artikel~}
-\def\@aref@artikel@postfix{}
-\def\@aref@artikel@format{\@aref@artikel}
-\def\@aref@artikel@formathl{\@aref@hl{\@aref@artikel@format}}
-\def\@aref@artikel@nformat{\@aref@artikel@prefix\@aref@artikel}
-\def\@Aref@artikel@nformat{\@Aref@artikel@prefix\@aref@artikel}
-\def\@aref@artikel@nformathl{\@aref@artikel@prefix\@aref@artikel@formathl}
-\def\@Aref@artikel@nformathl{\@Aref@artikel@prefix\@aref@artikel@formathl}
+\def\@aref@article@prefix{artikel~}
+\def\@Aref@article@prefix{Artikel~}
+\def\@aref@article@postfix{}
+\def\@aref@article@format{\@aref@article}
+\def\@aref@article@formathl{\@aref@hl{\@aref@article@format}}
+\def\@aref@article@nformat{\@aref@article@prefix\@aref@article}
+\def\@Aref@article@nformat{\@Aref@article@prefix\@aref@article}
+\def\@aref@article@nformathl{\@aref@article@prefix\@aref@article@formathl}
+\def\@Aref@article@nformathl{\@Aref@article@prefix\@aref@article@formathl}
 
 
 % Lid labels
-\def\@aref@lid@prefix{}
-\def\@Aref@lid@prefix{}
-\def\@aref@lid@postfix{~lid}
-\def\@aref@lid@format{\ordinalstringnum{\@aref@lid}}
-\def\@Aref@lid@format{\Ordinalstringnum{\@aref@lid}}
-\def\@aref@lid@formathl{\@aref@hl{\@aref@lid@format}}
-\def\@Aref@lid@formathl{\@aref@hl{\@Aref@lid@format}}
-\def\@aref@lid@nformat{\@aref@lid@format\@aref@lid@postfix}
-\def\@aref@lid@nformathl{\@aref@lid@formathl\@aref@lid@postfix}
-\def\@Aref@lid@nformat{\@Aref@lid@format\@aref@lid@postfix}
-\def\@Aref@lid@nformathl{\@Aref@lid@formathl\@aref@lid@postfix}
+\def\@aref@para@prefix{}
+\def\@Aref@para@prefix{}
+\def\@aref@para@postfix{~lid}
+\def\@aref@para@format{\ordinalstringnum{\@aref@para}}
+\def\@Aref@para@format{\Ordinalstringnum{\@aref@para}}
+\def\@aref@para@formathl{\@aref@hl{\@aref@para@format}}
+\def\@Aref@para@formathl{\@aref@hl{\@Aref@para@format}}
+\def\@aref@para@nformat{\@aref@para@format\@aref@para@postfix}
+\def\@aref@para@nformathl{\@aref@para@formathl\@aref@para@postfix}
+\def\@Aref@para@nformat{\@Aref@para@format\@aref@para@postfix}
+\def\@Aref@para@nformathl{\@Aref@para@formathl\@aref@para@postfix}
 
 % Sub labels
 \def\@aref@sub@prefix{onderdeel~}
@@ -211,8 +209,8 @@ dlEnd={\end{labeling}}%
 
 \newcommand\@aref@setvars[1]{%
     \def\@aref@count{\zref@extract{#1}{counter}}%
-    \def\@aref@artikel{\zref@extract{#1}{artikel}}%
-    \def\@aref@lid{\zref@extract{#1}{lid}}%
+    \def\@aref@article{\zref@extract{#1}{article}}%
+    \def\@aref@para{\zref@extract{#1}{para}}%
     \def\@aref@sub{\zref@extract{#1}{sub}}%
     \def\@aref@anchor{\zref@extract{#1}{anchor}}%
     \def\@aref@url{\zref@extractdefault{#1}{url}{}}%
@@ -227,28 +225,28 @@ dlEnd={\end{labeling}}%
     }{%
         \def\@aref@postlink{}%
     }%
-    \ifthenelse{\equal{\@aref@count}{artikel}}{%
-        \def\@aref@type{artikel}%
-        \def\@aref@format{\@aref@artikel@formathl}%
-        \def\@aref@formatn{\@ifacap{\@Aref@artikel@prefix}{\@aref@artikel@prefix}\@aref@format}%
-        \def\@aref@prefix{\@ifacap{\@Aref@artikel@prefix}{\@aref@artikel@prefix}}%
+    \ifthenelse{\equal{\@aref@count}{article}}{%
+        \def\@aref@type{article}%
+        \def\@aref@format{\@aref@article@formathl}%
+        \def\@aref@formatn{\@ifacap{\@Aref@article@prefix}{\@aref@article@prefix}\@aref@format}%
+        \def\@aref@prefix{\@ifacap{\@Aref@article@prefix}{\@aref@article@prefix}}%
         \def\@aref@postfix{}%
     }{%
-        \ifthenelse{\equal{\@aref@count}{ledeni}\OR\equal{\@aref@count}{lid}}{%
-            \def\@aref@type{lid}%
-            \def\@aref@format{\@ifacap{\@Aref@lid@formathl}{\@aref@lid@formathl}}%
-            \def\@aref@formatn{\@aref@format\@aref@lid@postfix}%
+        \ifthenelse{\equal{\@aref@count}{parasi}\OR\equal{\@aref@count}{para}}{%
+            \def\@aref@type{para}%
+            \def\@aref@format{\@ifacap{\@Aref@para@formathl}{\@aref@para@formathl}}%
+            \def\@aref@formatn{\@aref@format\@aref@para@postfix}%
             \def\@aref@prefix{%
-                \@ifacap{\@Aref@artikel@prefix}{\@aref@artikel@prefix}\@aref@artikel@format,~%
+                \@ifacap{\@Aref@article@prefix}{\@aref@article@prefix}\@aref@article@format,~%
             }%
-            \def\@aref@postfix{\@aref@lid@postfix}%
+            \def\@aref@postfix{\@aref@para@postfix}%
         }{%
-            \ifthenelse{\equal{\@aref@count}{ledenii}}{%
+            \ifthenelse{\equal{\@aref@count}{parasii}}{%
                 \def\@aref@type{sub}%
                 \def\@aref@format{\@aref@sub@formathl}%
                 \def\@aref@prefix{%
-                    \@ifacap{\@Aref@artikel@prefix}{\@aref@artikel@prefix}\@aref@artikel@format,~%
-                    \@ifacap{\@Aref@lid@format}{\@aref@lid@format}\@aref@lid@postfix,~%
+                    \@ifacap{\@Aref@article@prefix}{\@aref@article@prefix}\@aref@article@format,~%
+                    \@ifacap{\@Aref@para@format}{\@aref@para@format}\@aref@para@postfix,~%
                     \@ifacap{\@Aref@sub@prefix}{\@aref@sub@prefix}%
                 }%
                 \def\@aref@postfix{}%
