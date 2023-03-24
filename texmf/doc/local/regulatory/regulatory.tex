@@ -84,24 +84,24 @@
 
     Het voorbeeld van \zcref{code:simple} kan als volgt gegenereerd worden naar PDF:
     \begin{lstlisting}[style=Bash,caption={Commandline voorbeeld}]
-$ pdflatex main
+pdflatex main
 # Of
-$ lualatex main
+lualatex main
 # Of blijvend genereren met LatexMK
-$ latexmk -pvc -lualatex -interaction=nonstopmode main
+latexmk -pvc -lualatex -interaction=nonstopmode main
     \end{lstlisting}
 
     Stel er worden definitie lijsten gebruikt, dan komen er nog extra stappen bij in het generatieproces, namelijk:
     \begin{lstlisting}[style=Bash,caption={Commandline met definities}]
-$ lualatex main
-$ bib2gls main
-$ lualatex main
-$ lualatex main
+lualatex main
+bib2gls main
+lualatex main
+lualatex main
 # Of voor TeX code
-$ lualatex main
-$ makeglossaries main
-$ lualatex main
-$ lualatex main
+lualatex main
+makeglossaries main
+lualatex main
+lualatex main
     \end{lstlisting}
     In het geval gebruik gemaakt wordt van \texttt{latexmk} kan er in een aparte terminal het commando \texttt{bib2gls} of \texttt{makeglossaries} gebruikt worden.
     LatexMK ziet vanzelf de bestanden wijzigen en genereert dan het document opnieuw.

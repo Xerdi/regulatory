@@ -378,6 +378,8 @@ dlEnd={\end{labeling}}%
 
 \newcommand\describe[1]{\setboolean{regulatory@defslisted}{true}\glstarget{#1}{\glsentrydesc{#1}}}
 \newcommand\printdefs[1]{%
+    \renewcommand{\glossarysection}[2][]{}%
+    \renewcommand*{\glsnamefont}[1]{\textmd{#1}}%
     \setboolean{regulatory@defslisted}{true}%
     \glssetwidest{#1\quad}%
     \ifthenelse{\boolean{regulatory@usebib2gls}}{\printunsrtglossary[type=definitions,style=alttree,title={},nonumberlist=true]}{\printglossary[type=definitions,style=alttree,title={},nonumberlist=true]}}
@@ -442,5 +444,3 @@ dlEnd={\end{labeling}}%
 
 \AtEndPreamble{\ifthenelse{\boolean{regulatory@usebib2gls}}{}{\ifthenelse{\boolean{regulatory@defslisted}}{\makeglossaries}{}}}
 \AtEndDocument{\ifthenelse{\boolean{regulatory@alldefs}}{\glsaddallunused}{}}
-
-\makeatother
