@@ -210,6 +210,7 @@ dlEnd={\end{labeling}}%
 \newcommand\rref@label@prefix[2]{#1 #2}
 \newcommand\rref@label@postfix[2]{#2 #1}
 \newcommand\rref@label@refonly[2]{\@gobble{#1}#2}
+\newcommand\rref@group@braced[1]{{[}#1{]~}}
 
 % English full format layout (default)
 %\newcommand\rref@fullformat@article[2]{#1#2}
@@ -226,7 +227,9 @@ dlEnd={\end{labeling}}%
         name/.initial=\GetTranslation{article},
         Name/.initial=\GetTranslation{Article},
         ref format/.initial=\rref@refformat@noop,
-        label format/.initial=\rref@label@prefix
+        label format/.initial=\rref@label@prefix,
+        group conjunction/.initial={},
+        group format/.initial=\rref@refformat@noop
     }
 }
 \newcommand\rref@init@lang@para[1]{%
@@ -235,7 +238,9 @@ dlEnd={\end{labeling}}%
         name/.initial=\GetTranslation{paragraph},
         Name/.initial=\GetTranslation{Paragraph},
         ref format/.initial=\rref@refformat@parenthesis,
-        label format/.initial=\rref@label@refonly
+        label format/.initial=\rref@label@refonly,
+        group conjunction/.initial={,},
+        group format/.initial=\rref@refformat@noop
     }
 }
 \newcommand\rref@init@lang@sub[1]{%
@@ -244,7 +249,9 @@ dlEnd={\end{labeling}}%
         name/.initial=\GetTranslation{subparagraph},
         Name/.initial=\GetTranslation{Subparagraph},
         ref format/.initial=\rref@refformat@ordinal,
-        label format/.initial=\rref@label@postfix
+        label format/.initial=\rref@label@postfix,
+        group conjunction/.initial={,},
+        group format/.initial=\rref@group@braced
     }
 }
 
@@ -264,12 +271,18 @@ dlEnd={\end{labeling}}%
 % The default are already based on English, so no arguments are given.
 \rref@setup{english}{}{}{}
 
-\rref@setup{dutch}{}{
+\rref@setup{dutch}{
+    group conjunction={,~}
+}{
     ref format=\rref@refformat@ordinal,
-    label format=\rref@label@postfix
+    label format=\rref@label@postfix,
+    group conjunction/.initial={,~},
+    group format/.initial=\rref@refformat@noop
 }{
     ref format=\rref@refformat@alpha,
-    label format=\rref@label@prefix
+    label format=\rref@label@prefix,
+    group conjunction/.initial={,~},
+    group format/.initial=\rref@refformat@noop
 }%
 
 \newcommand\rref@set[4][\languagename]{%
@@ -297,15 +310,9 @@ dlEnd={\end{labeling}}%
 \newcommand\rref@reflink[2][\rref@current@type]{%
     \rref@linkpr{\rref@refformat[#1]{#2}}%
 }
-
-%\newcommand\rref@unstarred[1]{#1}
-%\newcommand\rref@starred[1]{#1}
-%
-%\newcommand\newrrefcmd[3]{%
-%    \expandafter\newcommand\csname #1\endcsname{%
-%        \@ifstar{\rref@starred{#2}}{\rref@unstarred{#3}}%
-%    }%
-%}
+\newcommand\rref@groupformat[2][\rref@current@type]{%
+    \rref@set{#1}{group format}{\@@groupformat}\@@groupformat{#2}%
+}
 
 \def\rref{\@ifstar\rref@star\rref@nostar}
 \def\rref@star#1{%
@@ -374,7 +381,7 @@ dlEnd={\end{labeling}}%
     \ifthenelse{\equal{article}{\rref@current@counter}}{%
         \def\rref@current@type{article}%
         \def\rref@current@value{\rref@current@article}%
-        \def\rref@current@fullformat{}
+        \def\rref@current@fullformat{}%
     }{%
         \ifthenelse{\equal{para}{\rref@current@counter}\or\equal{parasi}{\rref@current@counter}}{%
             \def\rref@current@type{para}%
@@ -463,9 +470,10 @@ dlEnd={\end{labeling}}%
     \ifthenelse{\equal{\@aref@count}{article}}{%
         \def\@aref@type{article}%
         \def\@aref@value{\@aref@article}%
-        \def\@aref@format{\@aref@article@formathl}%
-        \def\@aref@formatn{\@ifacap{\@Aref@article@prefix}{\@aref@article@prefix}\@aref@format}%
-        \def\@aref@prefix{\@ifacap{\@Aref@article@prefix}{\@aref@article@prefix}}%
+%        \def\@aref@format{\@aref@article@formathl}%
+        \def\@aref@format{\rref@reflink[article]{\@aref@article}}%
+%        \def\@aref@formatn{\@ifacap{\@Aref@article@prefix}{\@aref@article@prefix}\@aref@format}%
+        \def\@aref@prefix{}%\@ifacap{\@Aref@article@prefix}{\@aref@article@prefix}}%
         \def\@aref@postfix{}%
     }{%
         \ifthenelse{\equal{\@aref@count}{parasi}\OR\equal{\@aref@count}{para}}{%
@@ -476,24 +484,28 @@ dlEnd={\end{labeling}}%
 %            }{%
 %                \def\@aref@format{\@aref@hl{\rref@labelformat{para}{\rref@refformat{para}{\@aref@para}}}}%
 %            }%
-%            \def\@aref@format{\rref@linkformat{para}{\@aref@para}}%%\@ifacap{\@Aref@para@formathl}{\@aref@para@formathl}}%
+            \def\@aref@format{\rref@reflink[para]{\@aref@para}}%%\@ifacap{\@Aref@para@formathl}{\@aref@para@formathl}}%
 %            \def\@aref@format{\@aref@hl{\rref@refformat{para}{\@aref@para}}}%%\@ifacap{\@Aref@para@formathl}{\@aref@para@formathl}}%
-%            \def\@aref@format{\rref@labelformat{para}{\@aref@para}}%%\@ifacap{\@Aref@para@formathl}{\@aref@para@formathl}}%
-            \def\@aref@format{\@ifacap{\@Aref@para@formathl}{\@aref@para@formathl}}%
-            \def\@aref@formatn{\@aref@format\@aref@para@postfix}%
+%            \def\@aref@format{\rref@labelformat[para]{\@aref@para}}%%\@ifacap{\@Aref@para@formathl}{\@aref@para@formathl}}%
+%            \def\@aref@format{\@ifacap{\@Aref@para@formathl}{\@aref@para@formathl}}%
+%            \def\@aref@formatn{\@aref@format\@aref@para@postfix}%
             \def\@aref@prefix{%
-                \@ifacap{\@Aref@article@prefix}{\@aref@article@prefix}\@aref@article@format,~%
+                \rref@labelformat[article]{\@aref@article}\rref@get{article}{group conjunction}%
+%                \@ifacap{\@Aref@article@prefix}{\@aref@article@prefix}\@aref@article@format,~%
             }%
-            \def\@aref@postfix{\@aref@para@postfix}%
+            \def\@aref@postfix{}%\@aref@para@postfix}%
         }{%
             \ifthenelse{\equal{\@aref@count}{parasii}}{%
                 \def\@aref@type{sub}%
                 \def\@aref@value{\@aref@sub}%
-                \def\@aref@format{\@aref@sub@formathl}%
+%                \def\@aref@format{\@aref@sub@formathl}%
+                \def\@aref@format{\rref@reflink[sub]{\@aref@sub}}%
                 \def\@aref@prefix{%
-                    \@ifacap{\@Aref@article@prefix}{\@aref@article@prefix}\@aref@article@format,~%
-                    \@ifacap{\@Aref@para@format}{\@aref@para@format}\@aref@para@postfix,~%
-                    \@ifacap{\@Aref@sub@prefix}{\@aref@sub@prefix}%
+                    \rref@labelformat[article]{\rref@refformat[article]{\@aref@article}}\rref@get{article}{group conjunction}%
+                    \rref@labelformat[para]{\rref@refformat[para]{\@aref@para}}\rref@get{para}{group conjunction}%
+%                    \@ifacap{\@Aref@article@prefix}{\@aref@article@prefix}\@aref@article@format,~%
+%                    \@ifacap{\@Aref@para@format}{\@aref@para@format}\@aref@para@postfix,~%
+%                    \@ifacap{\@Aref@sub@prefix}{\@aref@sub@prefix}%
                 }%
                 \def\@aref@postfix{}%
             }{%
@@ -519,19 +531,12 @@ dlEnd={\end{labeling}}%
     }%
     \rref@setcurrent{\firstarg}%
     \@aref@setvars{\firstarg}%% TODO: deprecated
-    \@aref@prefix\aref@group{#1}\@aref@postfix\@aref@postlink%
+    \rref@groupformat{\@aref@prefix}\rref@labelformat{\aref@group{#1}}\@aref@postfix\@aref@postlink%
 }
 
 \newcommand{\Aref}[1]{%
     \setboolean{aref@cap}{true}%
     \aref{#1}%
-%    \IfSubStr{#1}{,}{%
-%        \StrBefore[1]{#1}{,}[\Firstarg]%
-%    }{%
-%        \def\Firstarg{#1}%
-%    }%
-%    \@aref@setvars{\Firstarg}%% TODO: deprecated
-%    \@aref@prefix\aref@group{#1}\@aref@postfix\@aref@postlink%
 }
 
 \def\listterminator{-1}
