@@ -119,9 +119,10 @@ dlEnd={\end{labeling}}%
 \zref@newprop{sub}[-1]{\number\value{parasii}}
 \zref@addprops{main}{article,para,sub}
 
-\DeclareTranslationFallback{article}{article}
-\DeclareTranslationFallback{paragraph}{paragraph}
-\DeclareTranslationFallback{subparagraph}{subparagraph}
+%\DeclareTranslationFallback{article}{article}
+%\DeclareTranslationFallback{paragraph}{paragraph}
+%\DeclareTranslationFallback{subparagraph}{subparagraph}
+
 \DeclareTranslation{dutch}{article}{artikel}
 \DeclareTranslation{dutch}{paragraph}{lid}
 \DeclareTranslation{dutch}{subparagraph}{onderdeel}
@@ -159,10 +160,6 @@ dlEnd={\end{labeling}}%
 \makeatother
 {\catcode`\#=12 \gdef\hashchar{#}}
 \makeatletter
-\newcommand\@aref@hl[1]{\edef\next{%
-    \noexpand\href{\@aref@fullurl}{#1}}\next}
-%\newcommand\rref@mklink[2]{\edef\next{%
-%    \noexpand\href{#1}{#2}}\next}
 \def\rref@linkpr{\href{\rref@current@fullurl}}
 
 \newboolean{rref@cap}
@@ -212,15 +209,6 @@ dlEnd={\end{labeling}}%
 \newcommand\rref@label@postfix[2]{#2 #1}
 \newcommand\rref@label@refonly[2]{\@gobble{#1}#2}
 \newcommand\rref@group@braced[1]{{[}#1{]~}}
-
-% English full format layout (default)
-%\newcommand\rref@fullformat@article[2]{#1#2}
-%\newcommand\rref@fullformat@para[3]{#1#2#3}
-%\newcommand\rref@fullformat@sub[4]{[#1#2, #3]#4}
-
-% Dutch full format layout
-%\newcommand\rref@fullformat@nl@para[3]{#1, #2#3}
-%\newcommand\rref@fullformat@nl@sub[4]{#1, #2, #3#4}
 
 \newcommand\rref@init@lang@article[1]{%
     \pgfkeys{/rref/#1/article/.is family,
@@ -407,57 +395,8 @@ dlEnd={\end{labeling}}%
     \zref@extractdefault{#1}{\rref@current@type}{-1}%
 }
 
-% Artikel labels
-\def\@aref@article@prefix{\rref@article@name~}
-\def\@Aref@article@prefix{\rref@article@name~} % deprecated
-\def\@aref@article@postfix{}
-%\def\@aref@article@format{\rref@refformat[article]{\@aref@article}}
-\def\@aref@article@format{\@aref@article}
-\def\@aref@article@formathl{\@aref@hl{\@aref@article@format}}
-\def\@aref@article@nformat{\@aref@article@prefix\@aref@article}
-\def\@Aref@article@nformat{\@Aref@article@prefix\@aref@article} % deprecated
-\def\@aref@article@nformathl{\@aref@article@prefix\@aref@article@formathl}
-\def\@Aref@article@nformathl{\@Aref@article@prefix\@aref@article@formathl} % deprecated
-
-
-% Lid labels
-\def\@aref@para@prefix{}
-\def\@Aref@para@prefix{} % deprecated
-\def\@aref@para@postfix{~\rref@para@name}
-%\def\@aref@para@format{\rref@labelformat{para}{\rref@para@name}{\rref@refformat{para}{\@aref@para}}}%\ordinalstringnum{\@aref@para}}
-%\def\@aref@para@format{\rref@refformat[para]{\@aref@para}}
-\def\@aref@para@format{\ordinalstringnum{\@aref@para}}
-\def\@Aref@para@format{\Ordinalstringnum{\@aref@para}} % deprecated
-\def\@aref@para@formathl{\@aref@hl{\@aref@para@format}}
-\def\@Aref@para@formathl{\@aref@hl{\@Aref@para@format}} % deprecated
-\def\@aref@para@nformat{\@aref@para@format\@aref@para@postfix}
-\def\@aref@para@nformathl{\@aref@para@formathl\@aref@para@postfix}
-\def\@Aref@para@nformat{\@Aref@para@format\@aref@para@postfix} % deprecated
-\def\@Aref@para@nformathl{\@Aref@para@formathl\@aref@para@postfix} % deprecated
-
-% Sub labels
-\def\@aref@sub@prefix{\rref@sub@name~}
-\def\@Aref@sub@prefix{\rref@sub@name~} % deprecated
-\def\@aref@sub@postfix{}
-\def\@aref@sub@format{\abalphnum{\@aref@sub}}
-\def\@aref@sub@formathl{\@aref@hl{\@aref@sub@format}}
-\def\@aref@sub@nformat{\@aref@sub@prefix\@aref@sub@format}
-\def\@aref@sub@nformathl{\@aref@sub@prefix\@aref@sub@formathl}
-\def\@Aref@sub@nformat{\@Aref@sub@prefix\@aref@sub@format} % deprecated
-\def\@Aref@sub@nformathl{\@Aref@sub@prefix\@aref@sub@formathl} % deprecated
-
-\def\@ifartifactisset#1#2#3{%
-    \pgfkeysifdefined{/artifact/#1/.is family}{#2}{#3}%
-}
-
-\newcommand\@aref@setvars[1]{%
-    \def\@aref@count{\zref@extract{#1}{counter}}%
-    \def\@aref@article{\zref@extract{#1}{article}}%
-    \def\@aref@para{\zref@extract{#1}{para}}%
-    \def\@aref@sub{\zref@extract{#1}{sub}}%
-    \def\@aref@anchor{\zref@extract{#1}{anchor}}%
-    \def\@aref@url{\zref@extractdefault{#1}{url}{}}%
-    \def\@aref@fullurl{\@aref@url\hashchar\@aref@anchor}%
+\newcommand\aref@setcurrent[1]{%
+    \def\aref@current@reflink{\expandafter\rref@reflink[\rref@current@type]{\rref@current@value}}%
     \zref@ifrefcontainsprop{#1}{externaldocument}{%
         \def\@aref@filelabel{\zref@extract{#1}{externaldocument}}%
         \def\@aref@postlink{%
@@ -468,61 +407,29 @@ dlEnd={\end{labeling}}%
     }{%
         \def\@aref@postlink{}%
     }%
-    \ifthenelse{\equal{\@aref@count}{article}}{%
-        \def\@aref@type{article}%
-        \def\@aref@value{\@aref@article}%
-%        \def\@aref@format{\@aref@article@formathl}%
-        \def\@aref@format{\rref@reflink[article]{\@aref@article}}%
-%        \def\@aref@formatn{\@ifacap{\@Aref@article@prefix}{\@aref@article@prefix}\@aref@format}%
-        \def\@aref@prefix{}%\@ifacap{\@Aref@article@prefix}{\@aref@article@prefix}}%
+    \ifthenelse{\equal{\rref@current@type}{article}}{%
+        \def\@aref@prefix{}%
         \def\@aref@postfix{}%
     }{%
-        \ifthenelse{\equal{\@aref@count}{parasi}\OR\equal{\@aref@count}{para}}{%
-            \def\@aref@type{para}%
-            \def\@aref@value{\@aref@para}%
-%            \ifthenelse{\boolean{regulatory@nameinlink}}{%
-%                \def\@aref@format{\@aref@hl{\rref@labelformat{para}{\rref@refformat{para}{\@aref@para}}}}%
-%            }{%
-%                \def\@aref@format{\@aref@hl{\rref@labelformat{para}{\rref@refformat{para}{\@aref@para}}}}%
-%            }%
-            \def\@aref@format{\rref@reflink[para]{\@aref@para}}%%\@ifacap{\@Aref@para@formathl}{\@aref@para@formathl}}%
-%            \def\@aref@format{\@aref@hl{\rref@refformat{para}{\@aref@para}}}%%\@ifacap{\@Aref@para@formathl}{\@aref@para@formathl}}%
-%            \def\@aref@format{\rref@labelformat[para]{\@aref@para}}%%\@ifacap{\@Aref@para@formathl}{\@aref@para@formathl}}%
-%            \def\@aref@format{\@ifacap{\@Aref@para@formathl}{\@aref@para@formathl}}%
-%            \def\@aref@formatn{\@aref@format\@aref@para@postfix}%
+        \ifthenelse{\equal{\rref@current@type}{para}}{%
             \def\@aref@prefix{%
-                \rref@labelformat[article]{\@aref@article}\rref@get{article}{group conjunction}%
-%                \@ifacap{\@Aref@article@prefix}{\@aref@article@prefix}\@aref@article@format,~%
+                \rref@labelformat[article]{\rref@current@article}\rref@get{article}{group conjunction}%
             }%
-            \def\@aref@postfix{}%\@aref@para@postfix}%
+            \def\@aref@postfix{}%
         }{%
-            \ifthenelse{\equal{\@aref@count}{parasii}}{%
-                \def\@aref@type{sub}%
-                \def\@aref@value{\@aref@sub}%
-%                \def\@aref@format{\@aref@sub@formathl}%
-                \def\@aref@format{\rref@reflink[sub]{\@aref@sub}}%
+            \ifthenelse{\equal{\rref@current@type}{sub}}{%
                 \def\@aref@prefix{%
-                    \rref@labelformat[article]{\rref@refformat[article]{\@aref@article}}\rref@get{article}{group conjunction}%
-                    \rref@labelformat[para]{\rref@refformat[para]{\@aref@para}}\rref@get{para}{group conjunction}%
-%                    \@ifacap{\@Aref@article@prefix}{\@aref@article@prefix}\@aref@article@format,~%
-%                    \@ifacap{\@Aref@para@format}{\@aref@para@format}\@aref@para@postfix,~%
-%                    \@ifacap{\@Aref@sub@prefix}{\@aref@sub@prefix}%
+                    \rref@labelformat[article]{\rref@refformat[article]{\rref@current@article}}\rref@get{article}{group conjunction}%
+                    \rref@labelformat[para]{\rref@refformat[para]{\rref@current@para}}\rref@get{para}{group conjunction}%
                 }%
                 \def\@aref@postfix{}%
             }{%
-                \def\@aref@type{page}%
-                \def\@aref@format{??}%
                 \def\@aref@prefix{}%
                 \def\@aref@postfix{}%
             }%
         }%
     }%
-    \def\@aref@number##1{\zref@extractdefault{##1}{\@aref@type}{-1}}%
 }
-
-% TODO: deprecated
-\newboolean{aref@cap}
-\def\@ifacap#1#2{\ifthenelse{\boolean{aref@cap}}{#1\setboolean{aref@cap}{false}}{#2}}
 
 \newcommand{\aref}[1]{%
     \IfSubStr{#1}{,}{%
@@ -531,12 +438,12 @@ dlEnd={\end{labeling}}%
         \def\firstarg{#1}%
     }%
     \rref@setcurrent{\firstarg}%
-    \@aref@setvars{\firstarg}%% TODO: deprecated
+    \aref@setcurrent{\firstarg}%% TODO: deprecated
     \rref@groupformat{\@aref@prefix}\rref@labelformat{\aref@group{#1}}\@aref@postfix\@aref@postlink%
 }
 
 \newcommand{\Aref}[1]{%
-    \setboolean{aref@cap}{true}%
+    \setboolean{rref@cap}{true}%
     \aref{#1}%
 }
 
@@ -553,34 +460,34 @@ dlEnd={\end{labeling}}%
 }
 \def\findendlist#1,#2\relax{%
     \rref@setcurrent{#1}%
-    \@aref@setvars{#1}% TODO: depracated
-    \ifnum\numexpr\@aref@number{\currentendlist}+1\relax=\@aref@number{#1}\relax%
+    \aref@setcurrent{#1}% TODO: depracated
+    \ifnum\numexpr\rref@number{\currentendlist}+1\relax=\rref@number{#1}\relax%
         \def\currentendlist{#1}%
         \findendlist#2\relax%
     \else%
         \rref@setcurrent{\startlist}%
-        \@aref@setvars{\startlist}% TODO: deprecated
-        \ifnum\@aref@number{\startlist}=\@aref@number{\currentendlist}\relax%
-            \ignorespaces\@aref@format\unskip%
+        \aref@setcurrent{\startlist}% TODO: deprecated
+        \ifnum\rref@number{\startlist}=\rref@number{\currentendlist}\relax%
+            \ignorespaces\aref@current@reflink\unskip%
         \else%
-            \ifnum\numexpr\@aref@number{\startlist}+1\relax=\@aref@number{\currentendlist}\relax%
-                \ignorespaces\@aref@format\unskip%
-                \ifnum\@aref@number{#1}=\listterminator\relax%
+            \ifnum\numexpr\rref@number{\startlist}+1\relax=\rref@number{\currentendlist}\relax%
+                \ignorespaces\aref@current@reflink\unskip%
+                \ifnum\rref@number{#1}=\listterminator\relax%
                     \rref@lastconjunction%
                 \else%
                     \rref@middleconjunction%
                 \fi\ignorespaces%
                 \rref@setcurrent{\currentendlist}%
-                \@aref@setvars{\currentendlist}% TODO: deprecated
-                \@aref@format\unskip%
+                \aref@setcurrent{\currentendlist}% TODO: deprecated
+                \aref@current@reflink\unskip%
             \else%
-                \ignorespaces\@aref@format\unskip\rref@rangeconjunction\ignorespaces%
+                \ignorespaces\aref@current@reflink\unskip\rref@rangeconjunction\ignorespaces%
                 \rref@setcurrent{\currentendlist}%
-                \@aref@setvars{\currentendlist}% TODO: deprecated
-                \@aref@format\unskip%
+                \aref@setcurrent{\currentendlist}% TODO: deprecated
+                \aref@current@reflink\unskip%
             \fi%
         \fi%
-        \ifnum\@aref@number{#1}=\listterminator\else%
+        \ifnum\rref@number{#1}=\listterminator\else%
             \IfStrEq{#2}{\listterminator,}{\rref@lastconjunction}{\rref@middleconjunction}\begincompaction#1,#2\relax%
         \fi%
     \fi%
@@ -588,11 +495,11 @@ dlEnd={\end{labeling}}%
 \newcommand\bubblesort[1]{\def\sortedlist{}\sortlist#1,\listterminator,\relax}
 \def\sortlist#1,#2,#3\relax{%
     \rref@setcurrent{#1}%
-    \@aref@setvars{#1}% TODO: deprecated
-    \ifnum\@aref@number{#2}=\listterminator\relax%
+    \aref@setcurrent{#1}% TODO: deprecated
+    \ifnum\rref@number{#2}=\listterminator\relax%
         \edef\sortedlist{\sortedlist#1}%
     \else%
-        \ifnum\@aref@number{#1}<\@aref@number{#2}\relax%
+        \ifnum\rref@number{#1}<\rref@number{#2}\relax%
             \edef\sortedlist{\sortedlist#1,}%
             \sortlist#2,#3\relax%
         \else%
