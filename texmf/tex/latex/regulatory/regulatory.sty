@@ -129,6 +129,7 @@ dlEnd={\end{labeling}}%
 \DeclareTranslation{dutch}{Paragraph}{Lid}
 \DeclareTranslation{dutch}{Subparagraph}{Onderdeel}
 \DeclareTranslation{dutch}{to}{tot}
+\DeclareTranslation{dutch}{Definitions}{Definities}
 
 \zcRefTypeSetup{article}{%
     Name-sg = \GetTranslation{Article},
@@ -637,16 +638,35 @@ dlEnd={\end{labeling}}%
 \newcommand\artifactdescription[1]{\@aget{#1}{description}}
 
 \renewcommand{\glossarysection}[2][]{\@gobble{#1}\@gobble{#2}}%
-\setglossarypreamble[definitions]{\vspace*{-\baselineskip}}
+\setglossarypreamble[definitions]{%
+    \ifnum\value{article}=0%
+        \article{\GetTranslation{Definitions}}\label{art:definitions}%
+        \vspace*{-\baselineskip}%
+    \else%
+        \ifnum\value{parasi}=0%
+            \vspace*{-\baselineskip}%
+        \fi%
+    \fi%
+}
 
 \newcommand\describe[1]{\setboolean{regulatory@defslisted}{true}\glstarget{#1}{\glsentrydesc{#1}}}
 \newcommand\printdefs[1]{%
-
-%    \renewcommand{\glossarysection}[2][]{\@gobble{##1}\@gobble{##2}}%
     \renewcommand*{\glsnamefont}[1]{\textmd{##1}}%
     \setboolean{regulatory@defslisted}{true}%
     \glssetwidest{#1}%
-    \ifthenelse{\boolean{regulatory@usebib2gls}}{\printunsrtglossary[type=definitions,style=alttree,title={},nonumberlist=true]}{\printglossary[type=definitions,style=alttree,title={},nonumberlist=true]}}
+    \ifnum\value{parasi}>0%
+        \def\@@wrapper##1{\begin{minipage}{\linewidth}##1\end{minipage}}%
+    \else%
+        \def\@@wrapper##1{##1}%
+    \fi%
+    \@@wrapper{%
+        \ifthenelse{\boolean{regulatory@usebib2gls}}{%
+            \printunsrtglossary[type=definitions,style=alttree,title={},nonumberlist=true]%
+        }{%
+            \printglossary[type=definitions,style=alttree,title={},nonumberlist=true]%
+        }%
+    }%
+}
 
 \attachfilesetup{color=black}
 
