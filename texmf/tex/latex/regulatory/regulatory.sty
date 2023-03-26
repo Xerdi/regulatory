@@ -636,12 +636,16 @@ dlEnd={\end{labeling}}%
 \newcommand\artifactsubject[1]{\@aget{#1}{subject}}
 \newcommand\artifactdescription[1]{\@aget{#1}{description}}
 
+\renewcommand{\glossarysection}[2][]{\@gobble{#1}\@gobble{#2}}%
+\setglossarypreamble[definitions]{\vspace*{-\baselineskip}}
+
 \newcommand\describe[1]{\setboolean{regulatory@defslisted}{true}\glstarget{#1}{\glsentrydesc{#1}}}
 \newcommand\printdefs[1]{%
-    \renewcommand{\glossarysection}[2][]{}%
-    \renewcommand*{\glsnamefont}[1]{\textmd{#1}}%
+
+%    \renewcommand{\glossarysection}[2][]{\@gobble{##1}\@gobble{##2}}%
+    \renewcommand*{\glsnamefont}[1]{\textmd{##1}}%
     \setboolean{regulatory@defslisted}{true}%
-    \glssetwidest{#1\quad}%
+    \glssetwidest{#1}%
     \ifthenelse{\boolean{regulatory@usebib2gls}}{\printunsrtglossary[type=definitions,style=alttree,title={},nonumberlist=true]}{\printglossary[type=definitions,style=alttree,title={},nonumberlist=true]}}
 
 \attachfilesetup{color=black}

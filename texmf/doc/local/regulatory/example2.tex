@@ -1,19 +1,19 @@
 \documentclass[12pt,dutch]{article}
 \usepackage{babel}
-\usepackage[bibdefs]{regulatory}
+\usepackage{regulatory}
 \usepackage{lipsum}
 
 \newcounter{lip}
 \setcounter{lip}{1}
 \newcommand\textfill{\lipsum[\arabic{lip}]\stepcounter{lip}}
 
-\loadglsdefs{example2}
 \masterdocument[ex1-]{example1}{%
     defs=example1,%
     author=E. Nijenhuis,%
     subject= Voorbeeld Één,%
     description = Het éérste voorbeeld document,
 }
+\loadglsdefs{example2}
 
 \begin{document}
     \begin{center}
@@ -21,11 +21,11 @@
     \end{center}
     \article{Pactum}\label{art:agreement}
     \begin{paras}
-        \item \label{lid:lorem} \textfill
-        \item \label{lid:lorem2} \textfill
+        \item \label{lid:lorem} \textfill~\Gls{def1}.
+        \item \label{lid:lorem2} \textfill~\Gls{def2}.
         \item \label{lid:lorem3} \textfill
         \item \label{lid:lorem4} \textfill
-        \item \label{lid:lorem5} \textfill~\Gls{def1} ipsum dolor sit amed.
+        \item \label{lid:lorem5} \textfill~\Gls{def4} ipsum dolor sit amed.
         \begin{paras}
             \item \label{sub:lorem} \textfill
             \item \label{sub:lorem2} \textfill
@@ -34,6 +34,7 @@
         \end{paras}
     \end{paras}
     \article{Suspendisse}
+    \printdefs{Suspendisse}
     \para{Aliquam}
     \textfill
 
