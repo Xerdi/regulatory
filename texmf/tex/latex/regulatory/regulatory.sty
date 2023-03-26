@@ -38,6 +38,7 @@
 % Markdown support
 \ifthenelse{\boolean{regulatory@usemarkdown}}{
 \RequirePackage[hashEnumerators,definitionLists,hybrid,headerAttributes=true]{markdown}
+\RequirePackage{regulatory}
 \setkeys{markdownRenderers}{
 headingOne={\article{#1}},
 olItemWithNumber={\item{}},
@@ -161,6 +162,7 @@ dlEnd={\end{labeling}}%
 {\catcode`\#=12 \gdef\hashchar{#}}
 \makeatletter
 \def\rref@linkpr{\href{\rref@current@fullurl}}
+%\def\rref@linkpr{\href{\rref@current@url\haschar\rref@current@anchor}}
 
 \newboolean{rref@cap}
 \def\@ifrrefcap#1#2{%
@@ -396,7 +398,7 @@ dlEnd={\end{labeling}}%
 }
 
 \newcommand\aref@setcurrent[1]{%
-    \def\aref@current@reflink{\expandafter\rref@reflink[\rref@current@type]{\rref@current@value}}%
+    \def\aref@current@reflink{\rref@reflink[\rref@current@type]{\rref@current@value}}%
     \zref@ifrefcontainsprop{#1}{externaldocument}{%
         \def\@aref@filelabel{\zref@extract{#1}{externaldocument}}%
         \def\@aref@postlink{%
@@ -432,14 +434,28 @@ dlEnd={\end{labeling}}%
 }
 
 \newcommand{\aref}[1]{%
+    \def\@@arefsetup##1##2{%
+        \rref@setcurrent{##1}%
+        \aref@setcurrent{##1}%
+        \rref@groupformat{\@aref@prefix}%
+        ##2%
+        \@aref@postfix\@aref@postlink%
+    }%
     \IfSubStr{#1}{,}{%
         \StrBefore[1]{#1}{,}[\firstarg]%
+%        \rref@setcurrent{\firstarg}%
+%        \aref@setcurrent{\firstarg}%
+%        \rref@groupformat{\@aref@prefix}%
+        \@@arefsetup{\firstarg}{\rref@labelformat{\aref@group{#1}}}%
     }{%
-        \def\firstarg{#1}%
+%        \def\firstarg{#1}%
+%        \rref@setcurrent{#1}%
+%        \aref@setcurrent{#1}%
+        \@@arefsetup{#1}{\nref{#1}}%
     }%
-    \rref@setcurrent{\firstarg}%
-    \aref@setcurrent{\firstarg}%% TODO: deprecated
-    \rref@groupformat{\@aref@prefix}\rref@labelformat{\aref@group{#1}}\@aref@postfix\@aref@postlink%
+%    \rref@setcurrent{\firstarg}%
+%    \aref@setcurrent{\firstarg}%
+%    \rref@groupformat{\@aref@prefix}\rref@labelformat{\aref@group{#1}}\@aref@postfix\@aref@postlink%
 }
 
 \newcommand{\Aref}[1]{%
@@ -459,32 +475,32 @@ dlEnd={\end{labeling}}%
     \findendlist#2\relax%
 }
 \def\findendlist#1,#2\relax{%
-    \rref@setcurrent{#1}%
-    \aref@setcurrent{#1}% TODO: depracated
+%    \rref@setcurrent{#1}%
+%    \aref@setcurrent{#1}% TODO: depracated
     \ifnum\numexpr\rref@number{\currentendlist}+1\relax=\rref@number{#1}\relax%
         \def\currentendlist{#1}%
         \findendlist#2\relax%
     \else%
-        \rref@setcurrent{\startlist}%
-        \aref@setcurrent{\startlist}% TODO: deprecated
+%        \rref@setcurrent{\startlist}%
+%        \aref@setcurrent{\startlist}% TODO: deprecated
         \ifnum\rref@number{\startlist}=\rref@number{\currentendlist}\relax%
-            \ignorespaces\aref@current@reflink\unskip%
+            \ignorespaces\rref{\startlist}\unskip%
         \else%
             \ifnum\numexpr\rref@number{\startlist}+1\relax=\rref@number{\currentendlist}\relax%
-                \ignorespaces\aref@current@reflink\unskip%
+                \ignorespaces\rref{\startlist}\unskip%
                 \ifnum\rref@number{#1}=\listterminator\relax%
                     \rref@lastconjunction%
                 \else%
                     \rref@middleconjunction%
                 \fi\ignorespaces%
-                \rref@setcurrent{\currentendlist}%
-                \aref@setcurrent{\currentendlist}% TODO: deprecated
-                \aref@current@reflink\unskip%
+%                \rref@setcurrent{\currentendlist}%
+%                \aref@setcurrent{\currentendlist}% TODO: deprecated
+                \rref{\currentendlist}\unskip%
             \else%
-                \ignorespaces\aref@current@reflink\unskip\rref@rangeconjunction\ignorespaces%
-                \rref@setcurrent{\currentendlist}%
-                \aref@setcurrent{\currentendlist}% TODO: deprecated
-                \aref@current@reflink\unskip%
+                \ignorespaces\rref{\startlist}\unskip\rref@rangeconjunction\ignorespaces%
+%                \rref@setcurrent{\currentendlist}%
+%                \aref@setcurrent{\currentendlist}% TODO: deprecated
+                \rref{\currentendlist}\unskip%
             \fi%
         \fi%
         \ifnum\rref@number{#1}=\listterminator\else%
