@@ -3,7 +3,7 @@
 %! suppress = InclusionLoop
 \usepackage[markdown]{regulatory}
 
-\usepackage{babel}
+\usepackage[dutch,english]{babel}
 \usepackage{listings}
 
 \usepackage{fontspec}
@@ -94,6 +94,7 @@
 
 % Document
 \begin{document}
+    \selectlanguage{dutch}
     \title{Het \package{regulatory} pakket\thanks{Dit document correspondeerd aan \textsf{regulatory}~\packageversion, geschreven op \packagedate.}}
     \author{Erik Nijenhuis\\
     \href{mailto:erik@xerdi.com}{erik@xerdi.com}}
@@ -124,6 +125,7 @@
     \section{Gebruik}
     Het pakket \package{regulatory} is uitdrukkelijk bedoeld voor het genereren van PDF-document met \LaTeX{}.
     Gebruik daarom \texttt{pdflatex} of \texttt{lualatex}.
+%    \selectlanguage{english}
 
     \begin{lstlisting}[style=tex,caption={main.tex},label=code:simple]
 \documentclass[dutch]{article}
@@ -269,7 +271,47 @@ lualatex main
     Dit is te verwachten, aangezien \texttt{lid:lorem} geen onderdeel uitmaakt van \texttt{art:cookies}.
 
     Het verschil met \cmd{\zref} is dat het een volledige verwijzing geeft en het juiste formaat hanteert.
-    \verb|\aref{ex2-sub:lorem}| resulteert wel in `\aref{ex2-sub:lorem}', in plaats van alleen `\zcref{ex2-sub:lorem}'.\\
+    \verb|\aref{ex2-sub:lorem}| resulteert wel in `\aref{ex2-sub:lorem}', in plaats van alleen `\zcref{ex2-sub:lorem}'.
+
+    \clearpage
+    \noindent
+    \verb|\nref*{code:example-md}| => \nref*{code:example-md}\\
+    \DescribeMacro{\rref}
+    \rref{ex1-art:defs}, \rref{ex1-lid:lorem}, \rref{ex1-sub:lorem}\\
+    \DescribeMacro{\rref*}
+    \rref*{ex1-art:defs}, \rref*{ex1-lid:lorem}, \rref*{ex1-sub:lorem}\\
+    \DescribeMacro{\Rref*}
+    \Rref*{ex1-art:defs}, \Rref*{ex1-lid:lorem}, \Rref*{ex1-sub:lorem}\\
+    \DescribeMacro{\nref}
+    \nref{ex1-art:defs}, \nref{ex1-lid:lorem}, \nref{ex1-sub:lorem}\\
+    \DescribeMacro{\nref*}
+    \nref*{ex1-art:defs}, \nref*{ex1-lid:lorem}, \nref*{ex1-sub:lorem}\\
+    \DescribeMacro{\Nref*}
+    \Nref*{ex1-art:defs}, \Nref*{ex1-lid:lorem}, \Nref*{ex1-sub:lorem}\\
+    \DescribeMacro{\Aref}
+    \aref{ex1-art:defs}\\
+    \Aref{ex1-lid:lorem}\\
+    \Aref{ex1-sub:lorem}\\
+    \selectlanguage{english}\\
+    \DescribeMacro{\rref}
+    \rref{ex1-art:defs}, \rref{ex1-lid:lorem}, \rref{ex1-sub:lorem}\\
+    \DescribeMacro{\rref*}
+    \rref*{ex1-art:defs}, \rref*{ex1-lid:lorem}, \rref*{ex1-sub:lorem}\\
+    \DescribeMacro{\Rref*}
+    \Rref*{ex1-art:defs}, \Rref*{ex1-lid:lorem}, \Rref*{ex1-sub:lorem}\\
+    \DescribeMacro{\nref}
+    \nref{ex1-art:defs}, \nref{ex1-lid:lorem}, \nref{ex1-sub:lorem}\\
+    \DescribeMacro{\nref*}
+    \nref*{ex1-art:defs}, \nref*{ex1-lid:lorem}, \nref*{ex1-sub:lorem}\\
+    \DescribeMacro{\Nref*}
+    \Nref*{ex1-art:defs}, \Nref*{ex1-lid:lorem}, \Nref*{ex1-sub:lorem}\\
+    \DescribeMacro{\Aref}
+    \aref{ex1-art:defs}\\
+    \Aref{ex1-lid:lorem}\\
+    \Aref{ex1-sub:lorem}\\
+%    \rref*{ex1-art:defs},\rref*{ex1-lid:lorem},\rref*{ex1-sub:lorem}\\
+%    {[\nref*{ex1-art:defs}\nref*{ex1-lid:lorem},\nref*{ex1-sub:lorem}]}\\
+    \clearpage
 
 %    \DescribeMacro{\crefname}
 %    Voor zowel \cmd{\zref} als \cmd{\aref} kunnen de aanduidingen van verwijzingen dankzij \package{cleveref} aangepast worden.

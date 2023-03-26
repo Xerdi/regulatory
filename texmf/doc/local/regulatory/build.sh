@@ -19,6 +19,8 @@
 #
 #
 
+set -e
+
 latexmk -c example1
 latexmk -c example2
 latexmk -c regulatory
