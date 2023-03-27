@@ -12,7 +12,9 @@
 \definecolor{greycolor}{HTML}{BFBFBF}
 \definecolor{brandcolor}{HTML}{174A67}
 \definecolor{darkcolor}{HTML}{091D28}
+\definecolor{greencolor}{HTML}{176734}
 \colorlet{artlabel}{brandcolor}
+\colorlet{green}{greencolor}
 
 \zcRefTypeSetup{listing}{%
     Name-sg = Codelijst,
@@ -25,7 +27,7 @@
     language=[LaTeX]TeX,
     keywordsprefix={\\},
     alsoletter={\\},
-    morekeywords={article,para,textfill,masterdocument,refdocument,loadglsdefs,printdefs,setmiddleconjunction,setlastconjunction,setrangeconjunction,setconjunction,markdownInput}
+    morekeywords={article,para,textfill,masterdocument,refdocument,loadglsdefs,printdefs,setmiddleconjunction,setlastconjunction,setrangeconjunction,setconjunction,markdownInput,glssetwidest,describe}
 }
 
 \lstdefinestyle{bash}{%
@@ -34,8 +36,14 @@
 }
 
 \lstdefinelanguage{Markdown}[LaTeX]{TeX}{%
-    morekeywords={\regulatorykeys},
-    sensitive=false
+    sensitive=false,
+    morecomment=[l][\bfseries\ttfamily\color{green}]{\#},
+    morecomment=[s][\bfseries\ttfamily\color{purple}]{:\ \ }{\ },
+%    morecomment=[f][\bfseries\ttfamily\color{purple}]{:},
+    morestring=[s][\color{black}]{\{}{\}},
+    morekeywords={article,para,textfill,masterdocument,refdocument,loadglsdefs,printdefs,setmiddleconjunction,setlastconjunction,setrangeconjunction,setconjunction,markdownInput,glssetwidest,describe},
+    keywordsprefix={\\},
+    alsoletter={\\},
 }
 
 \lstdefinestyle{md}{%
@@ -55,7 +63,9 @@
 }
 
 \lstdefinestyle{bib}{%
-    language=BibTeX
+    language=BibTeX,
+    morestring=[s][\bfseries\ttfamily\color{purple}]{\ \ \ \ }{\ },
+    morecomment=[n][\bfseries\ttfamily\color{green}]{\ \{}{\}},
 }
 
 \lstset{
@@ -75,6 +85,7 @@
 %    showspaces=true,               % show spaces adding particular underscores
 %    showstringspaces=true,         % underline spaces within strings
     showtabs=true,
+    keepspaces=true
 %    frameshape={RYRYNYYYY}{yny}{yny}{RYRYNYYYY}
 %    framexleftmargin=5mm
 }
