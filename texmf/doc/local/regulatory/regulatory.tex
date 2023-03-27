@@ -1,4 +1,4 @@
-\documentclass[11pt,dutch]{ltxdoc}
+\documentclass[10pt,dutch]{ltxdoc}
 
 %! suppress = InclusionLoop
 \usepackage[markdown]{regulatory}
@@ -64,11 +64,19 @@
     numberstyle=\ttfamily,
     numbersep=5pt,
     rulecolor=\color{greycolor},
+%    fillcolor=\color{greycolor},
     stringstyle=\color{pink},
-    keywordstyle=\bfseries\color{brandcolor},
+    keywordstyle=\color{brandcolor},
+%    keywordstyle=\bfseries\color{brandcolor},
     commentstyle=\itshape\color{darkcolor},
     breaklines=true,
-    captionpos=b
+    captionpos=b,
+    tabsize=4,
+%    showspaces=true,               % show spaces adding particular underscores
+%    showstringspaces=true,         % underline spaces within strings
+    showtabs=true,
+%    frameshape={RYRYNYYYY}{yny}{yny}{RYRYNYYYY}
+%    framexleftmargin=5mm
 }
 
 \newcommand\package{\texttt}
@@ -92,6 +100,12 @@
     description = Het tweede voorbeeld document,
 }
 
+%\setmainfont{Prompt Light}
+\setmainfont{Prompt ExtraLight}
+\setmonofont{Jetbrains Mono}
+
+\def\cmd{\lstinline[style=tex]}
+
 % Document
 \begin{document}
     \selectlanguage{dutch}
@@ -106,15 +120,17 @@
         Dit pakket brengt veel voorkomende structuren, zoals artikelen, leden, onderdelen en definities.
 
         % Verwijzen %
-        Verwijzen binnen het juridisch domein kan een grote uitdaging zijn, daarom biedt dit pakket een elegante manier van verwijzen net als je gewend bent bij standaard \LaTeX{} macro's, zoals voor een \cmd{\section}, namelijk d.m.v.\ labelen.
-
-        % Externe Documenten %
-        Deze manier van verwijzen beperkt zich niet alleen tot één document, maar ook andere documenten geschreven met het \package{regulatory} pakket.
-        Op deze manier blijft het eenvoudig verwijzen voor documenten onderling.
-        Denk bijvoorbeeld aan Algemene Voorwaarden en een Onderhoudsovereenkomst die naar elkaars artikelen verwijzen.
+        Verwijzen binnen het juridisch domein kan een grote uitdaging zijn, daarom biedt dit pakket een elegante manier van verwijzen net als iemand mag verwachten bij standaard \LaTeX{} macro's, zoals voor een hoofdstuk \cmd{\section}, namelijk door middel van labelen.
+        Hiervoor introduceert \package{regulatory} zijn eigen \cmd{\rref}, \cmd{\nref} en \cmd{\aref} macrofamilies die standaard ondersteuning bieden voor Nederlands en Engels.
 
         % Definities %
-        Definities, typisch opgenomen in de Algemene Voorwaarden, zijn voor alle documenten gemakkelijk naar te verwijzen, dankzij \package{glossaries-extra}.
+        Het beheren van definities kan eenduidig voor alle documenten met behulp van \package{BibTeX}.
+        Voor het verwijzen naar definities speelt \package{regulatory} in op de al bestaande \cmd{\gls} macrofamilie van \package{glossaries}.
+
+        % Externe Documenten %
+        Het verwijzen naar artikelen, leden, onderdelen en definities beperkt zich niet alleen tot één document, maar zijn ook aan te halen vanuit andere documenten geschreven met het \package{regulatory} pakket.
+        Op deze manier blijft het eenvoudig verwijzen voor documenten onderling.
+        Denk bijvoorbeeld aan Algemene Voorwaarden en een Onderhoudsovereenkomst die naar elkaars artikelen verwijzen of elkaars begrippen gebruiken.
         Het is zelfs mogelijk om bij documenten de Algemene Voorwaarden als bijlage in het PDF-bestand te voegen voor de volledigheid.
     \end{abstract}
 
@@ -123,10 +139,8 @@
     \clearpage
 
     \section{Gebruik}
-    Het pakket \package{regulatory} is uitdrukkelijk bedoeld voor het genereren van PDF-document met \LaTeX{}.
+    Het pakket \package{regulatory} is uitdrukkelijk bedoeld voor het genereren van PDF-documenten met \LaTeX{}.
     Gebruik daarom \texttt{pdflatex} of \texttt{lualatex}.
-%    \selectlanguage{english}
-
     \begin{lstlisting}[style=tex,caption={main.tex},label=code:simple]
 \documentclass[dutch]{article}
 \usepackage{regulatory}
@@ -138,10 +152,10 @@
     Dit houdt in dat \option{bib2gls} actief is.
     Om terug te schakelen naar TeX code voor definitielijsten is er de optie \oarg{nobibdefs}.
     Verder zijn er nog de opties \oarg{markdown,alldefs,hidelinks}.
-    Waar \option{markdown} Markdown support activeert, \option{alldefs} alle definities opsomt (handig voor Algemene Voorwaarden waarin niet alle definities voorkomen), \option{hidelinks} alle gekleurde kaders van hyperlinks verbergt.\\
+    Waar \option{markdown} Markdown support activeert, \option{alldefs} alle definities opsomt in plaats van alleen de gebruikte definities binnen hetzelfde document (handig voor Algemene Voorwaarden waarin niet alle definities per se voorkomen), \option{hidelinks} alle gekleurde kaders van hyperlinks verbergt.\\
 
     Het voorbeeld van \zcref{code:simple} kan als volgt gegenereerd worden naar PDF:
-    \begin{lstlisting}[style=bash,caption={Commandline voorbeeld}]
+    \begin{lstlisting}[style=bash,caption={Commandline voorbeelden}]
 pdflatex main
 # Of
 lualatex main
@@ -168,17 +182,17 @@ lualatex main
 
     \section{Structuur}\label{sec:struct}
     Dit pakket levert bekende structuren, zonder bestaande functionaliteiten te breken.
-    \DescribeMacro{\article\marg{title}}
-    \DescribeMacro{\para\marg{title}}
-    Neem bijvoorbeeld \cmd{\artikel\marg{title}} en \cmd{\lid\marg{title}}.
+    \DescribeMacro{\article}
+    \DescribeMacro{\para}
+    Neem bijvoorbeeld \lstinline[style=TeX]|\article|\marg{title} en \lstinline[style=TeX]|\para|\marg{title}.
     Deze zijn als aparte macro's gedefinieerd en opgemaakt met behulp van \package{titlesec}.
 
     \DescribeEnv{paras}
     Voor de \option{paras} en ``onderdelen'' is een nieuwe environment aangemaakt met behulp van \package{enumitem}.
-    De labels van de leden zijn aangepast naar \verb|\theartikel.\arabic*|, voor leden en, \verb|\abalphnum{\arabic*})|, voor onderdelen.
-    Voor onderdelen wordt er gebruik gemaakt van \cmd{\abalpnum} uit pakket \package{fmtcount} om meerdere onderdelen te kunnen opsommen.
-    Stel er zou gebruik gemaakt worden van \cmd{\alph}, dan is \option{paras} beperkt tot 26 onderdelen.
-    Bij \cmd{\abalphnum} met bijvoorbeeld een waarde van 125 is `\texttt{du}' de uitkomst.
+    De labels van de leden zijn aangepast naar \cmd|\theartikel.\arabic*|, voor leden en, \cmd|\abalphnum{\arabic*)}|, voor onderdelen.
+    Voor onderdelen wordt er gebruik gemaakt van \cmd|\abalpnum| uit pakket \package{fmtcount} om meerdere onderdelen te kunnen opsommen.
+    Stel er zou gebruik gemaakt worden van \cmd|\alph|, dan is \option{paras} beperkt tot 26 onderdelen.
+    Bij \cmd|\abalphnum| met bijvoorbeeld een waarde van 125 is `\texttt{du}' de uitkomst.
 
     \noindent\textbf{Voorbeeld:}
     \begin{lstlisting}[style=tex]
@@ -205,39 +219,42 @@ lualatex main
 %    TODO
 
     \subsection{Markdown}
-%    \lstinputlisting[style=Markdown]{example.md}
+    Met de pakketoptie \option{markdown} zorgt dit pakket ervoor dat al deze structuren gehanteerd worden.
+    Dit betekend echter wel dat er geen hoofdstukken of andere standaard onderdelen meer getypt kunnen worden.
+    In plaats daarvan is de schrijver juist beperkt tot de onderdelen omschreven in dit hoofdstuk.
+    Kijk naar \zcref{code:example-md} voor een markdown voorbeeld en naar \zcref{code:md-example} hoe zo'n Markdown bron uiteindelijk kan gebruikt worden vanuit \LaTeX{}.
 
     \clearpage
     \section{Definities}
     Voor het verwijzen naar definities wordt gebruik gemaakt van \package{glossaries-extra}.
-    Dit zorgt ervoor dat er met de \cmd{\gls\marg{label}} marco familie verwezen kan worden.\\
+    Dit zorgt ervoor dat er met de \cmd|\gls|\marg{label} marco familie verwezen kan worden.\\
 
     \DescribeEnv{definitions}
     \DescribeEnv{externals}
     Om conflicten tussen begrippen, afkortingen en definities te voorkomen voegt dit pakket twee \texttt{glossary} types toe.
     Voor definities binnen hetzelfde bestand worden ze onder het type \option{definitions} geplaatst, waar bij definities van andere documenten ze geplaatst worden onder \option{externals} (zie \zcref{sec:extern}).\\
 
-    \DescribeMacro{\describe\marg{label}}
-    \DescribeMacro{\printdefs\marg{width of text}\\}
+    \DescribeMacro{\printdefs}
     Om definities op te sommen zijn er verschillende macro's toegevoegd.
-    De meest voor de hand liggende, \cmd{\printdefs}, worden de definities met aangepaste stijl opgesomd.
+    De meest voor de hand liggende, \cmd|\printdefs|\marg{width of text}, worden de definities met aangepaste stijl opgesomd.
     Het argument \marg{width of text} wordt meegegeven om wille van de uitlijning van definitie aanduidingen en beschrijvingen.
 
-    Om hetzelfde resultaat te behalen met \cmd{\describe} is het eerst nodig om \cmd{\glssetwidest} aan te roepen in bijvoorbeeld Markdown (zie \zcref{code:example-md}).
-    De macro \cmd{\describe} leent zich uitstekend om handmatig definitie beschrijvingen te plaatsen.
+    \DescribeMacro{\describe}
+    Om hetzelfde resultaat te behalen met \cmd|\describe|\marg{label} is het eerst nodig om \cmd|\glssetwidest| aan te roepen in bijvoorbeeld Markdown (zie \zcref{code:example-md}).
+    De macro \cmd|\describe| leent zich uitstekend om handmatig definitie beschrijvingen te plaatsen.
     Deze macro voegt namelijk een ankerpunt toe, vereist voor werkende hyperlinks.\\
 
-    \DescribeMacro{\loadglsdefs\marg{src}}
-    \DescribeMacro{\loadextdefs\oarg{category}\\\marg{src}}
+    \DescribeMacro{\loadglsdefs}
     Om definities in te laden zijn er twee macro's gedefinieerd.
-    De \cmd{\loadglsdefs} macro voegt BibTeX bibliotheken toe onder het type \option{definitions} en heeft als categorie \option{definitions}.
-    Gebruikte definities in deze bibliotheken zullen opgesomd worden wanneer \cmd{\printdefs} wordt aangeroepen.
+    De \cmd|\loadglsdefs|\marg{src} macro voegt BibTeX bibliotheken toe onder het type \option{definitions} en heeft als categorie \option{definitions}.
+    Gebruikte definities in deze bibliotheken zullen opgesomd worden wanneer \cmd|\printdefs| wordt aangeroepen.
     Als bij het pakket de optie \option{alldefs} is meegegeven, dan zullen alle definities in die bibliotheken opgesomd worden.
     De opsomming wordt gesorteerd aan de hand van het Nederlandse woordenboek.
     Woorden die niet voorkomen daarin worden als eerste opgesomd.
 
-    Voor \cmd{\loadextdefs} kan het handig zijn om een categorie mee te geven, zodat definities van verschillende bronnen uit elkaar gehouden kunnen worden.
-    Het is daarentegen onverstandig deze direct aan te roepen, aangezien \cmd{\masterdocument} hier al slim op in speelt.
+    \DescribeMacro{\loadextdefs}
+    Voor \cmd|\loadextdefs|\oarg{category}\marg{src} kan het handig zijn om een categorie mee te geven, zodat definities van verschillende bronnen uit elkaar gehouden kunnen worden.
+    Het is daarentegen onverstandig deze direct aan te roepen, aangezien \cmd|\masterdocument| hier al slim op in speelt.
 
     \clearpage
     \section{Verwijzingen}
@@ -246,11 +263,11 @@ lualatex main
     Alle onderdelen genoemd in \zcref{sec:struct} zijn hiervoor geconfigureerd, echter biedt \package{zref} niet zoveel formaat aanpassingen als \package{cleveref}.
     \DescribeMacro{\aref\marg{labels...}}
     \DescribeMacro{\Aref\marg{labels...}}
-    Door deze beperking is er voor gekozen om een geheel nieuwe variant te ontwikkelen, namelijk \cmd{\aref}.
-    U kunt dus met \cmd{\aref} verwijzen naar artikelen net als gebruikelijk is voor \cmd{\section}, \cmd{\subsection}, e.d.
+    Door deze beperking is er voor gekozen om een geheel nieuwe variant te ontwikkelen, namelijk \cmd|\aref|.
+    Er kan dus met \cmd|\aref| verwezen worden naar artikelen net als gebruikelijk is voor \cmd|\section|, \cmd|\subsection|, e.d.
 
-    \cmd{\Aref} kan zelfs meerdere labels meekrijgen gescheiden met een komma.
-    Afhankelijk van de volgordelijkheid van de meegegeven labels koppelt \cmd{\aref} de labels op de juiste manier.
+    \cmd|\Aref| kan zelfs meerdere labels meekrijgen gescheiden met een komma.
+    Afhankelijk van de volgordelijkheid van de meegegeven labels koppelt \cmd|\aref| de labels op de juiste manier.
     Dit kan een lijst opsomming geven, zoals \aref{ex1-sub:lorem,ex1-sub:lorem3,ex1-sub:lorem4}, of een reeks, zoals
     \aref{ex1-sub:lorem,ex1-sub:lorem2,ex1-sub:lorem3,ex1-sub:lorem4}.
 
@@ -260,22 +277,22 @@ lualatex main
     % \ordinalstringnum
 
     Een andere tekortkoming van \package{cleveref} is dat het niet automatisch de bijbehorende onderdelen kan vinden.
-    Met \package{zref} kan dit wel geïmplementeerd worden, echter maakt alleen \cmd{\aref} hier gebruik van.
-    Bijvoorbeeld \verb|\zref{sub:eerste}| resulteert in \zcref{ex1-lid:lorem}, in plaats van \aref{ex1-lid:lorem}.\\
+    Met \package{zref} kan dit wel geïmplementeerd worden, echter maakt alleen \cmd|\aref| hier gebruik van.
+    Bijvoorbeeld \cmd|\zref{sub:eerste}| resulteert in \zcref{ex1-lid:lorem}, in plaats van \aref{ex1-lid:lorem}.\\
 
     Deze macro's zijn geschreven met behulp van \package{zref} en \package{xassoccnt}.
-    \cmd{\Aref} kijkt naar het eerste label en genereert daarna het voorvoegsel, bijvoorbeeld voor een lid is het voorvoegsel `artikel 1,~'.
-    Daarna worden alle labels meegegeven aan een interne macro \cmd{\aref@group}.
-    Wanneer er verschillende type labels meegegeven worden aan \cmd{\aref} is de uitkomst daarvan ongedefinieerd.
-    Neem bijvoorbeeld \verb|\aref{lid:lorem,sub:lorem}|, wat in dit geval leidt tot een foutmelding.
+    \cmd|\Aref| kijkt naar het eerste label en genereert daarna het voorvoegsel, bijvoorbeeld voor een lid is het voorvoegsel `artikel 1,~'.
+    Daarna worden alle labels meegegeven aan een interne macro \cmd|\aref@group|.
+    Wanneer er verschillende type labels meegegeven worden aan \cmd|\aref| is de uitkomst daarvan ongedefinieerd.
+    Neem bijvoorbeeld \cmd|\aref{lid:lorem,sub:lorem}|, wat in dit geval leidt tot een foutmelding.
     Dit is te verwachten, aangezien \texttt{lid:lorem} geen onderdeel uitmaakt van \texttt{art:cookies}.
 
-    Het verschil met \cmd{\zref} is dat het een volledige verwijzing geeft en het juiste formaat hanteert.
-    \verb|\aref{ex2-sub:lorem}| resulteert wel in `\aref{ex2-sub:lorem}', in plaats van alleen `\zcref{ex2-sub:lorem}'.
+    Het verschil met \cmd|\zref| is dat het een volledige verwijzing geeft en het juiste formaat hanteert.
+    \cmd|\aref{ex2-sub:lorem}| resulteert wel in `\aref{ex2-sub:lorem}', in plaats van alleen `\zcref{ex2-sub:lorem}'.
 
     \clearpage
     \noindent
-    \verb|\nref*{code:example-md}| => \nref*{code:example-md}\\
+    \cmd|\nref*{code:example-md}| => \nref*{code:example-md}\\
     \DescribeMacro{\rref}
     \rref{ex1-art:defs}, \rref{ex1-lid:lorem}, \rref{ex1-sub:lorem}\\
     \DescribeMacro{\rref*}
@@ -314,9 +331,9 @@ lualatex main
     \clearpage
 
 %    \DescribeMacro{\crefname}
-%    Voor zowel \cmd{\zref} als \cmd{\aref} kunnen de aanduidingen van verwijzingen dankzij \package{cleveref} aangepast worden.
+%    Voor zowel \cmd|\zref| als \cmd|\aref| kunnen de aanduidingen van verwijzingen dankzij \package{cleveref} aangepast worden.
 %    Stel dat `onderdeel a' een andere aanduiding dient te hebben, bijvoorbeeld `sub.\ a'.
-%    Dit kan door middel van \cmd{\crefname}.
+%    Dit kan door middel van \cmd|\crefname|.
 %    Deze macro krijgt drie argumenten, namelijk de \texttt{counter}, enkelvoud vorm en meervoudsvorm.
 %    \begin{lstlisting}[style=TeX]
 %\crefname{ledenii}{sub.\ }{sub.\ }
@@ -337,32 +354,31 @@ lualatex main
 \setrangeconjunction}{ t/m }
 \setconjunction{, }{ en }{ t/m }
     \end{lstlisting}
-
     \DescribeMacro{\setjuncto}
     \DescribeMacro{\unsetjuncto}
     Er zijn ook macro's om gemakkelijk naar verouderde notatie te schakelen.
-    Met \cmd{\setjuncto} kan er willekeurig in het document omgeschakeld worden naar het koppelwoord `\texttt{ jo.\textbackslash\ }'.
-    Door \cmd{\unsetjuncto} te gebruiken wordt \cmd{\lastconjunction} weer terug gezet naar `\texttt{ en }'.
+    Met \cmd|\setjuncto| kan er willekeurig in het document omgeschakeld worden naar het koppelwoord `\texttt{ jo.\textbackslash\ }'.
+    Door \cmd|\unsetjuncto| te gebruiken wordt \cmd|\lastconjunction| weer terug gezet naar `\texttt{ en }'.
     Als eerder handmatig de koppelingen zijn veranderd, dan zijn die wijzigingen door één van deze macro's overschreven.
-    Gebruik dan in plaats van \cmd{\unsetjuncto} \cmd{\setlastconjunction\marg{waarde}}.
+    Gebruik dan in plaats van \cmd|\unsetjuncto| \cmd|\setlastconjunction|\marg{waarde}.
 
     \section{Verwijzingen naar andere documenten}\label{sec:extern}
     Verwijzen naar andere documenten gegenereerd met het \package{regulatory} pakket kan vrij eenvoudig.
 
     \DescribeMacro{\refdocument\\\oarg{prefix}\\\marg{name}}
-    Na het opgeven van \cmd{\refdocument} in de preamble kan er naar artikelen, leden en onderdelen verwezen worden.
-    De macro familie \cmd{\aref} blijft dankzij \cmd{\zexternaldocument} van \package{zref-xr} nog steeds werken.
+    Na het opgeven van \cmd|\refdocument| in de preamble kan er naar artikelen, leden en onderdelen verwezen worden.
+    De macro familie \cmd|\aref| blijft dankzij \cmd|\zexternaldocument| van \package{zref-xr} nog steeds werken.
     Om ambiguïteit te voorkomen kan er een speciale \option{prefix} toegevoegd worden.
     Bij het weglaten van een \option{prefix} is er alsnog een \option{prefix}, namelijk \texttt{ext-}.
     Label \texttt{lid:geheimhouding} wordt dan \texttt{ext-lid:geheimhouding}.
-    Let wel dat de \option{prefix} niet geldt voor het verwijzen naar definities met \cmd{\gls}.
+    Let wel dat de \option{prefix} niet geldt voor het verwijzen naar definities met \cmd|\gls|.
 
     \DescribeMacro{\masterdocument\\\oarg{prefix}\\\marg{name}\\\marg{opts...}\\}
-    Om een volledige koppeling te maken met andere \package{regulatory} documenten wordt de \cmd{\masterdocument} macro gebruikt.
+    Om een volledige koppeling te maken met andere \package{regulatory} documenten wordt de \cmd|\masterdocument| macro gebruikt.
     Een volledige koppeling houdt in:
     \begin{enumerate}
-        \item verwijzen met de \cmd{\aref} familie;
-        \item verwijzen naar definities met de \cmd{\gls} familie;
+        \item verwijzen met de \cmd|\aref| familie;
+        \item verwijzen naar definities met de \cmd|\gls| familie;
         \item een voetnoot met het document als bijlage bij de eerste verschijning van een verwijzing of definitie.
     \end{enumerate}
     Het kan zelfs dat een document meerdere `master' documenten heeft, zoals dit document:
@@ -394,20 +410,23 @@ lualatex main
 %    \DescribeMacro{\artifactsubject}
 %    \DescribeMacro{\artifactdescription\\}
 
-    \clearpage
+%    \clearpage
 
     \DescribeMacro{\reffootnotelabel\\\marg{label}}
     \DescribeMacro{\deffootnotelabel\\\marg{label}\\}
     Voor zowel verwijzingen naar definities als artikelen e.d.\ wordt bij de eerste verschijning een voetnoot geplaatst.
-    Onder water wordt \cmd{\reffootnotelabel} aangeroepen voor artikelen e.d.\ en voor definities \cmd{\deffootnotelabel}.\\
+    Onder water wordt \cmd|\reffootnotelabel| aangeroepen voor artikelen e.d.\ en voor definities \cmd|\deffootnotelabel|.\\
 
     Deze macro's kunnen ook handmatig uitgevoerd worden.
-    Neem bijvoorbeeld \verb|\aref{ex1-sub:lorem}\reffootnotelabel{example1}| wat zou leiden tot:
+    Neem bijvoorbeeld \cmd|\aref{ex1-sub:lorem}\reffootnotelabel{example1}| wat zou leiden tot:
     `\aref{ex1-sub:lorem}\reffootnotelabel{example1}'.
-    En voor \verb|\gls{def4}\deffootnotelabel{example2}| is de uitkomst `\gls{def4}\deffootnotelabel{example2}'.
+    En voor \cmd|\gls{def4}\deffootnotelabel{example2}| is de uitkomst `\gls{def4}\deffootnotelabel{example2}'.
+
+    \section{Taalondersteuning}
+    Nog te komen\ldots
 
     \clearpage
-    \section{Voorbeelden}\label{sec:example}
+    \section*{Voorbeelden}\label{sec:example}
 
     \lstinputlisting[style=tex,numbers=left,caption={example1.tex},label={code:example1}]{example1.tex}\clearpage
 

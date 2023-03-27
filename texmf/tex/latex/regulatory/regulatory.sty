@@ -38,7 +38,6 @@
 % Markdown support
 \ifthenelse{\boolean{regulatory@usemarkdown}}{
 \RequirePackage[hashEnumerators,definitionLists,hybrid,headerAttributes=true]{markdown}
-\RequirePackage{regulatory}
 \setkeys{markdownRenderers}{
 headingOne={\article{#1}},
 olItemWithNumber={\item{}},
@@ -67,7 +66,6 @@ dlEnd={\end{labeling}}%
 \RequirePackage[user,counter,hyperref,xr]{zref}
 \RequirePackage{zref-xr,zref-user,zref-clever,zref-hyperref}
 \RequirePackage{pgf}
-%\RequirePackage{suffix}
 \RequirePackage[sanitize=none,nopostdot]{glossaries}
 \ifthenelse{\boolean{regulatory@usebib2gls}}{%
     \RequirePackage[record,style=alttree]{glossaries-extra}
@@ -120,10 +118,6 @@ dlEnd={\end{labeling}}%
 \zref@newprop{sub}[-1]{\number\value{parasii}}
 \zref@addprops{main}{article,para,sub}
 
-%\DeclareTranslationFallback{article}{article}
-%\DeclareTranslationFallback{paragraph}{paragraph}
-%\DeclareTranslationFallback{subparagraph}{subparagraph}
-
 \DeclareTranslation{dutch}{article}{artikel}
 \DeclareTranslation{dutch}{paragraph}{lid}
 \DeclareTranslation{dutch}{subparagraph}{onderdeel}
@@ -162,7 +156,6 @@ dlEnd={\end{labeling}}%
 {\catcode`\#=12 \gdef\hashchar{#}}
 \makeatletter
 \def\rref@linkpr{\href{\rref@current@fullurl}}
-%\def\rref@linkpr{\href{\rref@current@url\haschar\rref@current@anchor}}
 
 \newboolean{rref@cap}
 \def\@ifrrefcap#1#2{%
@@ -443,19 +436,10 @@ dlEnd={\end{labeling}}%
     }%
     \IfSubStr{#1}{,}{%
         \StrBefore[1]{#1}{,}[\firstarg]%
-%        \rref@setcurrent{\firstarg}%
-%        \aref@setcurrent{\firstarg}%
-%        \rref@groupformat{\@aref@prefix}%
         \@@arefsetup{\firstarg}{\rref@labelformat{\aref@group{#1}}}%
     }{%
-%        \def\firstarg{#1}%
-%        \rref@setcurrent{#1}%
-%        \aref@setcurrent{#1}%
         \@@arefsetup{#1}{\nref{#1}}%
     }%
-%    \rref@setcurrent{\firstarg}%
-%    \aref@setcurrent{\firstarg}%
-%    \rref@groupformat{\@aref@prefix}\rref@labelformat{\aref@group{#1}}\@aref@postfix\@aref@postlink%
 }
 
 \newcommand{\Aref}[1]{%
@@ -475,14 +459,10 @@ dlEnd={\end{labeling}}%
     \findendlist#2\relax%
 }
 \def\findendlist#1,#2\relax{%
-%    \rref@setcurrent{#1}%
-%    \aref@setcurrent{#1}% TODO: depracated
     \ifnum\numexpr\rref@number{\currentendlist}+1\relax=\rref@number{#1}\relax%
         \def\currentendlist{#1}%
         \findendlist#2\relax%
     \else%
-%        \rref@setcurrent{\startlist}%
-%        \aref@setcurrent{\startlist}% TODO: deprecated
         \ifnum\rref@number{\startlist}=\rref@number{\currentendlist}\relax%
             \ignorespaces\rref{\startlist}\unskip%
         \else%
@@ -493,13 +473,9 @@ dlEnd={\end{labeling}}%
                 \else%
                     \rref@middleconjunction%
                 \fi\ignorespaces%
-%                \rref@setcurrent{\currentendlist}%
-%                \aref@setcurrent{\currentendlist}% TODO: deprecated
                 \rref{\currentendlist}\unskip%
             \else%
                 \ignorespaces\rref{\startlist}\unskip\rref@rangeconjunction\ignorespaces%
-%                \rref@setcurrent{\currentendlist}%
-%                \aref@setcurrent{\currentendlist}% TODO: deprecated
                 \rref{\currentendlist}\unskip%
             \fi%
         \fi%
