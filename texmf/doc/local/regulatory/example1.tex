@@ -10,15 +10,13 @@
 \refdocument[ex2-]{example2}
 \loadglsdefs{example1}
 
-\setrangeconjunction{~tot~}
-
 \begin{document}
     \begin{center}
         \Huge Voorbeeld Één
     \end{center}
     \article{Definitiones}\label{art:defs}
     \printdefs{Nam dui}
-    \article{Quisque ullamcorper}
+    \article{Quisque ullamcorper}\label{art:lorem}
     \begin{paras}
         \item \label{lid:lorem} \textfill
         \item \label{lid:lorem2} \textfill
@@ -33,4 +31,9 @@
             \item \label{sub:lorem8} \textfill
         \end{paras}
     \end{paras}
+    \article{Etiam ac leo}\label{art:lorem2}
+    \para{A risus tristique nonummy}
+    \textfill
+    \article{Nulla in ipsum}\label{art:lorem3}
+    \textfill
 \end{document}
