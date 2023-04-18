@@ -10,10 +10,10 @@
 \usepackage{textcomp}
 
 \definecolor{greycolor}{HTML}{BFBFBF}
-\definecolor{brandcolor}{HTML}{174A67}
+\definecolor{primary}{HTML}{174A67}
 \definecolor{darkcolor}{HTML}{091D28}
 \definecolor{greencolor}{HTML}{176734}
-\colorlet{artlabel}{brandcolor}
+\colorlet{artlabel}{primary}
 \colorlet{green}{greencolor}
 
 \zcRefTypeSetup{listing}{%
@@ -78,8 +78,8 @@
     rulecolor=\color{greycolor},
 %    fillcolor=\color{greycolor},
     stringstyle=\color{pink},
-    keywordstyle=\color{brandcolor},
-%    keywordstyle=\bfseries\color{brandcolor},
+    keywordstyle=\color{primary},
+%    keywordstyle=\bfseries\color{primary},
     commentstyle=\itshape\color{darkcolor},
     breaklines=true,
     captionpos=b,
@@ -104,6 +104,7 @@
     author=E. Nijenhuis,%
     subject= Voorbeeld Één,%
     description = Het éérste voorbeeld document,
+    ref label=van Voorbeeld Één
 }
 
 \masterdocument[ex2-]{example2}{%
@@ -111,14 +112,19 @@
     author=E. Nijenhuis,%
     subject= Voorbeeld Twee,%
     description = Het tweede voorbeeld document,
+    ref label=van Voorbeeld Twee
 }
 
-%\setmainfont{Prompt Light}
 \setmainfont{Prompt ExtraLight}
 \setmonofont{Jetbrains Mono}
 
 \def\cmd{\lstinline[style=tex]}
 \def\cmditem#1{\item[\ttfamily\textbackslash{}#1]}
+
+\newcommand\Vtextvisiblespace[1][.3em]{%
+  \mbox{\kern.06em\vrule height.3ex}%
+  \vbox{\hrule width#1}%
+  \hbox{\vrule height.3ex}}
 
 % Document
 \begin{document}
@@ -165,9 +171,10 @@
     Het voorbeeld gebruikt geen opties.
     Dit houdt in dat \option{bib2gls} actief is.
     Om terug te schakelen naar TeX code voor definitielijsten is er de optie \oarg{nobibdefs}.
-    Verder zijn er nog de opties \oarg{markdown,alldefs,hidelinks}.
-    Waar \option{markdown} Markdown support activeert, \option{alldefs} alle definities opsomt in plaats van alleen de gebruikte definities binnen hetzelfde document (handig voor Algemene Voorwaarden waarin niet alle definities per se voorkomen), \option{hidelinks} alle gekleurde kaders van hyperlinks verbergt.\\
+    Verder zijn er nog de opties \oarg{markdown,alldefs,hidelinks,nameinlink}.
+    Waar \option{markdown} Markdown support activeert, \option{alldefs} alle definities opsomt in plaats van alleen de gebruikte definities binnen hetzelfde document (handig voor Algemene Voorwaarden waarin niet alle definities per se voorkomen), \option{hidelinks} alle gekleurde kaders van hyperlinks verbergt en \option{nameinlink} de hyperlink om het label heen plaatst.\\
 
+    \noindent
     Het voorbeeld van \zcref{code:simple} kan als volgt gegenereerd worden naar PDF:
     \begin{lstlisting}[style=bash,caption={Commandline voorbeelden}]
 pdflatex main
@@ -177,6 +184,7 @@ lualatex main
 latexmk -pvc -lualatex -interaction=nonstopmode main
     \end{lstlisting}
 
+    \noindent
     Stel er worden definitie lijsten gebruikt, dan komen er nog extra stappen bij in het generatieproces, namelijk:
     \begin{lstlisting}[style=Bash,caption={Commandline met definities}]
 lualatex main
@@ -201,6 +209,7 @@ lualatex main
     Neem b\ij{}voorbeeld \cmd|\article|\marg{title} en \cmd|\para|\marg{title}.
     Deze zijn als aparte macro's gedefinieerd en opgemaakt met behulp van \package{titlesec}.\\
 
+    \noindent
     \DescribeEnv{paras}
     Voor de \option{paras} en ``onderdelen'' is een nieuwe environment aangemaakt met behulp van \package{enumitem}.
     De labels van de leden zijn aangepast naar \cmd|\theartikel.\arabic*|, voor leden en, \cmd|\abalphnum{\arabic*)}|, voor onderdelen.
@@ -242,21 +251,25 @@ lualatex main
     Voor het verwijzen naar definities wordt gebruik gemaakt van \package{glossaries-extra}.
     Dit zorgt ervoor dat er met de \cmd|\gls|\marg{label} macrofamilie verwezen kan worden.\\
 
+    \noindent
     \DescribeEnv{definitions}
     \DescribeEnv{externals}
     Om conflicten tussen begrippen, afkortingen en definities te voorkomen voegt dit pakket twee \texttt{glossary} types toe.
     Voor definities binnen hetzelfde bestand worden ze onder het type \option{definitions} geplaatst, waar bij definities van andere documenten ze geplaatst worden onder \option{externals} (zie \zcref{sec:extern}).\\
 
+    \noindent
     \DescribeMacro{\printdefs}
     Om definities op te sommen zijn er verschillende macro's toegevoegd.
     De meest voor de hand liggende, \cmd|\printdefs|\marg{width of text}, worden de definities met aangepaste stijl opgesomd.
     Het argument \marg{width of text} wordt meegegeven om wille van de uitlijning van definitie aanduidingen en beschrijvingen.\\
 
+    \noindent
     \DescribeMacro{\describe}
     Om hetzelfde resultaat te behalen met \cmd|\describe|\marg{label} is het eerst nodig om \cmd|\glssetwidest| aan te roepen in b\ij{}voorbeeld Markdown (zie \zcref{code:example-md}).
     De macro \cmd|\describe| leent zich uitstekend om handmatig definitie beschrijvingen te plaatsen.
     Deze macro voegt namelijk een ankerpunt toe, vereist voor werkende hyperlinks.\\
 
+    \noindent
     \DescribeMacro{\loadglsdefs}
     Om definities in te laden zijn er twee macro's gedefinieerd.
     De \cmd|\loadglsdefs|\marg{src} macro voegt BibTeX bibliotheken toe onder het type \option{definitions} en heeft als categorie \option{definitions}.
@@ -265,6 +278,7 @@ lualatex main
     De opsomming wordt gesorteerd aan de hand van het Nederlandse woordenboek.
     Woorden die niet voorkomen daarin worden als eerste opgesomd.\\
 
+    \noindent
     \DescribeMacro{\loadextdefs}
     Voor \cmd|\loadextdefs|\oarg{category}\marg{src} kan het handig zijn om een categorie mee te geven, zodat definities van verschillende bronnen uit elkaar gehouden kunnen worden.
     Het is daarentegen onverstandig deze direct aan te roepen, aangezien \cmd|\masterdocument| hier al slim op in speelt.
@@ -304,6 +318,7 @@ lualatex main
     In de voorbeelden hierboven is al een opmerkelijk verschil te zien tussen alternatief \cmd|\zref|, namelijk de presentatie van de/het verwijsnummer/letter/woord en een afwijkend type in de titel.
     B\ij{}voorbeeld voor \texttt{ex1-lid:lorem} is de titel `2.1' en wordt aangehaald met `eerste'.\\
 
+    \noindent
     \DescribeMacro{\nref}
     \DescribeMacro{\Nref}
     Om te verwijzen met de bijbehorende benaming is er de macrofamilie \cmd{\nref}\marg{label} ontwikkeld.
@@ -319,9 +334,11 @@ lualatex main
         EN & \Nref{ex1-art:lorem} & \Nref{ex1-lid:lorem} & \Nref{ex1-sub:lorem}\\
     \end{tabularx}\selectlanguage{dutch}\\
 
+    \noindent
     Een opmerkelijk verschil tussen het alternatief \cmd|\zcref| is dat \cmd|\nref| rekening kan houden met de positie van de benaming.
     Kijk bijvoorbeeld naar de uitkomst van het lid ($\langle geschreven\ ordinaal\rangle\ \langle benoeming\rangle$).\\
 
+    \noindent
     Met de macrofamilies \cmd|\rref| en \cmd|\nref| is er dus al veel mogelijk, echter zijn er nog veel andere factoren die meespelen als het gaat om verwijzen.
     Macro \cmd|\nref| doet bijvoorbeeld wel al de juiste benaming erbij, maar bij het verwijzen naar een lid wordt er geen bijbehorend artikel genoemd.
     \DescribeMacro{\aref}
@@ -345,77 +362,6 @@ and \aref{ex1-sub:lorem,ex1-sub:lorem2,ex1-sub:lorem3,ex1-sub:lorem4}.
         and \aref{ex1-sub:lorem,ex1-sub:lorem2,ex1-sub:lorem3,ex1-sub:lorem4}.
     \end{center}
     \selectlanguage{dutch}
-
-
-%    \cmd|\Aref| kan zelfs meerdere labels meekrijgen gescheiden met een komma.
-%    Afhankelijk van de volgordelijkheid van de meegegeven labels koppelt \cmd|\aref| de labels op de juiste manier.
-%    Dit kan een lijst opsomming geven, zoals \aref{ex1-sub:lorem,ex1-sub:lorem3,ex1-sub:lorem4}, of een reeks, zoals
-%    \aref{ex1-sub:lorem,ex1-sub:lorem2,ex1-sub:lorem3,ex1-sub:lorem4}.
-%
-%    Een andere tekortkoming van \package{cleveref} is dat het niet automatisch de bijbehorende onderdelen kan vinden.
-%    Met \package{zref} kan dit wel geïmplementeerd worden, echter maakt alleen \cmd|\aref| hier gebruik van.
-%    B\ij{}voorbeeld \cmd|\zref{sub:eerste}| resulteert in \zcref{ex1-lid:lorem}, in plaats van \aref{ex1-lid:lorem}.\\
-%
-%    Deze macro's zijn geschreven met behulp van \package{zref} en \package{xassoccnt}.
-%    \cmd|\Aref| kijkt naar het eerste label en genereert daarna het voorvoegsel, b\ij{}voorbeeld voor een lid is het voorvoegsel `artikel 1,~'.
-%    Daarna worden alle labels meegegeven aan een interne macro \cmd|\aref@group|.
-%    Wanneer er verschillende type labels meegegeven worden aan \cmd|\aref| is de uitkomst daarvan ongedefinieerd.
-%    Neem b\ij{}voorbeeld \cmd|\aref{lid:lorem,sub:lorem}|, wat in dit geval leidt tot een foutmelding.
-%    Dit is te verwachten, aangezien \texttt{lid:lorem} geen onderdeel uitmaakt van \texttt{art:cookies}.
-%
-%    Het verschil met \cmd|\zref| is dat het een volledige verwijzing geeft en het juiste formaat hanteert.
-%    \cmd|\aref{ex2-sub:lorem}| resulteert wel in `\aref{ex2-sub:lorem}', in plaats van alleen `\zcref{ex2-sub:lorem}'.
-%
-%    \clearpage
-%    \noindent
-%    \cmd|\nref*{code:example-md}| => \nref*{code:example-md}\\
-%    \DescribeMacro{\rref}
-%    \rref{ex1-art:defs}, \rref{ex1-lid:lorem}, \rref{ex1-sub:lorem}\\
-%    \DescribeMacro{\rref*}
-%    \rref*{ex1-art:defs}, \rref*{ex1-lid:lorem}, \rref*{ex1-sub:lorem}\\
-%    \DescribeMacro{\Rref*}
-%    \Rref*{ex1-art:defs}, \Rref*{ex1-lid:lorem}, \Rref*{ex1-sub:lorem}\\
-%    \DescribeMacro{\nref}
-%    \nref{ex1-art:defs}, \nref{ex1-lid:lorem}, \nref{ex1-sub:lorem}\\
-%    \DescribeMacro{\nref*}
-%    \nref*{ex1-art:defs}, \nref*{ex1-lid:lorem}, \nref*{ex1-sub:lorem}\\
-%    \DescribeMacro{\Nref*}
-%    \Nref*{ex1-art:defs}, \Nref*{ex1-lid:lorem}, \Nref*{ex1-sub:lorem}\\
-%    \DescribeMacro{\Aref}
-%    \Aref{ex1-art:defs}\\
-%    \Aref{ex1-lid:lorem}\\
-%    \Aref{ex1-sub:lorem}\\
-%    \selectlanguage{english}\\
-%    \DescribeMacro{\rref}
-%    \rref{ex1-art:defs}, \rref{ex1-lid:lorem}, \rref{ex1-sub:lorem}\\
-%    \DescribeMacro{\rref*}
-%    \rref*{ex1-art:defs}, \rref*{ex1-lid:lorem}, \rref*{ex1-sub:lorem}\\
-%    \DescribeMacro{\Rref*}
-%    \Rref*{ex1-art:defs}, \Rref*{ex1-lid:lorem}, \Rref*{ex1-sub:lorem}\\
-%    \DescribeMacro{\nref}
-%    \nref{ex1-art:defs}, \nref{ex1-lid:lorem}, \nref{ex1-sub:lorem}\\
-%    \DescribeMacro{\nref*}
-%    \nref*{ex1-art:defs}, \nref*{ex1-lid:lorem}, \nref*{ex1-sub:lorem}\\
-%    \DescribeMacro{\Nref*}
-%    \Nref*{ex1-art:defs}, \Nref*{ex1-lid:lorem}, \Nref*{ex1-sub:lorem}\\
-%    \DescribeMacro{\Aref}
-%    \Aref{ex1-art:defs}\\
-%    \Aref{ex1-lid:lorem}\\
-%    \Aref{ex1-sub:lorem}\\
-%%    \rref*{ex1-art:defs},\rref*{ex1-lid:lorem},\rref*{ex1-sub:lorem}\\
-%%    {[\nref*{ex1-art:defs}\nref*{ex1-lid:lorem},\nref*{ex1-sub:lorem}]}\\
-%    \clearpage
-
-%    \DescribeMacro{\crefname}
-%    Voor zowel \cmd|\zref| als \cmd|\aref| kunnen de aanduidingen van verwijzingen dankzij \package{cleveref} aangepast worden.
-%    Stel dat `onderdeel a' een andere aanduiding dient te hebben, b\ij{}voorbeeld `sub.\ a'.
-%    Dit kan door middel van \cmd|\crefname|.
-%    Deze macro krijgt drie argumenten, namelijk de \texttt{counter}, enkelvoud vorm en meervoudsvorm.
-%    \begin{lstlisting}[style=TeX]
-%\crefname{ledenii}{sub.\ }{sub.\ }
-%    \end{lstlisting}
-%    In het voorbeeld wordt `sub.' voor zowel enkel- als meervoud gebruikt.
-%    De volgende counters kunnen gebruikt worden: \texttt{artikel, lid, ledeni, ledenii}.
 
     \subsection{Conjunctie}
     \DescribeMacro{\setmiddleconjunction\\\marg{format}}
@@ -441,7 +387,7 @@ and \aref{ex1-sub:lorem,ex1-sub:lorem2,ex1-sub:lorem3,ex1-sub:lorem4}.
     \clearpage
     \section{Verwijzingen naar andere documenten}\label{sec:extern}
     Verwijzen naar andere documenten gegenereerd met het \package{regulatory} pakket kan vrij eenvoudig.
-    \DescribeMacro{\refdocument\\\oarg{prefix}\\\marg{name}}
+    \DescribeMacro{\refdocument\\\oarg{prefix}\\\marg{name}\\\marg{opts...}}
     Na het opgeven van \cmd|\refdocument| in de preamble kan er naar artikelen, leden en onderdelen verwezen worden.
     De macro familie \cmd|\aref| blijft dankzij \cmd|\zexternaldocument| van \package{zref-xr} nog steeds werken.
     Om ambiguïteit te voorkomen kan er een speciale \option{prefix} toegevoegd worden.
@@ -449,58 +395,149 @@ and \aref{ex1-sub:lorem,ex1-sub:lorem2,ex1-sub:lorem3,ex1-sub:lorem4}.
     Label \texttt{lid:lorem} wordt dan \texttt{ext-lid:lorem}.
     Let wel dat de \option{prefix} niet geldt voor het verwijzen naar definities met \cmd|\gls|.\\
 
+    \noindent
     \DescribeMacro{\masterdocument\\\oarg{prefix}\\\marg{name}\\\marg{opts...}\\}
     Om een volledige koppeling te maken met andere \package{regulatory} documenten wordt de \cmd|\masterdocument| macro gebruikt.
     Een volledige koppeling houdt in:
     \begin{enumerate}
         \item verwijzen met de \cmd|\aref| familie;
         \item verwijzen naar definities met de \cmd|\gls| familie;
+        \item verwijzen naar het bijbehorende document;
         \item een voetnoot met het document als bijlage bij de eerste verschijning van een verwijzing of definitie.
     \end{enumerate}
     Het kan zelfs dat een document meerdere `master' documenten heeft, zoals dit document:
     \begin{lstlisting}[style=tex]
+\newcommand\definitionlabel[1]{~(zie #1)}
 \masterdocument[ex1-]{example1}{
     defs=example1,
     author=E. Nijenhuis,
     subject= Voorbeeld Één,
     description = Het éérste voorbeeld document,
+    ref label=van Voorbeeld Één,
+    def label=\definitionlabel
 }
 
 \masterdocument[ex2-]{example2}{
-    defs=extra,
+    defs=example2,
     author=E. Nijenhuis,
     subject= Voorbeeld Twee,
     description = Het tweede voorbeeld document,
+    ref label=van Voorbeeld Twee,
+    def label=\definitionlabel
 }
     \end{lstlisting}
 
+    Beide macro's \cmd{\refdocument} en \cmd{\masterdocument} hebben als derde argument keuze uit de volgende opties:
+    \begin{labeling}{\texttt{footnote label}}
+        \addtokomafont{labelinglabel}{\ttfamily}
+        \item[name] standaard hetzelfde als het eerste argument van de macro's.
+        \item[filename] standaard het eerste argument met \texttt{.pdf} geconcateneerd.
+        Deze optie kan overschreven worden wanneer de naam niet correspondeerd met de bestandsnaam.
+        \item[ref label] standaard heeft deze macro geen waarde en in dat geval wordt er in \cmd{\documentlabel} de volgende standaard waarde gebruikt: \lstinline|\GetTranslation{of the} \artifactsubject{#1}|.
+        Deze macro krijgt als argument de \texttt{name} van het document.
+        \item[def label] standaard heeft deze macro de volgende waarde: \lstinline|~(\GetTranslation{see} #1)|.
+        Het argument bevat de \texttt{subject} met eventueel de footnote (afhankelijk van \texttt{referred}).
+        \item[footnote] standaard is de waarde \texttt{true}, zodat er voetnoten geplaatst worden bij de eerste verschijning.
+        Deze kan naar \texttt{false} gezet worden om dit te voorkomen.
+        \item[footnote label] deze macro krijgt als argument het bijgevoegde document met \texttt{subject} als weergave in de tekst.
+        Standaard print deze macro enkel het eerste argument.
+        \item[url] deze optie wordt nog niet gebruikt.
+        De bedoeling van deze optie is om in de voetnoot de vindplaats van het document te duiden.
+        \item[referred] deze optie is voor intern gebruik.
+        \cmd{\documentfootnote} zet deze waarde naar \texttt{true}.
+        \item[defs] deze optie wordt gebruikt om externe definitielijsten in te laden onder dit document.
+        Op deze manier kan bij eerste verschijningen van definities de juiste bron vermeldt worden.
+        \item[author] deze optie wordt in \cmd|\documentattachment| gebruikt voor metadata t.b.v.\ sommige PDF-weergave applicaties.
+        \item[subject] deze optie wordt net als \texttt{author} gebruikt in de bijlage.
+        \item[description] deze optie wordt net als \texttt{author} gebruikt in de bijlage.
+    \end{labeling}
 
-%    \DescribeMacro{\newartifact\marg{...}\\}
-%
-%    \DescribeMacro{\artifactname\\\marg{artifact}}
-%    \DescribeMacro{\artifactfilename}
-%    \DescribeMacro{\artifacturl}
-%    \DescribeMacro{\artifactreferred}
-%    \DescribeMacro{\artifactdefs}
-%    \DescribeMacro{\artifactauthor}
-%    \DescribeMacro{\artifactsubject}
-%    \DescribeMacro{\artifactdescription\\}
+    \noindent
+    \DescribeMacro{\documentlabel\\\marg{label}}
+    \DescribeMacro{\documentfootnote\\\oarg{link text}\\\marg{label}}
+    \DescribeMacro{\documentattachment\\\marg{label}\\\marg{link text}}
+    Voor zowel verwijzingen naar definities als artikelen e.d.\ wordt de bron vermeldt en wordt er bij de eerste verschijning een voetnoot geplaatst met een bijlage van het exemplaar.
+    Onder water worden \cmd|\documentlabel|\footnote{Deze macro gebruikt het label van verwijzingen en dus niet van definities.} \cmd|\documentfootnote| en \cmd|\documentattachment| aangeroepen voor artikelen e.d.\ en definities.\\
 
-%    \clearpage
-
-    \DescribeMacro{\reffootnotelabel}
-    \DescribeMacro{\deffootnotelabel}
-    \texttt{[WIP]}\footnote{Deze macro's zijn nog in ontwikkeling. De kans is groot dat er nog wijzigingen in aangebracht worden.}
-    Voor zowel verwijzingen naar definities als artikelen e.d.\ wordt bij de eerste verschijning een voetnoot geplaatst.
-    Onder water wordt \cmd|\reffootnotelabel|\marg{label} aangeroepen voor artikelen e.d.\ en voor definities \cmd|\deffootnotelabel|\marg{label}.\\
-
+    \noindent
     Deze macro's kunnen ook handmatig uitgevoerd worden.
-    Neem b\ij{}voorbeeld \cmd|\aref{ex1-sub:lorem}\reffootnotelabel{example1}| wat zou leiden tot:
-    `\aref{ex1-sub:lorem}\reffootnotelabel{example1}'.
-    En voor \cmd|\gls{def4}\deffootnotelabel{example2}| is de uitkomst `\gls{def4}'.
+    Neem b\ij{}voorbeeld \cmd|\documentfootnote{example2}| wat zou leiden tot:
+    `\documentfootnote{example2}'.
 
+    \clearpage
     \section{Taalondersteuning}
-    Nog te komen\ldots
+    In beginsel bood dit pakket alleen ondersteuning voor Nederlands.
+    Toen Engels geïmplementeerd werd zijn er bepaalde macro's bij gekomen, zodat er makkelijk geschakeld kan worden tussen talen.
+    De notatie van verwijzingen in het Engels en Nederlands verschillen der mate dat de instelling van een taal best complex kan zijn, echter maakt dit het wellicht instelbaar voor andere talen.\\
+
+    \noindent
+    \DescribeMacro{\rref@setup\\\marg{lang}\\\marg{article opts...}\\\marg{para opts...}\\\marg{sub opts...}}
+    De \cmd|\rref@setup| macro heeft als eerste argument de taal die ingesteld dient te worden.
+    De andere drie argumenten accepteren meerdere opties, namelijk:
+    \begin{labeling}{\texttt{group conjunction}}
+        \addtokomafont{labelinglabel}{\ttfamily}
+        \item[name] de benaming in kleine letters.
+        Bijvoorbeeld `artikel', `art.', `onderdeel', et cetera.
+        Standaard voor \\artikel \lstinline|\GetTranslation{article}|, \\lid \lstinline|\GetTranslation{paragraph}| en \\onderdeel \lstinline|\GetTranslation{subparagraph}|.
+        \item[Name] de benaming beginnend met een hoofdletter.
+        Bijvoorbeeld `Artikel'.
+        Net als \texttt{name} gebruikt deze optie standaard \lstinline|\GetTranslation|, maar dan met een hoofdletter.
+        \item[ref format] een macro met één argument, namelijk het huidige nummer.
+        Voor bijvoorbeeld een lid (of subparagraph in het Engels) is hiervoor \lstinline|\ordinalstringnum| gebruikt.
+        In zo'n geval is het belangrijk om rekening te houden met hoofdletter gevoeligheid d.m.v.\ \lstinline|\@ifrrefcap|.
+        Voorbeeld: \lstinline|\@ifrrefcap{\Ordinalstringnum{#1}}{\ordinalstringnum{#1}}|.
+        \item[label format] de volgorde van de verwijzing en de naam.
+        Deze macro krijgt twee argumenten mee, namelijk de \texttt{name} en het resultaat van \texttt{ref format}.
+        Voor bijvoorbeeld een artikel is de volgorde \lstinline|{#1 #2}|, voor een lid \lstinline|{#2 #1}|, en voor een paragraph/lid in het engels \lstinline|{\@gobble{#1}#2}|\footnote{\lstinline|\\@gobble| verwerkt het argument maar print niks uit.}.
+        Let wel dat je een macro dient op te geven.
+        Bij het eerste voorbeeld zou je \cmd|\mylabelformat| als optie meegeven en zou gedefinieerd zijn als \cmd|\newcommand\mylabelformat[2]{#1 #2}|.
+        \item[group conjunction] deze waarde geeft aan hoe het dient gekoppeld te worden aan het bovenliggende onderdeel.
+        Bijvoorbeeld bij ``artikel\Vtextvisiblespace1\textcolor{red}{,\Vtextvisiblespace}eerste\Vtextvisiblespace lid'' is de \texttt{group conjunction} bij de instelling van het artikel gelijk aan \lstinline|{,~}|.
+        \item[group format] deze optie accepteert een macro met één argument.
+        Het eerste argument bevat alle onderliggende onderdelen.
+        Bijvoorbeeld in het Engels dient bij een subparagraph/onderdeel het artikel en lid/paragraph omringd te worden met blokhaken.
+        De waarde is dan bij het onderdeel \cmd|{{[}#1{]}~}|.
+    \end{labeling}
+    Deze opties kunnen verschillend zijn per artikel, lid en onderdeel.
+
+    Bij het definiëren van een nieuwe taal is het belangrijk om te weten dat de standaard waarden gebaseerd zijn op de Engelse configuratie.
+    Neem bijvoorbeeld de Nederlandse configuratie inclusief alle gebruikte hulp macro's:
+    \begin{lstlisting}[style=TeX,caption={Nederlandse configuratie},numbers=left]
+\newcommand\rref@refformat@noop[1]{#1}
+\newcommand\rref@refformat@parenthesis[1]{(#1)}
+\newcommand\rref@refformat@ordinal[1]{%
+    \@ifrrefcap{%
+        \Ordinalstringnum{#1}%
+    }{%
+        \ordinalstringnum{#1}%
+    }%
+}
+\newcommand\rref@refformat@alpha[1]{%
+    \@ifrrefcap{%
+        \ABAlphnum{#1}%
+    }{%
+        \abalphnum{#1}%
+    }%
+}
+\newcommand\rref@label@prefix[2]{#1 #2}
+\newcommand\rref@label@postfix[2]{#2 #1}
+\newcommand\rref@label@refonly[2]{\@gobble{#1}#2}
+\newcommand\rref@group@braced[1]{{[}#1{]~}}
+
+\rref@setup{dutch}{
+    group conjunction={,~}
+}{
+    ref format=\rref@refformat@ordinal,
+    label format=\rref@label@postfix,
+    group conjunction={,~},
+    group format=\rref@refformat@noop
+}{
+    ref format=\rref@refformat@alpha,
+    label format=\rref@label@prefix,
+    group conjunction={,~},
+    group format=\rref@refformat@noop
+}
+    \end{lstlisting}
 
     \clearpage
     \section*{Voorbeelden}\label{sec:example}

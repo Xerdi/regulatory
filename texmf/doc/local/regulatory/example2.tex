@@ -7,11 +7,16 @@
 \setcounter{lip}{1}
 \newcommand\textfill{\lipsum[\arabic{lip}]\stepcounter{lip}}
 
+\newcommand\definitionlabel[1]{~(zie #1)}
+
 \masterdocument[ex1-]{example1}{%
     defs=example1,%
     author=E. Nijenhuis,%
     subject= Voorbeeld Één,%
     description = Het éérste voorbeeld document,
+    footnote label = Bijlage:~,
+    ref label=van Voorbeeld Één,
+    def label=\definitionlabel
 }
 \loadglsdefs{example2}
 

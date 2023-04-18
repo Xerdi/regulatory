@@ -38,6 +38,7 @@
 % Markdown support
 \ifthenelse{\boolean{regulatory@usemarkdown}}{
 \RequirePackage[hashEnumerators,definitionLists,hybrid,headerAttributes=true]{markdown}
+\RequirePackage{regulatory}
 \setkeys{markdownRenderers}{
 headingOne={\article{#1}},
 olItemWithNumber={\item{}},
@@ -126,6 +127,7 @@ dlEnd={\end{labeling}}%
 \DeclareTranslation{dutch}{Subparagraph}{Onderdeel}
 \DeclareTranslation{dutch}{to}{tot}
 \DeclareTranslation{dutch}{Definitions}{Definities}
+\DeclareTranslation{dutch}{of the}{van de}
 
 \zcRefTypeSetup{article}{%
     Name-sg = \GetTranslation{Article},
@@ -260,13 +262,13 @@ dlEnd={\end{labeling}}%
 }{
     ref format=\rref@refformat@ordinal,
     label format=\rref@label@postfix,
-    group conjunction/.initial={,~},
-    group format/.initial=\rref@refformat@noop
+    group conjunction={,~},
+    group format=\rref@refformat@noop
 }{
     ref format=\rref@refformat@alpha,
     label format=\rref@label@prefix,
-    group conjunction/.initial={,~},
-    group format/.initial=\rref@refformat@noop
+    group conjunction={,~},
+    group format=\rref@refformat@noop
 }%
 
 \newcommand\rref@set[4][\languagename]{%
@@ -395,8 +397,9 @@ dlEnd={\end{labeling}}%
     \zref@ifrefcontainsprop{#1}{externaldocument}{%
         \def\@aref@filelabel{\zref@extract{#1}{externaldocument}}%
         \def\@aref@postlink{%
+            , \documentlabel{\@aref@filelabel}%
             \ifthenelse{\equal{\artifactfootnote{\@aref@filelabel}}{true}\and\equal{\artifactreferred{\@aref@filelabel}}{false}}{%
-                \reffootnotelabel{\@aref@filelabel}%
+                \documentfootnote{\@aref@filelabel}%
             }{}%
         }%
     }{%
@@ -487,7 +490,7 @@ dlEnd={\end{labeling}}%
 \newcommand\bubblesort[1]{\def\sortedlist{}\sortlist#1,\listterminator,\relax}
 \def\sortlist#1,#2,#3\relax{%
     \rref@setcurrent{#1}%
-    \aref@setcurrent{#1}% TODO: deprecated
+    \aref@setcurrent{#1}%
     \ifnum\rref@number{#2}=\listterminator\relax%
         \edef\sortedlist{\sortedlist#1}%
     \else%
@@ -508,6 +511,8 @@ dlEnd={\end{labeling}}%
 \newglossary*{definitions}{Definitions}
 \newglossary*{externals}{Externals}
 
+\newcommand\artifact@footnote@noop[1]{#1}
+\newcommand\artifact@def@label@default[1]{~(\GetTranslation{see} #1)}
 
 \newcommand\newartifact[2]{%
     \pgfkeys{
@@ -515,7 +520,10 @@ dlEnd={\end{labeling}}%
         /artifact/#1,
         name/.initial = #1,
         filename/.initial = #1.pdf,
+        ref label/.initial=,
+        def label/.initial=\artifact@def@label@default,
         footnote/.initial = true,
+        footnote label/.initial=\artifact@footnote@noop,
         url/.initial=,
         referred/.initial = false,
         defs/.initial=,
@@ -526,6 +534,7 @@ dlEnd={\end{labeling}}%
     \pgfkeys{/artifact/#1,#2}
 }
 \newcommand\@aget[2]{\pgfkeysvalueof{/artifact/#1/#2}}
+\newcommand\artifact@setfootnotelabel[1]{\pgfkeysgetvalue{/artifact/#1/footnote label}{\artifactfootnotelabel}}
 \newcommand\artifactname[1]{\@aget{#1}{name}}
 \newcommand\artifactfilename[1]{\@aget{#1}{filename}}
 \newcommand\artifactfootnote[1]{\@aget{#1}{footnote}}
@@ -569,16 +578,27 @@ dlEnd={\end{labeling}}%
 
 \attachfilesetup{color=black}
 
-\newcommand\reffootnotelabel[1]{%
-\pgfkeys{/artifact/#1,referred=true}%
-\def\@tmpfile{\artifactfilename{#1}}%
-, van \artifactsubject{#1}\footnote{Bijlage: \textattachfile[description={\artifactdescription{#1}},subject={\artifactsubject{#1}},author={\artifactauthor{#1}}]{\@tmpfile}{\@tmpfile}}%
+\newcommand\documentattachment[2]{%
+    \def\@tmpfile{\artifactfilename{#1}}%
+    \textattachfile[description={\artifactdescription{#1}},subject={\artifactsubject{#1}},author={\artifactauthor{#1}}]{\@tmpfile}{#2}%
 }
 
-\newcommand\deffootnotelabel[1]{%
-    \pgfkeys{/artifact/#1,referred=true}%
-    \def\@tmpfile{\artifactfilename{#1}}%
-    ~(zie \artifactsubject{#1}\footnote{Bijlage: \textattachfile[description={\artifactdescription{#1}},subject={\artifactsubject{#1}},author={\artifactauthor{#1}}]{\@tmpfile}{\@tmpfile}})%
+\newcommand\documentlabel[1]{%
+    \def\@@label{\@aget{#1}{ref label}}%
+    \ifthenelse{\equal{\@@label}{}}{%
+        \GetTranslation{of the} \artifactsubject{#1}%
+    }{\@@label}%
+}
+
+\newcommand\documentfootnote[2][]{%
+    \pgfkeys{/artifact/#2,referred=true}%
+    \artifact@setfootnotelabel{#2}%
+    \ifthenelse{\equal{#1}{}}{%
+        \def\artifact@description{\artifactsubject{#2}}%
+    }{%
+        \def\artifact@description{#1}%
+    }%
+    \footnote{\artifactfootnotelabel{\documentattachment{#2}{\artifact@description}}}%
 }
 
 \edef\@regulatory@bib@selection{}
@@ -600,14 +620,17 @@ dlEnd={\end{labeling}}%
         \loadglsentries[externals]{#2}%
     }%
     \glsdefpostlink{#1}{%
-        \ifthenelse{\equal{\artifactreferred{#1}}{true}}{}{%
-            \deffootnotelabel{#1}%
+        \@aget{#1}{def label}{%
+            \artifactsubject{#1}%
+            \ifthenelse{\equal{\artifactreferred{#1}}{true}}{}{%
+                \documentfootnote{#1}%
+            }%
         }%
     }%
 }
 
-\newcommand\refdocument[2][ext-]{%
-    \newartifact{#2}{footnote=false}%
+\newcommand\refdocument[3][ext-]{%
+    \newartifact{#2}{footnote=false,#3}%
     \zexternaldocument[#1]{#2}%
 }
 
