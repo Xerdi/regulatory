@@ -55,7 +55,6 @@
 % Markdown support
 \ifthenelse{\boolean{regulatory@usemarkdown}}{
 \RequirePackage[hashEnumerators,definitionLists,hybrid,headerAttributes=true]{markdown}
-\RequirePackage{regulatory}
 \setkeys{markdownRenderers}{
 headingOne={\article{#1}},
 olItemWithNumber={\item{}},
@@ -80,9 +79,9 @@ dlEnd={\end{labeling}}%
 \RequirePackage{fmtcount}
 \RequirePackage{scrextend}
 \RequirePackage{xr-hyper}
-\RequirePackage{hyperref}
 \RequirePackage[user,counter,hyperref,xr]{zref}
 \RequirePackage{zref-xr,zref-user,zref-clever,zref-hyperref}
+\RequirePackage{hyperref}
 \RequirePackage{pgf}
 \RequirePackage[sanitize=none,nopostdot]{glossaries}
 \ifthenelse{\boolean{regulatory@usebib2gls}}{%
@@ -105,6 +104,7 @@ dlEnd={\end{labeling}}%
 \colorlet{subtitle}{black}
 
 
+
 % Artikelen
 \newcounter{article}
 \titleclass{\article}[0]{straight}
@@ -124,6 +124,11 @@ dlEnd={\end{labeling}}%
 \def\toclevel@article{2}
 \newcommand{\l@para}{\@dottedtocline{1}{3.8em}{2.3em}}
 \def\toclevel@para{3}
+
+\newcounter{provisions}
+\newlist{provisions}{enumerate}{1}
+\setlist[provisions,1]{label=\arabic*.,align=left,itemsep=0pt}
+\counterwithin{provisions}{section}
 
 \newlist{paras}{enumerate}{2}
 \setlist[paras,1]{label=\thearticle.\arabic*.,ref=\arabic*,align=left,itemsep=0pt}
@@ -637,9 +642,9 @@ dlEnd={\end{labeling}}%
         \loadglsentries[externals]{#2}%
     }%
     \glsdefpostlink{#1}{%
+    \ifthenelse{\equal{\artifactreferred{#1}}{true}}{}{%
         \@aget{#1}{def label}{%
-            \artifactsubject{#1}%
-            \ifthenelse{\equal{\artifactreferred{#1}}{true}}{}{%
+                \artifactsubject{#1}%
                 \documentfootnote{#1}%
             }%
         }%

@@ -14,6 +14,8 @@ TEXMFAUXTREES=$HOME/src/regulatory/texmf,
 ```
 */etc/texmf/texmf.d/01xerdi.cnf*
 
+Afterward execute `update-texmf` with root permissions.
+It can be validated by the output of: `kpsewhich -var-value TEXMFAUXTREES`.
 ## Documentation
 The documentation has yet to be translated from Dutch to English.
 Make sure to install fonts 'Prompt' and 'Jetbrains Mono'.
