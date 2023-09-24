@@ -74,7 +74,7 @@ dlEnd={\end{labeling}}%
 \RequirePackage{xcolor}
 \RequirePackage{xassoccnt}
 \RequirePackage{xpatch}
-\RequirePackage[loadonly]{titlesec}
+\RequirePackage{titlesec}
 \RequirePackage{enumitem}
 \RequirePackage{fmtcount}
 \RequirePackage{scrextend}
@@ -417,7 +417,8 @@ dlEnd={\end{labeling}}%
 \newcommand\aref@setcurrent[1]{%
     \def\aref@current@reflink{\rref@reflink[\rref@current@type]{\rref@current@value}}%
     \zref@ifrefcontainsprop{#1}{externaldocument}{%
-        \def\@aref@filelabel{\zref@extract{#1}{externaldocument}}%
+        \filename@parse{\expanded{\zref@extract{#1}{externaldocument}}}%
+        \edef\@aref@filelabel{\expanded{\filename@base}}%
         \def\@aref@postlink{%
             , \documentlabel{\@aref@filelabel}%
             \ifthenelse{\equal{\artifactfootnote{\@aref@filelabel}}{true}\and\equal{\artifactreferred{\@aref@filelabel}}{false}}{%
@@ -542,6 +543,7 @@ dlEnd={\end{labeling}}%
         /artifact/#1,
         name/.initial = #1,
         filename/.initial = #1.pdf,
+        path/.initial = ./,
         ref label/.initial=,
         def label/.initial=\artifact@def@label@default,
         footnote/.initial = true,
@@ -558,7 +560,9 @@ dlEnd={\end{labeling}}%
 \newcommand\@aget[2]{\pgfkeysvalueof{/artifact/#1/#2}}
 \newcommand\artifact@setfootnotelabel[1]{\pgfkeysgetvalue{/artifact/#1/footnote label}{\artifactfootnotelabel}}
 \newcommand\artifactname[1]{\@aget{#1}{name}}
+\newcommand\artifactfullname[1]{\@aget{#1}{path}\@aget{#1}{name}}
 \newcommand\artifactfilename[1]{\@aget{#1}{filename}}
+\newcommand\artifactfullfilename[1]{\@aget{#1}{path}\@aget{#1}{filename}}
 \newcommand\artifactfootnote[1]{\@aget{#1}{footnote}}
 \newcommand\artifacturl[1]{\@aget{#1}{url}}
 \newcommand\artifactreferred[1]{\@aget{#1}{referred}}
@@ -601,7 +605,7 @@ dlEnd={\end{labeling}}%
 \attachfilesetup{color=black}
 
 \newcommand\documentattachment[2]{%
-    \def\@tmpfile{\artifactfilename{#1}}%
+    \def\@tmpfile{\artifactfullfilename{#1}}%
     \textattachfile[description={\artifactdescription{#1}},subject={\artifactsubject{#1}},author={\artifactauthor{#1}}]{\@tmpfile}{#2}%
 }
 
@@ -642,8 +646,8 @@ dlEnd={\end{labeling}}%
         \loadglsentries[externals]{#2}%
     }%
     \glsdefpostlink{#1}{%
-    \ifthenelse{\equal{\artifactreferred{#1}}{true}}{}{%
-        \@aget{#1}{def label}{%
+        \ifthenelse{\equal{\artifactreferred{#1}}{true}}{}{%
+            \@aget{#1}{def label}{%
                 \artifactsubject{#1}%
                 \documentfootnote{#1}%
             }%
@@ -653,12 +657,12 @@ dlEnd={\end{labeling}}%
 
 \newcommand\refdocument[3][ext-]{%
     \newartifact{#2}{footnote=false,#3}%
-    \zexternaldocument[#1]{#2}%
+    \zexternaldocument[#1]{\artifactfullname{#2}}[#2]%
 }
 
 \newcommand\masterdocument[3][ext-]{%
     \newartifact{#2}{#3}%
-    \zexternaldocument[#1]{#2}%
+    \zexternaldocument[#1]{\artifactfullname{#2}}[#2]%
     \ifthenelse{\equal{\string\artifactdefs{#2}}{}}{%
         \PackageWarning{regulatory}{No definitions given to the master document. \the\gls commands will therefore not work.}%
     }{%
