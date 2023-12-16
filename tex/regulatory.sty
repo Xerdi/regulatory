@@ -606,7 +606,9 @@ dlEnd={\end{labeling}}%
 
 \newcommand\documentattachment[2]{%
     \def\@tmpfile{\artifactfullfilename{#1}}%
-    \textattachfile[description={\artifactdescription{#1}},subject={\artifactsubject{#1}},author={\artifactauthor{#1}}]{\@tmpfile}{#2}%
+    \IfFileExists{\@tmpfile}{%
+    \textattachfile[description={\artifactdescription{#1}},subject={\artifactsubject{#1}},author={\artifactauthor{#1}}]{\@tmpfile}{#2}}%
+    {\texttt{#2}}%
 }
 
 \newcommand\documentlabel[1]{%
@@ -617,14 +619,16 @@ dlEnd={\end{labeling}}%
 }
 
 \newcommand\documentfootnote[2][]{%
-    \pgfkeys{/artifact/#2,referred=true}%
-    \artifact@setfootnotelabel{#2}%
-    \ifthenelse{\equal{#1}{}}{%
-        \def\artifact@description{\artifactsubject{#2}}%
-    }{%
-        \def\artifact@description{#1}%
-    }%
-    \footnote{\artifactfootnotelabel{\documentattachment{#2}{\artifact@description}}}%
+    \pgfkeysifdefined{/artifact/#2/referred}{%
+        \pgfkeys{/artifact/#2,referred=true}%
+        \artifact@setfootnotelabel{#2}%
+        \ifthenelse{\equal{#1}{}}{%
+            \def\artifact@description{\artifactsubject{#2}}%
+        }{%
+            \def\artifact@description{#1}%
+        }%
+        \footnote{\artifactfootnotelabel{\documentattachment{#2}{\artifact@description}}}%
+    }{\PackageWarning{regulatory}{Artifact does not exists '#2'}\footnote{DOCUMENT NOT FOUND '#2'}}
 }
 
 \edef\@regulatory@bib@selection{}
@@ -666,6 +670,7 @@ dlEnd={\end{labeling}}%
     \ifthenelse{\equal{\string\artifactdefs{#2}}{}}{%
         \PackageWarning{regulatory}{No definitions given to the master document. \the\gls commands will therefore not work.}%
     }{%
+        \PackageWarning{regulatory}{Agreement file loads #1, #2, #3.}
         \loadextdefs[#2]{\artifactdefs{#2}}%
         \ifthenelse{\boolean{regulatory@usebib2gls}}{%
             \glssetcategoryattribute{#2}{targeturl}{\artifactfilename{#2}}%
