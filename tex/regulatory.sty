@@ -18,42 +18,42 @@
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesPackage{regulatory}[2022/06/19 Xerdi's Regulatory Package]
 
+\RequirePackage{pgfopts}
 \RequirePackage{xifthen}
 \RequirePackage{keyval}
 \RequirePackage{xstring}
 \RequirePackage{xspace}
 
-\newboolean{regulatory@usemarkdown}
-\setboolean{regulatory@usemarkdown}{false}
-\DeclareOption{markdown}{%
-    \setboolean{regulatory@usemarkdown}{true}%
+\newif\ifregulatory@markdown
+\newif\ifregulatory@bibtogls
+\newif\ifregulatory@legacy
+\newif\ifregulatory@alldefs
+\pgfkeys{
+    /regulatory/.is family,
+    /regulatory,
+    md/.is if=regulatory@markdown,
+    md=false,
+    bib2gls/.is if=regulatory@bibtogls,
+    bib2gls=true,
+    legacy/.is if=regulatory@legacy,
+    legacy=false,
+    alldefs/.is if=regulatory@alldefs,
+    alldefs=false
 }
 
-\newboolean{regulatory@usebib2gls}
-\setboolean{regulatory@usebib2gls}{true}
-\DeclareOption{bibdefs}{\setboolean{regulatory@usebib2gls}{true}}
-\DeclareOption{nobibdefs}{\setboolean{regulatory@usebib2gls}{false}}
-
-\DeclareOption{hidelinks}{%
-    \PassOptionsToPackage{hidelinks}{hyperref}}
+\InputIfFileExists{regulatory.cfg}{%
+    \PackageInfo{regulatory}{Using local configuration file}%
+}{%
+    \PackageInfo{regulatory}{No local configuration file}%
+}
 
 \newboolean{regulatory@nameinlink}
 \setboolean{regulatory@nameinlink}{true}
 
-\newboolean{regulatory@alldefs}
-\setboolean{regulatory@alldefs}{false}
-\DeclareOption{alldefs}{\setboolean{regulatory@alldefs}{true}}
-
-\newboolean{regulatory@usejuncto}
-\setboolean{regulatory@usejuncto}{false}
-\DeclareOption{juncto}{%
-    \setboolean{regulatory@usejuncto}{true}}
-
-\DeclareOption*{\PackageError{regulatory}{Unknown option}{Options are markdown,bibdefs,nobibdefs,alldefs,hidelinks}}
-\ProcessOptions*
+\ProcessPgfPackageOptions{/regulatory}
 
 % Markdown support
-\ifthenelse{\boolean{regulatory@usemarkdown}}{
+\ifregulatory@markdown
 \RequirePackage[hashEnumerators,definitionLists,hybrid,headerAttributes=true]{markdown}
 \setkeys{markdownRenderers}{
 headingOne={\article{#1}},
@@ -68,7 +68,7 @@ dlBegin={\begin{labeling}{\@glswidestname}},
 dlEnd={\end{labeling}}%
 \renewcommand\markdownRendererOlItemWithNumber[1]{\item{}\label{ml:##1}}
 }
-}{}
+\fi
 
 % Pakketten ná markdown (anders gaat enumitem kapot)
 \RequirePackage{xcolor}
@@ -84,11 +84,12 @@ dlEnd={\end{labeling}}%
 \RequirePackage{hyperref}
 \RequirePackage{pgf}
 \RequirePackage[sanitize=none,nopostdot]{glossaries}
-\ifthenelse{\boolean{regulatory@usebib2gls}}{%
-    \RequirePackage[record,style=alttree]{glossaries-extra}
-}{%
-    \PackageWarning{regulatory}{Using glossaries for definitions without bib2gls. This is mostly untested.}
-}
+\ifregulatory@bibtogls
+\RequirePackage[record,style=alttree]{glossaries-extra}
+\else
+\PackageWarning{regulatory}{Using glossaries for definitions without bib2gls. This is mostly untested.}
+\fi
+
 \RequirePackage{attachfile2}
 \RequirePackage{translations}
 
@@ -96,12 +97,12 @@ dlEnd={\end{labeling}}%
 \setboolean{regulatory@defslisted}{false}
 
 % Kleuren
-\colorlet{artlabel}{black}
-\colorlet{arttitle}{black}
-\colorlet{paralabel}{black}
-\colorlet{paratitle}{black}
-\colorlet{sublabel}{black}
-\colorlet{subtitle}{black}
+\providecolor{artlabel}{rgb}{0,0,0}
+\providecolor{arttitle}{rgb}{0,0,0}
+\providecolor{paralabel}{rgb}{0,0,0}
+\providecolor{paratitle}{rgb}{0,0,0}
+\providecolor{sublabel}{rgb}{0,0,0}
+\providecolor{subtitle}{rgb}{0,0,0}
 
 
 
@@ -218,7 +219,9 @@ dlEnd={\end{labeling}}%
 \setlastconjunction{ \GetTranslation{and} }%
 }
 
-\ifthenelse{\boolean{regulatory@usejuncto}}{\setjuncto}{}
+\ifregulatory@legacy
+\setjuncto
+\fi
 
 \newcommand\rref@refformat@noop[1]{#1}
 \newcommand\rref@refformat@parenthesis[1]{(#1)}
@@ -594,11 +597,11 @@ dlEnd={\end{labeling}}%
         \def\@@wrapper##1{##1}%
     \fi%
     \@@wrapper{%
-        \ifthenelse{\boolean{regulatory@usebib2gls}}{%
+        \ifregulatory@bibtogls%
             \printunsrtglossary[type=definitions,style=alttree,title={},nonumberlist=true]%
-        }{%
+        \else%
             \printglossary[type=definitions,style=alttree,title={},nonumberlist=true]%
-        }%
+        \fi%
     }%
 }
 
@@ -632,23 +635,25 @@ dlEnd={\end{labeling}}%
 }
 
 \edef\@regulatory@bib@selection{}
-\ifthenelse{\boolean{regulatory@alldefs}}{\edef\@regulatory@bib@selection{,selection=all}}{}
+\ifregulatory@alldefs
+\edef\@regulatory@bib@selection{,selection=all}
+\fi
 
 \newcommand\loadglsdefs[1]{%
     \setboolean{regulatory@defslisted}{true}%
-    \ifthenelse{\boolean{regulatory@usebib2gls}}{%
+    \ifregulatory@bibtogls%
         \GlsXtrLoadResources[type=definitions,src={#1},sort={nl-NL},category={defs}\@regulatory@bib@selection]%
-    }{%
+    \else%
         \loadglsentries[definitions]{#1}%
-    }%
+    \fi%
 }
 
 \newcommand\loadextdefs[2][externals]{%
-    \ifthenelse{\boolean{regulatory@usebib2gls}}{%
+    \ifregulatory@bibtogls%
         \GlsXtrLoadResources[type=externals,src={#2},sort={nl-NL},category={#1}]%
-    }{%
+    \else%}{%
         \loadglsentries[externals]{#2}%
-    }%
+    \fi%}%
     \glsdefpostlink{#1}{%
         \ifthenelse{\equal{\artifactreferred{#1}}{true}}{}{%
             \@aget{#1}{def label}{%
@@ -672,12 +677,18 @@ dlEnd={\end{labeling}}%
     }{%
         \PackageWarning{regulatory}{Agreement file loads #1, #2, #3.}
         \loadextdefs[#2]{\artifactdefs{#2}}%
-        \ifthenelse{\boolean{regulatory@usebib2gls}}{%
+        \ifregulatory@bibtogls%
             \glssetcategoryattribute{#2}{targeturl}{\artifactfilename{#2}}%
             \glssetcategoryattribute{#2}{targetname}{\glolinkprefix\glslabel}%
-        }{}%
+        \fi%
     }%
 }
 
-\AtEndPreamble{\ifthenelse{\boolean{regulatory@usebib2gls}}{}{\ifthenelse{\boolean{regulatory@defslisted}}{\makeglossaries}{}}}
-\AtEndDocument{\ifthenelse{\boolean{regulatory@alldefs}}{\glsaddallunused}{}}
+\AtEndPreamble{%
+\ifregulatory@bibtogls\else%
+\ifthenelse{\boolean{regulatory@defslisted}}{\makeglossaries}{}%
+\fi%
+}
+\AtEndDocument{%
+\ifregulatory@alldefs\glsaddallunused\fi%
+}
