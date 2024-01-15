@@ -1,0 +1,20 @@
+\documentclass[12pt,english]{article}
+\usepackage{babel}
+\usepackage[alldefs]{regulatory}
+\usepackage{lipsum}
+
+\newcounter{lip}
+\setcounter{lip}{1}
+\newcommand\textfill{\lipsum[\arabic{lip}]\stepcounter{lip}}
+
+\newcommand\translation[2]{#1}
+
+\refdocument[ex2-]{example2-en}{%
+    ref label=of Example Two
+}
+
+\loadglsdefs{example1}
+
+\begin{document}
+    \input{example1}
+\end{document}

@@ -1,0 +1,20 @@
+\documentclass[12pt,dutch]{article}
+\usepackage{babel}
+\usepackage[alldefs]{regulatory}
+\usepackage{lipsum}
+
+\newcounter{lip}
+\setcounter{lip}{1}
+\newcommand\textfill{\lipsum[\arabic{lip}]\stepcounter{lip}}
+
+\newcommand\translation[2]{#2}
+
+\refdocument[ex2-]{example2-nl}{%
+    ref label=van Voorbeeld Twee
+}
+
+\loadglsdefs{example1}
+
+\begin{document}
+    \input{example1}
+\end{document}

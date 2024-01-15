@@ -1,0 +1,58 @@
+%% regulatory.tex
+%% Copyright 2023 E. Nijenhuis
+%
+% This work may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License, either version 1.3
+% of this license or (at your option) any later version.
+% The latest version of this license is in
+% http://www.latex-project.org/lppl.txt
+% and version 1.3 or later is part of all distributions of LaTeX
+% version 2005/12/01 or later.
+%
+% This work has the LPPL maintenance status ‘maintained’.
+%
+% The Current Maintainer of this work is E. Nijenhuis.
+%
+% This work consists of the files regulatory.tex, fc-dutch.def
+% and regulatory.sty
+\documentclass[10pt,dutch]{ltxdoc}
+
+%! suppress = InclusionLoop
+\usepackage[md]{regulatory}
+\usepackage{tabularx}
+\usepackage[dutch,english]{babel}
+
+\input{regulatory-preamble}
+
+\zcRefTypeSetup{listing}{%
+    Name-sg = Codelijst,
+    name-sg = codelijst,
+    Name-pl = Codelijsten,
+    name-pl = codelijsten
+}
+
+\renewcommand{\lstlistingname}{Codelijst}
+
+\newcommand\translation[2]{#2}
+
+\masterdocument[ex1-]{example1-nl}{%
+    defs=example1,%
+    author=E. Nijenhuis,%
+    subject= Voorbeeld Één,%
+    description = Het éérste voorbeeld document,
+    ref label=van Voorbeeld Één
+}
+
+\masterdocument[ex2-]{example2-nl}{%
+    defs=example2,%
+    author=E. Nijenhuis,%
+    subject= Voorbeeld Twee,%
+    description = Het tweede voorbeeld document,
+    ref label=van Voorbeeld Twee
+}
+
+% Document
+\begin{document}
+    \selectlanguage{dutch}
+    \input{regulatory}
+\end{document}

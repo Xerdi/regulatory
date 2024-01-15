@@ -1,41 +1,25 @@
-\documentclass[12pt,dutch]{article}
-\usepackage{babel}
-\usepackage[alldefs]{regulatory}
-\usepackage{lipsum}
-
-\newcounter{lip}
-\setcounter{lip}{1}
-\newcommand\textfill{\lipsum[\arabic{lip}]\stepcounter{lip}}
-
-\refdocument[ex2-]{example2}{%
-    ref label=van Voorbeeld Twee
-}
-\loadglsdefs{example1}
-
-\begin{document}
-    \begin{center}
-        \Huge Voorbeeld Één
-    \end{center}
-    \article{Definitiones}\label{art:defs}
-    \printdefs{Nam dui}
-    \article{Quisque ullamcorper}\label{art:lorem}
+\begin{center}
+    \Huge \translation{Example One}{Voorbeeld Één}
+\end{center}
+\article{Definitiones}\label{art:defs}
+\printdefs{Nam dui}
+\article{Quisque ullamcorper}\label{art:lorem}
+\begin{paras}
+    \item \label{lid:lorem} \textfill
+    \item \label{lid:lorem2} \textfill
     \begin{paras}
-        \item \label{lid:lorem} \textfill
-        \item \label{lid:lorem2} \textfill
-        \begin{paras}
-            \item \label{sub:lorem} \textfill~\Aref{lid:lorem}.
-            \item \label{sub:lorem2} \textfill~\Aref{ex2-lid:lorem}.
-            \item \label{sub:lorem3} \textfill~\Aref{lid:lorem,lid:lorem2}.
-            \item \label{sub:lorem4} \textfill~\Aref{ex2-lid:lorem,ex2-lid:lorem2,ex2-lid:lorem3}.
-            \item \label{sub:lorem5} \textfill~\Aref{ex2-lid:lorem,ex2-lid:lorem2,ex2-lid:lorem3,ex2-lid:lorem5}.
-            \item \label{sub:lorem6} \textfill~\Gls{def1} ipsum dolor sit amed.
-            \item \label{sub:lorem7} \textfill~\Aref{ex2-sub:lorem,ex2-sub:lorem2,ex2-sub:lorem4}.
-            \item \label{sub:lorem8} \textfill
-        \end{paras}
+        \item \label{sub:lorem} \textfill~\Aref{lid:lorem}.
+        \item \label{sub:lorem2} \textfill~\Aref{ex2-lid:lorem}.
+        \item \label{sub:lorem3} \textfill~\Aref{lid:lorem,lid:lorem2}.
+        \item \label{sub:lorem4} \textfill~\Aref{ex2-lid:lorem,ex2-lid:lorem2,ex2-lid:lorem3}.
+        \item \label{sub:lorem5} \textfill~\Aref{ex2-lid:lorem,ex2-lid:lorem2,ex2-lid:lorem3,ex2-lid:lorem5}.
+        \item \label{sub:lorem6} \textfill~\Gls{def1} ipsum dolor sit amed.
+        \item \label{sub:lorem7} \textfill~\Aref{ex2-sub:lorem,ex2-sub:lorem2,ex2-sub:lorem4}.
+        \item \label{sub:lorem8} \textfill
     \end{paras}
-    \article{Etiam ac leo}\label{art:lorem2}
-    \para{A risus tristique nonummy}
-    \textfill
-    \article{Nulla in ipsum}\label{art:lorem3}
-    \textfill
-\end{document}
+\end{paras}
+\article{Etiam ac leo}\label{art:lorem2}
+\para{A risus tristique nonummy}
+\textfill
+\article{Nulla in ipsum}\label{art:lorem3}
+\textfill

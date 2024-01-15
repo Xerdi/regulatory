@@ -1,0 +1,27 @@
+\documentclass[12pt,english]{article}
+\usepackage{babel}
+\usepackage{regulatory}
+\usepackage{lipsum}
+
+\newcounter{lip}
+\setcounter{lip}{1}
+\newcommand\textfill{\lipsum[\arabic{lip}]\stepcounter{lip}}
+
+\newcommand\translation[2]{#1}
+
+\newcommand\definitionlabel[1]{~(see #1)}
+
+\masterdocument[ex1-]{example1-en}{%
+    defs=example1,%
+    author=E. Nijenhuis,%
+    subject= Example One,%
+    description = The first example document,
+    footnote label = Attachment:~,
+    ref label=of Example One,
+    def label=\definitionlabel
+}
+\loadglsdefs{example2}
+
+\begin{document}
+    \input{example2}
+\end{document}

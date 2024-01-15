@@ -1,0 +1,88 @@
+\usepackage{gitinfo-lua}
+\usepackage{listings}
+
+\usepackage{fontspec}
+\usepackage{textcomp}
+
+\def\projecturl{https://github.com/Xerdi/regulatory}
+
+\definecolor{greycolor}{HTML}{BFBFBF}
+\definecolor{primary}{HTML}{174A67}
+\definecolor{darkcolor}{HTML}{091D28}
+\definecolor{greencolor}{HTML}{176734}
+\colorlet{artlabel}{primary}
+\colorlet{green}{greencolor}
+
+\lstdefinestyle{tex}{%
+    language=[LaTeX]TeX,
+    keywordsprefix={\\},
+    alsoletter={\\},
+    morekeywords={article,para,textfill,masterdocument,refdocument,loadglsdefs,printdefs,setmiddleconjunction,setlastconjunction,setrangeconjunction,setconjunction,markdownInput,glssetwidest,describe}
+}
+
+\lstdefinestyle{bash}{%
+    language=bash,
+    morekeywords={pdflatex,lualatex,latexmk,makeglossaries,bib2gls}
+}
+
+\lstdefinelanguage{Markdown}[LaTeX]{TeX}{%
+    sensitive=false,
+    morecomment=[l][\bfseries\ttfamily\color{green}]{\#},
+    morecomment=[s][\bfseries\ttfamily\color{purple}]{:\ \ }{\ },
+    morestring=[s][\color{black}]{\{}{\}},
+    morekeywords={article,para,textfill,masterdocument,refdocument,loadglsdefs,printdefs,setmiddleconjunction,setlastconjunction,setrangeconjunction,setconjunction,markdownInput,glssetwidest,describe},
+    keywordsprefix={\\},
+    alsoletter={\\},
+}
+
+\lstdefinestyle{md}{%
+    language=Markdown
+}
+
+\lstdefinelanguage{BibTeX}{%
+    keywords={%
+        article,book,collectedbook,conference,electronic,entry,ieeetranbstctl,%
+        inbook,incollectedbook,incollection,injournal,inproceedings,%
+        manual,mastersthesis,misc,patent,periodical,phdthesis,preamble,%
+        proceedings,standard,string,techreport,unpublished%
+    },
+    keywordsprefix={@},
+    comment=[l][\itshape]{@comment},
+    sensitive=false,
+}
+
+\lstdefinestyle{bib}{%
+    language=BibTeX,
+    morestring=[s][\bfseries\ttfamily\color{purple}]{\ \ \ \ }{\ },
+    morecomment=[n][\bfseries\ttfamily\color{green}]{\ \{}{\}},
+}
+
+\lstset{
+    title=\lstname,
+    basicstyle=\ttfamily,
+    numberstyle=\ttfamily,
+    numbersep=5pt,
+    rulecolor=\color{greycolor},
+    stringstyle=\color{pink},
+    keywordstyle=\color{primary},
+    commentstyle=\itshape\color{darkcolor},
+    breaklines=true,
+    captionpos=b,
+    tabsize=4,
+    showtabs=true
+}
+
+\newcommand\package{\texttt}
+\newcommand\file{\texttt}
+\newcommand\option{\texttt}
+
+\def\packagedate{\gitdate}
+\def\packageversion{\gitversion}
+
+%\def\cmd{\lstinline[style=tex]}
+\def\cmditem#1{\item[\ttfamily\textbackslash{}#1]}
+
+\newcommand\Vtextvisiblespace[1][.3em]{%
+  \mbox{\kern.06em\vrule height.3ex}%
+  \vbox{\hrule width#1}%
+  \hbox{\vrule height.3ex}}
