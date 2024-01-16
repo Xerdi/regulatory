@@ -17,5 +17,5 @@ TEXMFAUXTREES=$HOME/src/regulatory/texmf,
 Afterward execute `update-texmf` with root permissions.
 It can be validated by the output of: `kpsewhich -var-value TEXMFAUXTREES`.
 ## Documentation
-The documentation has yet to be translated from Dutch to English.
-Make sure to install fonts 'Prompt' and 'Jetbrains Mono'.
+The documentation is available in Dutch and English and will be included in every release.
+See the [releases page](https://github.com/Xerdi/regulatory/releases) for the PDF files.

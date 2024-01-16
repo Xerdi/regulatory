@@ -1,7 +1,7 @@
 \translation{%
     \title{Package \package{regulatory}\thanks{This document corresponds to \textsf{regulatory}~\packageversion, written on \packagedate.}}
 }{%
-    \title{Het \package{regulatory} pakket\thanks{Dit document correspondeerd aan \textsf{regulatory}~\packageversion, geschreven op \packagedate.}}%
+    \title{Het \package{regulatory} pakket\thanks{Dit document correspondeert aan \textsf{regulatory}~\packageversion, geschreven op \packagedate.}}%
 }
 \author{Erik Nijenhuis\\
 \href{mailto:erik@xerdi.com}{erik@xerdi.com}}
@@ -18,19 +18,19 @@
 
     % Verwijzen %
     \translation{%
-        Referring within the legal domain can be a significant challenge; therefore, this package provides an elegant way of referencing, as one would expect with standard \LaTeX{} macros, such as for a chapter using \cmd{\section}, namely through labeling. For this purpose, the \package{regulatory} introduces its own \cmd{\rref}, \cmd{\nref}, and \cmd{\aref} macro families that provide default support for both Dutch and English.%
+        Referring within the legal domain can be a significant challenge; therefore, this package provides an elegant way of referencing, as one would expect with standard \LaTeX{} macros, such as for a chapter using \cmd{\section}, namely through labeling. For this purpose, the \package{regulatory} package introduces its own \cmd{\rref}, \cmd{\nref}, and \cmd{\aref} macro families that provide default support for both Dutch and English.%
     }{%
-        Verwijzen binnen het juridisch domein kan een grote uitdaging zijn, daarom biedt dit pakket een elegante manier van verwijzen net als iemand mag verwachten bij standaard \LaTeX{} macro's, zoals voor een hoofdstuk \cmd{\section}, namelijk door middel van labelen.
-        Hiervoor introduceert \package{regulatory} zijn eigen \cmd{\rref}, \cmd{\nref} en \cmd{\aref} macrofamilies die standaard ondersteuning bieden voor Nederlands en Engels.%
+        Verwijzen binnen het juridisch domein kan een grote uitdaging zijn, daarom biedt dit pakket een elegante manier van verwijzen, zoals men mag verwachten bij standaard \LaTeX{} macro's, zoals voor een hoofdstuk \cmd{\section}, namelijk door middel van labelen.
+        Hiervoor introduceert pakket \package{regulatory} zijn eigen \cmd{\rref}, \cmd{\nref} en \cmd{\aref} macrofamilies die standaard ondersteuning bieden voor Nederlands en Engels.%
     }
 
     % Definities %
     \translation{%
         Managing definitions uniformly across all documents can be achieved using \package{BibTeX}.
-        When it comes to referencing definitions, \package{regulatory} package aligns with the existing \cmd{\gls} macro family of the \package{glossaries} package.%
+        When it comes to referencing definitions, the \package{regulatory} package aligns with the existing \cmd{\gls} macro family of the \package{glossaries} package.%
     }{%
         Het beheren van definities kan eenduidig voor alle documenten met behulp van \package{BibTeX}.
-        Voor het verwijzen naar definities speelt \package{regulatory} in op de al bestaande \cmd{\gls} macrofamilie van \package{glossaries}.%
+        Voor het verwijzen naar definities speelt het \package{regulatory} pakket in op de al bestaande \cmd{\gls} macrofamilie van \package{glossaries}.%
     }
     % Externe Documenten %
     \translation{%
@@ -138,7 +138,10 @@ lualatex main
 \noindent
 \DescribeEnv{paras}
 \translation{%
-    For the \option{paras} and ``subparagraphs'', a new environment has been created using \package{enumitem}.
+    For the \option{paras}\footnote{%
+        Originally the naming was taken from Dutch ``artikel, lid en onderdeel'', which was hard to introduce in English, due to ambiguity reasons.%
+        Therefore, section and part are aliased to paras.%
+    } and ``subparagraphs'', a new environment has been created using \package{enumitem}.
     The labels for the members have been adjusted to
 }{%
     Voor de \option{paras} en ``onderdelen'' is een nieuwe environment aangemaakt met behulp van \package{enumitem}.
@@ -200,7 +203,7 @@ lualatex main
     This allows referencing with the \cmd{\gls}\marg{label} macro family.%
 }{%
     Voor het verwijzen naar definities wordt gebruik gemaakt van \package{glossaries-extra}.
-    Dit zorgt ervoor dat er met de \cmd{\gls}\marg{label} macrofamilie verwezen kan worden.%
+    Dit zorgt ervoor dat er met de \cmd{\gls}\marg{label} macrofamilie kan worden verwezen.%
 }\\
 
 \noindent
@@ -211,7 +214,7 @@ lualatex main
     Definitions within the same file are placed under the type \option{definitions}, while definitions from other documents are placed under \option{externals} (see \zcref{sec:extern}).%
 }{%
     Om conflicten tussen begrippen, afkortingen en definities te voorkomen voegt dit pakket twee \texttt{glossary} types toe.
-    Voor definities binnen hetzelfde bestand worden ze onder het type \option{definitions} geplaatst, waar bij definities van andere documenten ze geplaatst worden onder \option{externals} (zie \zcref{sec:extern}).%
+    Voor definities binnen hetzelfde bestand worden ze ingedeeld onder het type \option{definitions}, terwijl definities van andere documenten worden ingedeeld onder \option{externals} (zie \zcref{sec:extern}).%
 }\\
 
 \noindent
@@ -221,9 +224,12 @@ lualatex main
     The most straightforward one, \cmd{\printdefs}\marg{width of text}, enumerates the definitions with a customized style.
     The argument \marg{width of text} is provided for the alignment of definition labels and descriptions.%
 }{%
-    Om definities op te sommen zijn er verschillende macro's toegevoegd.
-    De meest voor de hand liggende, \cmd{\printdefs}\marg{width of text}, worden de definities met aangepaste stijl opgesomd.
-    Het argument \marg{width of text} wordt meegegeven om wille van de uitlijning van definitie aanduidingen en beschrijvingen.%
+    Om definities in te laden zijn er twee macro's gedefinieerd.
+    De \cmd{\loadglsdefs}\marg{src} macro voegt BibTeX bibliotheken toe onder het type \option{definitions} en heeft als categorie \option{definitions}.
+    Gebruikte definities in deze bibliotheken zullen opgesomd worden wanneer \cmd{\printdefs} wordt aangeroepen.
+    Indien de optie \option{alldefs} bij het pakket is meegegeven, dan zullen alle definities in die bibliotheken opgesomd worden.
+    De opsomming wordt gesorteerd aan de hand van het Nederlandse woordenboek.
+    Woorden die niet voorkomen daarin zullen als eerste opgesomd worden.%
 }\\
 
 \noindent
@@ -262,7 +268,7 @@ lualatex main
     However, it is unwise to call this macro directly since \cmd{\masterdocument} is already smartly handling it.
 }{%
     Voor \cmd{\loadextdefs}\oarg{category}\marg{src} kan het handig zijn om een categorie mee te geven, zodat definities van verschillende bronnen uit elkaar gehouden kunnen worden.
-    Het is daarentegen onverstandig deze direct aan te roepen, aangezien \cmd{\masterdocument} hier al slim op in speelt.
+    Het is echter niet aan te raden deze direct aan te roepen, aangezien \cmd{\masterdocument} hier al slim op in speelt.
 }
 \clearpage
 
@@ -274,7 +280,7 @@ lualatex main
     However, \package{zref} does not provide as many formatting adjustments as \package{cleveref}.
 }{%
     Voor het verwijzen naar artikelen, leden en onderdelen wordt onder water gebruik gemaakt van \package{zref}.
-    Alle onderdelen genoemd in \zcref{sec:struct} zijn hiervoor geconfigureerd, echter biedt \package{zref} niet zoveel formaat aanpassingen als \package{cleveref}.
+    Alle onderdelen genoemd in \zcref{sec:struct} zijn hiervoor ingesteld, echter biedt \package{zref} niet zoveel formaat aanpassingen als \package{cleveref}.
 }
 
 \DescribeMacro{\rref}
@@ -614,7 +620,8 @@ en / and \aref{ex1-sub:lorem,ex1-sub:lorem2,ex1-sub:lorem3,ex1-sub:lorem4}.
 }{%
     In beginsel bood dit pakket alleen ondersteuning voor Nederlands.
     Toen Engels geïmplementeerd werd zijn er bepaalde macro's bij gekomen, zodat er makkelijk geschakeld kan worden tussen talen.
-    De notatie van verwijzingen in het Engels en Nederlands verschillen der mate dat de instelling van een taal best complex kan zijn, echter maakt dit het wellicht instelbaar voor andere talen.%
+    De notatie van verwijzingen in het Engels en Nederlands verschilt dusdanig dat de instelling van een taal enigszins complex kan zijn.
+    Echter, dit maakt het mogelijk aanpasbaar voor andere talen.%
 }\\
 
 \noindent
@@ -623,7 +630,7 @@ en / and \aref{ex1-sub:lorem,ex1-sub:lorem2,ex1-sub:lorem3,ex1-sub:lorem4}.
     The \cmd{\rref@setup} macro takes the \meta{language} as first argument.
     The other three arguments accept multiple options, namely:%
 }{%
-    De \cmd{\rref@setup} macro heeft als eerste argument \meta{de taal} die ingesteld dient te worden.
+    De \cmd{\rref@setup} macro heeft als eerste argument \meta{de taal} die moet worden ingesteld.
     De andere drie argumenten accepteren meerdere opties, namelijk:%
 }
 \begin{labeling}{\texttt{group conjunction}}
@@ -634,15 +641,13 @@ en / and \aref{ex1-sub:lorem,ex1-sub:lorem2,ex1-sub:lorem3,ex1-sub:lorem4}.
         For example `article', `art.', `par', et cetera.
         Default for%
     }{%
-        de benaming in kleine letters.
-        Bijvoorbeeld `artikel', `art.', `onderdeel', et cetera.
+        de benaming in kleine letters, b\ij{}voorbeeld `artikel', `art.', `onderdeel', enzovoort.
         Standaard voor%
     }\\\GetTranslation{article} \lstinline|\GetTranslation{article}|, \\\GetTranslation{paragraph} \lstinline|\GetTranslation{paragraph}| \GetTranslation{and} \\\GetTranslation{subparagraph} \lstinline|\GetTranslation{subparagraph}|.%
     \item[Name] \translation{%
         the designation starting with a capital letter. For example, 'Article'. Like \texttt{name}, this option defaults to using \cmd{\GetTranslation}, but with an initial capital letter.%
     }{%
-        de benaming beginnend met een hoofdletter.
-        Bijvoorbeeld `Artikel'.
+        de benaming beginnend met een hoofdletter, b\ij{}voorbeeld `Artikel'.
         Net als \texttt{name} gebruikt deze optie standaard \cmd{\GetTranslation}, maar dan met een hoofdletter.%
     }
     \item[ref format] \translation{%
@@ -674,7 +679,7 @@ en / and \aref{ex1-sub:lorem,ex1-sub:lorem2,ex1-sub:lorem3,ex1-sub:lorem4}.
         For example (Dutch), in ``artikel\Vtextvisiblespace1\textcolor{red}{,\Vtextvisiblespace}eerste\Vtextvisiblespace lid,'' the \texttt{group conjunction} is set to \lstinline|{,~}| for the article.%
     }{%
         deze waarde geeft aan hoe het dient gekoppeld te worden aan het bovenliggende onderdeel.
-        Bijvoorbeeld bij ``artikel\Vtextvisiblespace1\textcolor{red}{,\Vtextvisiblespace}eerste\Vtextvisiblespace lid'' is de \texttt{group conjunction} bij de instelling van het artikel gelijk aan \lstinline|{,~}|.%
+        Bijvoorbeeld, in ``artikel\Vtextvisiblespace1\textcolor{red}{,\Vtextvisiblespace}eerste\Vtextvisiblespace lid'' is de \texttt{group conjunction} bij de instelling van het artikel gelijk aan \lstinline|{,~}|.%
     }
     \item[group format] \translation{%
         This option accepts a macro with one argument.
@@ -694,10 +699,10 @@ en / and \aref{ex1-sub:lorem,ex1-sub:lorem2,ex1-sub:lorem3,ex1-sub:lorem4}.
     When defining a new language, it's important to know that the default values are based on the English configuration.
     For example, consider the Dutch configuration, including all the used helper macros:
 }{%
-    Deze opties kunnen verschillend zijn per artikel, lid en onderdeel.
+    Deze opties kunnen verschillen per artikel, lid en onderdeel.
 
     Bij het definiëren van een nieuwe taal is het belangrijk om te weten dat de standaard waarden gebaseerd zijn op de Engelse configuratie.
-    Neem bijvoorbeeld de Nederlandse configuratie inclusief alle gebruikte hulp macro's:%
+    Neem bijvoorbeeld de Nederlandse configuratie, inclusief alle gebruikte hulp macro's:%
 }
 \begin{lstlisting}[style=TeX,caption={\translation{Dutch configuration}{Nederlandse configuratie}},numbers=left]
 \newcommand\rref@refformat@noop[1]{#1}
@@ -737,7 +742,7 @@ en / and \aref{ex1-sub:lorem,ex1-sub:lorem2,ex1-sub:lorem3,ex1-sub:lorem4}.
 \end{lstlisting}
 
 \clearpage
-\section*{Voorbeelden}\label{sec:example}
+\section*{\translation{Examples}{Voorbeelden}}\label{sec:example}
 \lstset{numbers=left,frame=single}
 \lstinputlisting[style=tex,numbers=left,caption={example1.tex},label={code:example1}]{example1.tex}
 
