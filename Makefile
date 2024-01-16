@@ -3,6 +3,7 @@ VERSION := $(shell git describe --tags --always)
 TAR_BALL := $(CONTRIBUTION)-$(VERSION).tar.gz
 
 package: $(TAR_BALL)
+	@echo "Created $(TAR_BALL)"
 
 build-docs: remove-docs
 	$(MAKE) -C doc -f Makefile all
@@ -19,4 +20,4 @@ remove-docs:
 	rm -f doc/*.glg doc/*.atfi doc/*.glstex
 
 $(TAR_BALL): build-docs clean-docs
-	tar --transform 's,^\.,regulatory,' -czvf $(TAR_BALL) --exclude '*/Makefile' ./README.md ./doc ./tex
+	tar --transform 's,^\.,regulatory,' -czvf $(TAR_BALL) --exclude 'Makefile' --exclude '_markdown*' ./README.md ./doc ./tex

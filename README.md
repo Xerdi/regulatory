@@ -20,4 +20,8 @@ It can be validated by the output of: `kpsewhich -var-value TEXMFAUXTREES`.
 The documentation is available in Dutch and English and will be included in every release.
 See the [releases page](https://github.com/Xerdi/regulatory/releases) for the PDF files.
 
-For more information on building all documentation, see [Makefile](./Makefile) and [doc/Makefile](./doc/Makefile) in this project.
+For more information on building all documentation, see [Makefile](Makefile) and [doc/Makefile](doc/Makefile) in this project.
+
+## License
+This project is licensed under the LPPL version 1.3c and maintained by Erik Nijenhuis.
+See [LICENSE.txt](LICENSE.txt) for more information.
