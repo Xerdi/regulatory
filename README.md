@@ -1,4 +1,5 @@
 # Regulatory
+![CTAN Version](https://img.shields.io/ctan/v/regulatory)
 
 A LaTeX package which provides macro's for crafting regulatory documents.
 
