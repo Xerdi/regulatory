@@ -1,4 +1,5 @@
-COMPILER ?= lualatex --interaction=nonstopmode --shell-escape
+CNF_LINE = -cnf-line TEXMFHOME={../,$(shell kpsewhich --var-value TEXMFHOME)}
+COMPILER ?= lualatex --interaction=nonstopmode --shell-escape $(CNF_LINE)
 RM = rm -f
 ifeq ($(OS),Windows_NT)
 	RM = del
