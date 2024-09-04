@@ -50,13 +50,23 @@ jobs:
           asset_path: ${{ github.workspace }}/regulatory/regulatory-${{ github.ref_name }}.tar.gz
           asset_name: regulatory-${{ github.ref_name }}.tar.gz
           asset_content_type: application/gzip
-      - name: 'Upload Release Asset: Manual'
-        id: upload_release_asset_manual
+      - name: 'Upload Release Asset: Manual English'
+        id: upload_release_asset_manual_en
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ${{ github.workspace }}/regulatory/doc/regulatory.pdf
-          asset_name: regulatory-${{ github.ref_name }}.pdf
+          asset_path: ${{ github.workspace }}/regulatory/doc/regulatory-en.pdf
+          asset_name: regulatory-en.pdf
+          asset_content_type: application/pdf
+      - name: 'Upload Release Asset: Manual Dutch'
+        id: upload_release_asset_manual_nl
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ${{ github.workspace }}/regulatory/doc/regulatory-nl.pdf
+          asset_name: regulatory-nl.pdf
           asset_content_type: application/pdf
