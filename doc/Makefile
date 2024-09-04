@@ -32,13 +32,16 @@ regulatory-en.pdf: example1-en.pdf example2-en.pdf
 
 md-example.pdf: example1-nl.pdf example2-nl.pdf
 
-clean: clean-leftovers
-	$(foreach auxfile,$(wildcard *.aux),latexmk -f -c $(auxfile),)
+clean-%:
+	latexmk -f -c $*-en
+	latexmk -f -c $*-nl
 
-clean-all: clean-leftovers
-	$(foreach file,$(wildcard *.pdf),latexmk -f -C $(basename $(file)).aux,)
+clean-all-%:
+	latexmk -f -C $*-en
+	latexmk -f -C $*-nl
 
-clean-leftovers:
-	$(foreach file,$(wildcard *.glg),$(RM) $(file))
-	$(foreach file,$(wildcard *.atfi),$(RM) $(file))
-	$(foreach file,$(wildcard *.glstex),$(RM) $(file))
+clean: clean-example1 clean-example2 clean-regulatory
+	rm -f *.glstex
+
+clean-all: clean-all-example1 clean-all-example2 clean-all-regulatory
+	rm -f *.glstex
