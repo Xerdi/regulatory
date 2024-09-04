@@ -176,16 +176,14 @@ lualatex main
 }{, voor onderdelen.}
 \translation{%
     For ``subparagraphs'', \cmd{\abalpnum} from the \package{fmtcount}\footnote{%
-        The Dutch language definition is currently in progress within the \href{https://github.com/vincentb1/fmtcount/pull/51}{\package{fmtcount}} package.
-        In the meantime, this package includes the correct configuration for it.%
-    } package is used to enumerate multiple subparagraphs.
+        The Dutch language definition is now included into package \href{https://github.com/Xerdi/fmtcount}{\package{fmtcount}} itself.
+        Be sure to update the package if \texttt{fc-dutch.def} is missing} package is used to enumerate multiple subparagraphs.
     Suppose \cmd{\alph} were used; in that case, \option{paras} (second level) would be limited to 26 subparagraphs.
     With \cmd{\abalphnum}, for example, with a value of 125, the result is `\texttt{du}'.
 }{%
     Voor onderdelen wordt er gebruik gemaakt van \cmd{\abalpnum} uit pakket \package{fmtcount}\footnote{%
-        De Nederlandse taal definitie is momenteel nog in behandeling bij pakket \href{https://github.com/vincentb1/fmtcount/pull/51}{\package{fmtcount}}.
-        In de tussentijd levert dit pakket daarvoor de juist configuratie mee.%
-    } om meerdere onderdelen te kunnen opsommen.
+        De Nederlandse taal definitie is nu inbegrepen in pakket \href{https://github.com/Xerdi/fmtcount}{\package{fmtcount}} zelf.
+        Zorg ervoor dat het pakket up to date is als \texttt{fc-dutch.def} mist.} om meerdere onderdelen te kunnen opsommen.
     Stel er zou gebruik gemaakt worden van \cmd{\alph}, dan is \option{paras} beperkt tot 26 onderdelen.
     Bij \cmd{\abalphnum} met b\ij{}voorbeeld een waarde van 125 is `\texttt{du}' de uitkomst.
 }
