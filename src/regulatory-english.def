@@ -23,12 +23,17 @@
 % \subsection{\translation{English definitions}{Engelse definities}}\label{sec:englishdef}
 % \setcounter{CodelineNo}{0}
 %
-% The English definitions are the defaults of this bundle, which is why no option at all is passed to
-% \cmd{\rref@setup}. The translations are stated all the same, so that the keys of \cmd{\GetTranslation}
-% are documented in one place. Translating this bundle into another language comes down to copying this
+% English is the language every other one falls back on, so its definitions are stated in full rather than
+% left to the initial values. Translating this bundle into another language comes down to copying this
 % file to \texttt{regulatory-\meta{language}.def} and translating the right hand side of every
 % \cmd{\DeclareTranslation}; see \zcref{sec:dutchdef} for what a language that words its references
 % differently needs on top of that.
+%
+% A word on the third level. It is a \emph{point}, the lettered subdivision of a paragraph, and not a
+% subparagraph: in the terminology of the European institutions a subparagraph is the \emph{alinea}, the
+% unnumbered block of text, which this bundle does not number at all. The key used to be
+% \texttt{subparagraph} and was renamed for that reason; a document that asked for that translation by
+% name asks for \texttt{point} now.
 %    \begin{macrocode}
 \ProvidesRegulatoryLanguage{english}
     [2026/09/05 0.0.5 English definitions for regulatory]
@@ -41,10 +46,10 @@
 \DeclareTranslation{english}{Paragraph}{Paragraph}
 \DeclareTranslation{english}{paragraphs}{paragraphs}
 \DeclareTranslation{english}{Paragraphs}{Paragraphs}
-\DeclareTranslation{english}{subparagraph}{subparagraph}
-\DeclareTranslation{english}{Subparagraph}{Subparagraph}
-\DeclareTranslation{english}{subparagraphs}{subparagraphs}
-\DeclareTranslation{english}{Subparagraphs}{Subparagraphs}
+\DeclareTranslation{english}{point}{point}
+\DeclareTranslation{english}{Point}{Point}
+\DeclareTranslation{english}{points}{points}
+\DeclareTranslation{english}{Points}{Points}
 \DeclareTranslation{english}{to}{to}
 \DeclareTranslation{english}{Definitions}{Definitions}
 \DeclareTranslation{english}{of the}{of the}
@@ -52,9 +57,23 @@
 %
 % The reference formats are only set up when \package{regulatory-ref} is loaded, since a document that only
 % loads \package{regulatory-struct} has the translations above but none of the reference macros.
+%
+% English compresses a reference the way the European style guides do: \emph{Article 6(2), point (a)}. The
+% article carries its name and its number, the paragraph follows in brackets with nothing in between, and
+% the point is lettered and bracketed in turn, behind a comma. A group of points repeats neither the name
+% nor the brackets of what came before: \emph{Article 1(6), point (a), (b) and (d)}.
 %    \begin{macrocode}
 \regulatory@ifmodule{ref}{%
-    \rref@setup{english}{}{}{}%
+    \rref@setup{english}{
+        group conjunction={}
+    }{
+        group conjunction={,~}
+    }{
+        ref format=\rref@refformat@alphaparen,
+        label format=\rref@label@prefix,
+        group conjunction={,~},
+        group format=\rref@refformat@noop
+    }%
 }{}
 %    \end{macrocode}
 %

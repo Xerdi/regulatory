@@ -174,12 +174,15 @@
 %
 % These are the formats the language definition files pick from. A \texttt{ref format} turns the number of a
 % reference into its representation, a \texttt{label format} decides on the order of the designation and the
-% number, and a \texttt{group format} wraps the parent parts of a reference.
+% number, and a \texttt{group format} wraps the parent parts of a reference. A point is lettered and
+% put in brackets, \texttt{(a)}, which is the form the European style guides write it in and the one the
+% English configuration reaches for.
 %    \begin{macrocode}
 \newcommand\rref@refformat@noop[1]{#1}
 \newcommand\rref@refformat@parenthesis[1]{(#1)}
 \newcommand\rref@refformat@ordinal[1]{\@ifrrefcap{\Ordinalstringnum{#1}}{\ordinalstringnum{#1}}}
 \newcommand\rref@refformat@alpha[1]{\@ifrrefcap{\ABAlphnum{#1}}{\abalphnum{#1}}}
+\newcommand\rref@refformat@alphaparen[1]{(\abalphnum{#1})}
 \newcommand\rref@label@prefix[2]{#1 #2}
 \newcommand\rref@label@postfix[2]{#2 #1}
 \newcommand\rref@label@refonly[2]{\@gobble{#1}#2}
@@ -196,6 +199,8 @@
         /rref/#1/article,
         name/.initial=\GetTranslation{article},
         Name/.initial=\GetTranslation{Article},
+        names/.initial=\GetTranslation{articles},
+        Names/.initial=\GetTranslation{Articles},
         ref format/.initial=\rref@refformat@noop,
         label format/.initial=\rref@label@prefix,
         group conjunction/.initial={},
@@ -207,6 +212,8 @@
         /rref/#1/para,
         name/.initial=\GetTranslation{paragraph},
         Name/.initial=\GetTranslation{Paragraph},
+        names/.initial=\GetTranslation{paragraphs},
+        Names/.initial=\GetTranslation{Paragraphs},
         ref format/.initial=\rref@refformat@parenthesis,
         label format/.initial=\rref@label@refonly,
         group conjunction/.initial={,},
@@ -216,8 +223,10 @@
 \newcommand\rref@init@lang@sub[1]{%
     \pgfkeys{/rref/#1/sub/.is family,
         /rref/#1/sub,
-        name/.initial=\GetTranslation{subparagraph},
-        Name/.initial=\GetTranslation{Subparagraph},
+        name/.initial=\GetTranslation{point},
+        Name/.initial=\GetTranslation{Point},
+        names/.initial=\GetTranslation{points},
+        Names/.initial=\GetTranslation{Points},
         ref format/.initial=\rref@refformat@ordinal,
         label format/.initial=\rref@label@postfix,
         group conjunction/.initial={,},
@@ -263,6 +272,12 @@
 % \begin{macro}{\rref@set}
 % Reading a single key of the current, or of an explicitly given, language. Where \cmd{\rref@get} prints the
 % value, \cmd{\rref@set} stores it in the macro of its last argument.
+%
+% A designation that stands in front of more than one number is written in the plural: the Leidraad voor
+% juridische auteurs writes \enquote{de artikelen 162 tot en met 164} and \enquote{onderdelen c en d}. The
+% plural is a key of its own per type and per language, since it is not the language that decides it but
+% the position: Dutch keeps \enquote{lid} singular where the designation follows the ordinals, and says so
+% in its own definition file rather than here.
 %    \begin{macrocode}
 \newcommand\rref@set[4][\rref@lang]{%
     \pgfkeysgetvalue{/rref/#1/#2/#3}{#4}%
@@ -272,7 +287,14 @@
     \pgfkeysvalueof{/rref/#1/#2/#3}%
 }
 
-\newcommand\rref@name[2][\rref@lang]{\@ifrrefcap{\rref@get[#1]{#2}{Name}}{\rref@get[#1]{#2}{name}}}
+\newif\ifrref@plural
+\newcommand\rref@name[2][\rref@lang]{%
+    \ifrref@plural%
+        \@ifrrefcap{\rref@get[#1]{#2}{Names}}{\rref@get[#1]{#2}{names}}%
+    \else%
+        \@ifrrefcap{\rref@get[#1]{#2}{Name}}{\rref@get[#1]{#2}{name}}%
+    \fi%
+}
 \def\rref@article@name{\rref@name{article}}
 \def\rref@para@name{\rref@name{para}}
 \def\rref@sub@name{\rref@name{sub}}
@@ -454,7 +476,7 @@
 %
 % \begin{macro}{\aref@setcurrent}
 % A complete reference states all parent parts of the label as well, so a paragraph is prefixed with its
-% article, and a subparagraph with both its article and its paragraph. Each of them is joined with the
+% article, and a point with both its article and its paragraph. Each of them is joined with the
 % group conjunction of its own type.
 %    \begin{macrocode}
 \newcommand\aref@setcurrent[1]{%
@@ -541,7 +563,9 @@
 \newcommand\aref@dispatch[1]{%
     \IfSubStr{#1}{,}{%
         \StrBefore[1]{#1}{,}[\firstarg]%
-        \@@arefsetup{\firstarg}{\rref@labelformat{\aref@group{#1}}}%
+        \@@arefsetup{\firstarg}{%
+            \rref@pluraltrue\rref@labelformat{\aref@group{#1}}\rref@pluralfalse%
+        }%
     }{%
         \@@arefsetup{#1}{\nref{#1}}%
     }%

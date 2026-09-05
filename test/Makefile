@@ -45,6 +45,7 @@ COMPILER ?= $(ENGINE) --interaction=nonstopmode --shell-escape $(CNF_LINE)
 # its Markdown source, and sign-example has no definitions at all. For those,
 # calling bib2gls would be an error rather than a no-op.
 BIBEXAMPLES = example1-nl example2-nl example1-en example2-en
+BIBFILES = example1.bib example2.bib
 PLAINEXAMPLES = md-example sign-example
 EXAMPLES = $(BIBEXAMPLES) $(PLAINEXAMPLES)
 
@@ -74,7 +75,7 @@ SUITES += conformance
 endif
 
 .PHONY: all test $(addprefix suite-,$(ENGINES) html conformance) \
-        test-engines test-html html-checks md-checks ref-checks sign-checks \
+        test-engines test-html html-checks md-checks ref-checks sign-checks log-checks \
         conformance conformance-run \
         conformance-check conformance-check-run conformance-stale \
         clean-examples clean-all-examples clean clean-all
@@ -98,7 +99,7 @@ suite-conformance: conformance
 # which is why every path above is absolute. The directory is named after the
 # engine, and so is the engine it builds with: `make build-pdflatex' is pdflatex.
 build-%:
-	$(call run_in,$*,all ref-checks md-checks sign-checks ENGINE=$*)
+	$(call run_in,$*,all ref-checks log-checks md-checks sign-checks ENGINE=$*)
 
 .DELETE_ON_ERROR:
 
@@ -112,25 +113,37 @@ all: $(addsuffix .pdf,$(EXAMPLES))
 %.aux: %.tex
 	$(COMPILER) $*
 
-%.glstex: %.aux
+# Same story one link down: bib2gls reads the aux, but what changes what it writes
+# is the document and the bib file it names. Following the aux instead would make
+# this rule run on every make, since the run that typesets rewrites that aux.
+%.glstex: %.tex $(BIBFILES) | %.aux
 	bib2gls $*
 
 # Twice, because the examples refer to each other's articles and definitions.
-$(addsuffix .pdf,$(BIBEXAMPLES)): %.pdf: %.glstex
+#
+# The aux and the glstex are prerequisites of the order-only kind: they have to
+# exist before the PDF is made, but their timestamps say nothing about whether it
+# is out of date. An aux file is both an input and an output -- the run that writes
+# the PDF rewrites it, and writes it last -- so a normal prerequisite would make
+# every one of these documents older than its own aux the moment it was built, and
+# the cascade through the glstex of the other document rebuilt all five on every
+# make. What the PDF really follows is the source.
+$(addsuffix .pdf,$(BIBEXAMPLES)): %.pdf: %.tex | %.glstex
 	$(COMPILER) $*
 	$(COMPILER) $*
 
-$(addsuffix .pdf,$(PLAINEXAMPLES)): %.pdf: %.aux
+$(addsuffix .pdf,$(PLAINEXAMPLES)): %.pdf: %.tex | %.aux
 	$(COMPILER) $*
 	$(COMPILER) $*
 
 # Both example documents refer to each other, so the labels of the second one
-# have to be on disk before the first one is typeset.
-example1-nl.aux: example2-nl.glstex
+# have to be on disk before the first one is typeset. Order-only for the reason
+# above: what has to be settled here is the order, not the age.
+example1-nl.aux: | example2-nl.glstex
 
-example1-en.aux: example2-en.glstex
+example1-en.aux: | example2-en.glstex
 
-md-example.pdf: example1-nl.pdf example2-nl.pdf
+md-example.pdf: | example1-nl.pdf example2-nl.pdf
 
 # A reference that resolved to nothing prints two question marks and warns; the run
 # succeeds either way, so the warning is what is read here. Over every example, not
@@ -145,6 +158,19 @@ ref-checks: $(addsuffix .pdf,$(EXAMPLES))
 	 fi; \
 	 if [ "$$dup" -gt 0 ]; then \
 	     echo "refs: a label was defined twice; see the example logs" >&2; exit 1; \
+	 fi
+
+# The package says nothing about a document it has no reason to complain about, so
+# anything it does say here is a defect: a language it has no definitions for, a
+# tex4ht run without its configuration, PDF management where it costs the lists.
+# Those warnings exist to be read by someone, and a suite that lets them pass is a
+# suite that reads nothing.
+log-checks: $(addsuffix .pdf,$(EXAMPLES))
+	@warned=$$(cat $(addsuffix .log,$(EXAMPLES)) \
+	     | grep -c 'Package regulatory\(-[a-z]*\)\? Warning' || true); \
+	 echo "log: $$warned package warnings"; \
+	 if [ "$$warned" -gt 0 ]; then \
+	     echo "log: the package reported something; see the example logs" >&2; exit 1; \
 	 fi
 
 # A signature field is a PDF annotation over a drawn box. The box is drawn by TeX
@@ -254,11 +280,14 @@ html-checks: $(HTML_EXAMPLE).html $(HTML_DEFS_EXAMPLE).html $(HTML_MD_EXAMPLE).h
 	 deflist=$$(grep -o "dl class='description'" $(HTML_DEFS_EXAMPLE).html | wc -l); \
 	 undef=$$(cat $(HTML_EXAMPLE).log $(HTML_DEFS_EXAMPLE).log $(HTML_MD_EXAMPLE).log \
 	     | grep -c 'Reference .* undefined' || true); \
+	 warned=$$(cat $(HTML_EXAMPLE).log $(HTML_DEFS_EXAMPLE).log $(HTML_MD_EXAMPLE).log \
+	     | grep 'Package regulatory\(-[a-z]*\)\? Warning' \
+	     | grep -vc 'Attachments need the PDF management' || true); \
 	 labeling=$$(grep -o 'regulatory-definitions' $(HTML_EXAMPLE).html | wc -l); \
 	 mdsections=$$(grep -o '<section' $(HTML_MD_EXAMPLE).html | wc -l); \
 	 mditems=$$(grep -o 'enumitem-paras' $(HTML_MD_EXAMPLE).html | wc -l); \
 	 mddefs=$$(grep -o "id='glo_" $(HTML_MD_EXAMPLE).html | wc -l); \
-	 echo "html: $$sections sections, $$headings headings, $$items paras items, $$defs definitions, $$inline inline, $$deflist description list, $$labeling labeling list, $$undef undefined"; \
+	 echo "html: $$sections sections, $$headings headings, $$items paras items, $$defs definitions, $$inline inline, $$deflist description list, $$labeling labeling list, $$undef undefined, $$warned unexpected warnings"; \
 	 echo "html md: $$mdsections sections, $$mditems paras items, $$mddefs definitions"; \
 	 if [ "$$sections" -lt 1 ] || [ "$$headings" -lt 1 ]; then \
 	     echo "html: no structure in the output; was regulatory.4ht found?" >&2; exit 1; \
@@ -274,6 +303,9 @@ html-checks: $(HTML_EXAMPLE).html $(HTML_DEFS_EXAMPLE).html $(HTML_MD_EXAMPLE).h
 	 fi; \
 	 if [ "$$undef" -gt 0 ]; then \
 	     echo "html: a reference resolved to nothing; are the zref labels written?" >&2; exit 1; \
+	 fi; \
+	 if [ "$$warned" -gt 0 ]; then \
+	     echo "html: the package reported something beyond the attachments it cannot embed" >&2; exit 1; \
 	 fi; \
 	 if [ "$$labeling" -lt 1 ]; then \
 	     echo "html: the labeling style produced no list of its own" >&2; exit 1; \

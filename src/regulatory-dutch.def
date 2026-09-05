@@ -23,7 +23,7 @@
 % \subsection{\translation{Dutch definitions}{Nederlandse definities}}\label{sec:dutchdef}
 % \setcounter{CodelineNo}{0}
 %
-% Dutch names an article `artikel', a paragraph `lid' and a subparagraph `onderdeel'. The
+% Dutch names an article `artikel', a paragraph `lid' and a point `onderdeel'. The
 % \package{translations} dictionary translates `and' and `see' already, but its `to' means `aan', while a
 % range of articles asks for `tot'.
 %    \begin{macrocode}
@@ -38,18 +38,23 @@
 \DeclareTranslation{dutch}{Paragraph}{Lid}
 \DeclareTranslation{dutch}{paragraphs}{leden}
 \DeclareTranslation{dutch}{Paragraphs}{Leden}
-\DeclareTranslation{dutch}{subparagraph}{onderdeel}
-\DeclareTranslation{dutch}{Subparagraph}{Onderdeel}
-\DeclareTranslation{dutch}{subparagraphs}{onderdelen}
-\DeclareTranslation{dutch}{Subparagraphs}{Onderdelen}
+\DeclareTranslation{dutch}{point}{onderdeel}
+\DeclareTranslation{dutch}{Point}{Onderdeel}
+\DeclareTranslation{dutch}{points}{onderdelen}
+\DeclareTranslation{dutch}{Points}{Onderdelen}
 \DeclareTranslation{dutch}{to}{tot}
 \DeclareTranslation{dutch}{Definitions}{Definities}
 \DeclareTranslation{dutch}{of the}{van de}
 %    \end{macrocode}
-% Where English writes `article 2(2), first subparagraph', Dutch writes `artikel 2, tweede lid, onderdeel
-% a'. So a paragraph is written as an ordinal followed by its designation, a subparagraph is enumerated
-% alphabetically with its designation in front of it, and all parts are joined with a comma instead of
-% being wrapped in brackets.
+% Where English writes `Article 2(2), point (b)', Dutch writes `artikel 2, tweede lid, onderdeel b'. So a
+% paragraph is written as an ordinal followed by its designation, a point is lettered with its designation
+% in front of it and without brackets, and all parts are joined with a comma.
+%
+% An enumeration takes the plural of the designation, `de artikelen 162 tot en met 164' and `onderdelen c
+% en d'. A paragraph is the exception: its designation follows the ordinals rather than preceding them,
+% and Dutch keeps it singular there, `het tweede en derde lid'. The Leidraad shows no such enumeration
+% written out in full, so this is the idiom rather than a rule, which is why it is set here and not among
+% the initial values.
 %    \begin{macrocode}
 \regulatory@ifmodule{ref}{%
     \rref@setup{dutch}{
@@ -57,6 +62,8 @@
     }{
         ref format=\rref@refformat@ordinal,
         label format=\rref@label@postfix,
+        names=\GetTranslation{paragraph},
+        Names=\GetTranslation{Paragraph},
         group conjunction={,~},
         group format=\rref@refformat@noop
     }{

@@ -248,7 +248,7 @@ lualatex main
     For the \option{paras}\footnote{%
         Originally the naming was taken from Dutch ``artikel, lid en onderdeel'', which was hard to introduce in English, due to ambiguity reasons.%
         Therefore, section and part are aliased to paras.%
-    } and ``subparagraphs'', a new environment has been created using \package{enumitem}.
+    } and ``points'', a new environment has been created using \package{enumitem}.
     The labels for the members have been adjusted to
 }{%
     Voor de \option{paras} en ``onderdelen'' is een nieuwe environment aangemaakt met behulp van \package{enumitem}.
@@ -257,13 +257,13 @@ lualatex main
     for paragraphs and
 }{, voor leden en,
 }\lstinline[style=tex]|\abalphnum{\arabic*)|\translation{
-    for subparagraphs.%
+    for points.%
 }{, voor onderdelen.}
 \translation{%
-    For ``subparagraphs'', \cmd{\abalpnum} from the \package{fmtcount}\footnote{%
+    For ``points'', \cmd{\abalpnum} from the \package{fmtcount}\footnote{%
         The Dutch language definition is now included into package \href{https://github.com/Xerdi/fmtcount}{\package{fmtcount}} itself.
-        Be sure to update the package if \texttt{fc-dutch.def} is missing} package is used to enumerate multiple subparagraphs.
-    Suppose \cmd{\alph} were used; in that case, \option{paras} (second level) would be limited to 26 subparagraphs.
+        Be sure to update the package if \texttt{fc-dutch.def} is missing} package is used to enumerate multiple points.
+    Suppose \cmd{\alph} were used; in that case, \option{paras} (second level) would be limited to 26 points.
     With \cmd{\abalphnum}, for example, with a value of 125, the result is `\texttt{du}'.
 }{%
     Voor onderdelen wordt er gebruik gemaakt van \cmd{\abalpnum} uit pakket \package{fmtcount}\footnote{%
@@ -731,28 +731,28 @@ De volgende begrippen worden in deze overeenkomst gebruikt.
     {Starting with a lowercase letter and with a hyperlink.}
     {Beginnend met een kleine letter en met hyperlink.}\\
     \begin{tabularx}{\linewidth}{@{}X X X@{}}
-        \textbf{\translation{Article}{Artikel}} & \textbf{\translation{Paragraph}{Lid}} & \textbf{\translation{Subparagraph}{Onderdeel}} \\
+        \textbf{\translation{Article}{Artikel}} & \textbf{\translation{Paragraph}{Lid}} & \textbf{\translation{Point}{Onderdeel}} \\
         \rref{ex1-art:lorem}                    & \rref{ex1-lid:lorem}                  & \rref{ex1-sub:lorem}                           \\
     \end{tabularx}
     \cmditem{rref*} \translation
     {Starting with a lowercase letter and without a hyperlink.}
     {Beginnend met een kleine letter en zonder hyperlink.}\\
     \begin{tabularx}{\linewidth}{@{}X X X@{}}
-        \textbf{\translation{Article}{Artikel}} & \textbf{\translation{Paragraph}{Lid}} & \textbf{\translation{Subparagraph}{Onderdeel}} \\
+        \textbf{\translation{Article}{Artikel}} & \textbf{\translation{Paragraph}{Lid}} & \textbf{\translation{Point}{Onderdeel}} \\
         \rref*{ex1-art:lorem}                   & \rref*{ex1-lid:lorem}                 & \rref*{ex1-sub:lorem}                          \\
     \end{tabularx}
     \cmditem{Rref} \translation
     {Starting with an uppercase letter and with a hyperlink.}
     {Beginnend met een hoofdletter en met hyperlink.}\\
     \begin{tabularx}{\linewidth}{@{}X X X@{}}
-        \textbf{\translation{Article}{Artikel}} & \textbf{\translation{Paragraph}{Lid}} & \textbf{\translation{Subparagraph}{Onderdeel}} \\
+        \textbf{\translation{Article}{Artikel}} & \textbf{\translation{Paragraph}{Lid}} & \textbf{\translation{Point}{Onderdeel}} \\
         \Rref{ex1-art:lorem}                    & \Rref{ex1-lid:lorem}                  & \Rref{ex1-sub:lorem}                           \\
     \end{tabularx}
     \cmditem{Rref*} \translation
     {Starting with an uppercase letter and without a hyperlink.}
     {Beginnend met een hoofdletter en zonder hyperlink.}\\
     \begin{tabularx}{\linewidth}{@{}X X X@{}}
-        \textbf{\translation{Article}{Artikel}} & \textbf{\translation{Paragraph}{Lid}} & \textbf{\translation{Subparagraph}{Onderdeel}} \\
+        \textbf{\translation{Article}{Artikel}} & \textbf{\translation{Paragraph}{Lid}} & \textbf{\translation{Point}{Onderdeel}} \\
         \Rref*{ex1-art:lorem}                   & \Rref*{ex1-lid:lorem}                 & \Rref*{ex1-sub:lorem}                          \\
     \end{tabularx}
 \end{labeling}
@@ -779,7 +779,7 @@ De volgende begrippen worden in deze overeenkomst gebruikt.
 
 \noindent
 \begin{tabularx}{\linewidth}{@{}p{\widthof{EN}} X X X@{}}
-    & \textbf{\translation{Article}{Artikel}} & \textbf{\translation{Paragraph}{Lid}} & \textbf{\translation{Subparagraph}{Onderdeel}} \\
+    & \textbf{\translation{Article}{Artikel}} & \textbf{\translation{Paragraph}{Lid}} & \textbf{\translation{Point}{Onderdeel}} \\
     \translation{EN}{NL} & \Nref{ex1-art:lorem}                    & \Nref{ex1-lid:lorem}                  & \Nref{ex1-sub:lorem}                           \\
 \end{tabularx}\translation{\selectlanguage{dutch}}{\selectlanguage{english}}\\
 \begin{tabularx}{\linewidth}{@{}p{\widthof{EN}} X X X@{}}
@@ -789,7 +789,7 @@ De volgende begrippen worden in deze overeenkomst gebruikt.
 \noindent
 \translation{%
     A notable difference with the alternative \cmd{\zcref} is that \cmd{\nref} can take into account the position of the designation.
-    For example, consider the outcome for the subparagraph (\meta{written ordinal} \meta{designation}).%
+    For example, consider the outcome for the point (\meta{designation} \meta{letter}).%
 }{%
     Een opmerkelijk verschil tussen het alternatief \cmd{\zcref} is dat \cmd{\nref} rekening kan houden met de positie van de benaming.
     Kijk bijvoorbeeld naar de uitkomst van het lid (\meta{geschreven ordinaal} \meta{benoeming}).%
@@ -878,7 +878,7 @@ en / and \aref{ex1-sub:lorem,ex1-sub:lorem2,ex1-sub:lorem3,ex1-sub:lorem4}.
 \translation{Referencing Other Documents Generated with the \package{regulatory} Package is Quite Simple.}{Verwijzen naar andere documenten gegenereerd met het \package{regulatory} pakket kan vrij eenvoudig.}
 \DescribeMacro{\refdocument\\\oarg{prefix}\\\marg{name}\\\marg{opts...}}
 \translation{%
-    After specifying \cmd{\refdocument} in the preamble, it is possible to refer to articles, paragraphs, and subparagraphs.
+    After specifying \cmd{\refdocument} in the preamble, it is possible to refer to articles, paragraphs, and points.
     The macro family \cmd{\aref} continues to work seamlessly, thanks to \cmd{\zexternaldocument} from \package{zref-xr}.
     To avoid ambiguity, a special \option{prefix} can be added.
     If a \option{prefix} is omitted, a default \option{prefix} is still applied, namely \texttt{ext-}.
@@ -1178,21 +1178,34 @@ en / and \aref{ex1-sub:lorem,ex1-sub:lorem2,ex1-sub:lorem3,ex1-sub:lorem4}.
     }{%
         de benaming in kleine letters, b\ij{}voorbeeld `artikel', `art.', `onderdeel', enzovoort.
         Standaard voor%
-    }\\\GetTranslation{article} \lstinline|\GetTranslation{article}|, \\\GetTranslation{paragraph} \lstinline|\GetTranslation{paragraph}| \GetTranslation{and} \\\GetTranslation{subparagraph} \lstinline|\GetTranslation{subparagraph}|.%
+    }\\\GetTranslation{article} \lstinline|\GetTranslation{article}|, \\\GetTranslation{paragraph} \lstinline|\GetTranslation{paragraph}| \GetTranslation{and} \\\GetTranslation{point} \lstinline|\GetTranslation{point}|.%
     \item[Name] \translation{%
         the designation starting with a capital letter. For example, 'Article'. Like \texttt{name}, this option defaults to using \cmd{\GetTranslation}, but with an initial capital letter.%
     }{%
         de benaming beginnend met een hoofdletter, b\ij{}voorbeeld `Artikel'.
         Net als \texttt{name} gebruikt deze optie standaard \cmd{\GetTranslation}, maar dan met een hoofdletter.%
     }
+    \item[names, Names] \translation{%
+        the designation of a reference that names more than one structure: \enquote{articles 1 and 2},
+        \enquote{points (a), (b) and (d)}. It is a key of its own because it is not the language that
+        decides whether the plural is used but the position of the designation: Dutch writes
+        \enquote{onderdelen c en d} but keeps \enquote{het tweede en derde lid} singular, since there the
+        designation follows the ordinals.%
+    }{%
+        de benaming van een verwijzing die meer dan één structuur noemt: \enquote{artikelen 1 en 2},
+        \enquote{onderdelen c en d}. Het is een eigen sleutel omdat niet de taal bepaalt of het meervoud
+        gebruikt wordt maar de plaats van de benaming: het Nederlands schrijft \enquote{onderdelen c en d}
+        maar houdt \enquote{het tweede en derde lid} enkelvoudig, omdat de benaming daar achter de
+        rangtelwoorden staat.%
+    }
     \item[ref format] \translation{%
         a macro with one argument, namely the current number.
-        For example, for a member (or subparagraph in English), \cmd{\ordinalstringnum} is used for this.
+        For example, a Dutch paragraph is written as an ordinal, for which \cmd{\ordinalstringnum} is used, and a point is lettered.
         In such cases, it is important to consider case sensitivity using \cmd{\@ifrrefcap}.
         Example:%
     }{%
         een macro met één argument, namelijk het huidige nummer.
-        Voor bijvoorbeeld een lid (of subparagraph in het Engels) is hiervoor \cmd{\ordinalstringnum} gebruikt.
+        Een lid wordt bijvoorbeeld als rangtelwoord geschreven, waarvoor \cmd{\ordinalstringnum} gebruikt is, en een onderdeel met een letter.
         In zo'n geval is het belangrijk om rekening te houden met hoofdletter gevoeligheid d.m.v.\ \cmd{\@ifrrefcap}.
         Voorbeeld:%
     } \lstinline[style=tex]|\@ifrrefcap{\Ordinalstringnum{...}}{\ordinalstringnum{...}}|.
@@ -1219,24 +1232,22 @@ en / and \aref{ex1-sub:lorem,ex1-sub:lorem2,ex1-sub:lorem3,ex1-sub:lorem4}.
     \item[group format] \translation{%
         This option accepts a macro with one argument.
         The first argument contains all subparts.
-        For example, in English, for a subparagraph/onderdeel, the article and paragraph/lid need to be surrounded by square brackets.
-        The value would then be for the subpart \texttt{{[}\#1{]}}.
+        A language that wants the parent parts of a reference set apart\,---\,\texttt{{[}Article 1(6),{]} point (a)}\,---\,gives the point \cmd{\rref@group@braced}, which is what this bundle did for English until the European style guides settled the question the other way.
     }{%
         deze optie accepteert een macro met één argument.
         Het eerste argument bevat alle onderliggende onderdelen.
-        Bijvoorbeeld in het Engels dient bij een subparagraph/onderdeel het artikel en paragraph/lid omringd te worden met blokhaken.
-        De waarde is dan bij het onderdeel \texttt{{[}\#1{]}}.
+        Een taal die de bovenliggende delen van een verwijzing apart wil zetten\,---\,\texttt{{[}Article 1(6),{]} point (a)}\,---\,geeft het onderdeel \cmd{\rref@group@braced} mee, wat deze bundel voor het Engels deed tot de Europese stijlgidsen die vraag anders beslechtten.
     }
 \end{labeling}
 \translation{%
-    These options can vary for each article, paragraph, and subparagraph.
-    When defining a new language, it's important to know that the default values are based on the English
-    configuration, which is why \texttt{regulatory-english.def} passes no options at all.%
+    These options can vary for each article, paragraph, and point.
+    When defining a new language, it is worth reading \texttt{regulatory-english.def} first: it states
+    every value in full, and it is the configuration any language without one of its own falls back on.%
 }{%
     Deze opties kunnen verschillen per artikel, lid en onderdeel.
-    Bij het definiëren van een nieuwe taal is het belangrijk om te weten dat de standaard waarden gebaseerd
-    zijn op de Engelse configuratie, wat de reden is dat \texttt{regulatory-english.def} in het geheel geen
-    opties meegeeft.%
+    Bij het definiëren van een nieuwe taal loont het om eerst \texttt{regulatory-english.def} te lezen:
+    die geeft iedere waarde voluit op, en is de configuratie waar een taal zonder eigen configuratie op
+    terugvalt.%
 }
 
 \translation{%
@@ -1244,6 +1255,11 @@ en / and \aref{ex1-sub:lorem,ex1-sub:lorem2,ex1-sub:lorem3,ex1-sub:lorem4}.
     They are the source a translation starts from, so they are printed here rather than among the modules
     of \zcref{sec:impl}.%
 }{%
+    Een document dat een taal kiest waar deze bundel geen definities voor heeft, krijgt dat één keer te
+    horen aan het begin van het document, met de taal erbij. Er faalt in dat geval niets: de verwijzingen
+    worden in het Engels verwoord, en dat is ook de enige manier waarop het opvalt\,---\,in een document
+    dat in een andere taal geschreven is leest dat gemakkelijk voorbij.
+
     Hieronder volgen de definitiebestanden van beide ondersteunde talen.
     Ze vormen de bron waar een vertaling mee begint, dus staan ze hier en niet tussen de modules van
     \zcref{sec:impl}.
@@ -1290,6 +1306,20 @@ en / and \aref{ex1-sub:lorem,ex1-sub:lorem2,ex1-sub:lorem3,ex1-sub:lorem4}.
 \begin{lstlisting}[style=tex]
 \ifdefined\HCode\else\IfDocumentMetadataTF{}{\DocumentMetadata{}}\fi
 \end{lstlisting}
+\translation{%
+    Both of these are said out loud rather than left to the result. A run that converts with PDF
+    management active is told that the list markup goes away, and a run in which the configuration of this
+    package was not found is told that an article and a paragraph become running text without a heading.
+    Neither stops the conversion, and neither shows in an output one does not already know how to read: a
+    heading that is no heading looks like a sentence in bold.%
+}{%
+    Allebei worden ze hardop gezegd in plaats van aan de uitkomst overgelaten. Een bouw die omzet met
+    actieve PDF-administratie krijgt te horen dat de lijstopmaak verdwijnt, en een bouw waarin de
+    configuratie van dit pakket niet gevonden is krijgt te horen dat een artikel en een lid lopende tekst
+    worden zonder kop. Geen van beide stopt de omzetting, en geen van beide valt op in een uitkomst die je
+    niet al weet te lezen: een kop die geen kop is ziet eruit als een vetgedrukte zin.%
+}
+
 
 \noindent
 \translation{%

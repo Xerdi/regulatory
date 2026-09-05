@@ -235,10 +235,10 @@
 \DeclareTranslationFallback{Paragraph}{Paragraph}
 \DeclareTranslationFallback{paragraphs}{paragraphs}
 \DeclareTranslationFallback{Paragraphs}{Paragraphs}
-\DeclareTranslationFallback{subparagraph}{subparagraph}
-\DeclareTranslationFallback{Subparagraph}{Subparagraph}
-\DeclareTranslationFallback{subparagraphs}{subparagraphs}
-\DeclareTranslationFallback{Subparagraphs}{Subparagraphs}
+\DeclareTranslationFallback{point}{point}
+\DeclareTranslationFallback{Point}{Point}
+\DeclareTranslationFallback{points}{points}
+\DeclareTranslationFallback{Points}{Points}
 \DeclareTranslationFallback{Definitions}{Definitions}
 %    \end{macrocode}
 % \end{macro}
@@ -336,10 +336,10 @@
 %
 % \begin{environment}{provisions}
 % \begin{environment}{paras}
-% Provisions are a flat enumeration within a section, whereas paragraphs and subparagraphs are the two
+% Provisions are a flat enumeration within a section, whereas paragraphs and points are the two
 % levels of the \texttt{paras} environment. The label of the first level repeats the article number, and the
 % second level is enumerated alphabetically with \cmd{\abalphnum} of \package{fmtcount}, so it isn't limited
-% to 26 subparagraphs.
+% to 26 points.
 %    \begin{macrocode}
 \newcounter{provisions}
 \newlist{provisions}{enumerate}{1}
@@ -372,7 +372,7 @@
 %
 % \subsubsection{\translation{Reference properties}{Verwijseigenschappen}}
 %
-% Every label records the article, paragraph and subparagraph it appears in, which is what
+% Every label records the article, paragraph and point it appears in, which is what
 % \package{regulatory-ref} builds its references upon. A paragraph is either a \cmd{\para} heading or the
 % first level of the \texttt{paras} environment, so both are stored in the same property.
 %    \begin{macrocode}
@@ -394,7 +394,7 @@
 %
 % References made with \cmd{\zcref} of \package{zref-clever} get the designations of these structures, so
 % that both ways of referring stay consistent. The counters \texttt{parasi} and \texttt{parasii} are the
-% list variants of a paragraph and a subparagraph.
+% list variants of a paragraph and a point.
 %    \begin{macrocode}
 \zcRefTypeSetup{article}{%
     Name-sg = \GetTranslation{Article},
@@ -415,10 +415,10 @@
     name-pl = \GetTranslation{paragraphs}
 }
 \zcRefTypeSetup{parasii}{%
-    Name-sg = \GetTranslation{Subparagraph},
-    name-sg = \GetTranslation{subparagraph},
-    Name-pl = \GetTranslation{Subparagraphs},
-    name-pl = \GetTranslation{subparagraphs}
+    Name-sg = \GetTranslation{Point},
+    name-sg = \GetTranslation{point},
+    Name-pl = \GetTranslation{Points},
+    name-pl = \GetTranslation{points}
 }
 %    \end{macrocode}
 %
@@ -480,6 +480,66 @@
     }%
 }
 \AddToHook{begindocument/before}{\regulatory@load@languages}
+%    \end{macrocode}
+% \end{macro}
+%
+% \subsubsection{\translation{What the run cannot fix}{Wat de run niet kan verhelpen}}
+%
+% \begin{macro}{\regulatory@checkenvironment}
+% Three things this bundle cannot do anything about, and which show up in the result rather than in the
+% log. Each of them was found the hard way, by reading an output that looked finished, so each is said out
+% loud once at the beginning of the document.
+%
+% A language without a definition file is accepted where it is loaded, since \package{babel} may well be
+% asked for a language that is only used for a quotation. What it costs is only visible in a reference: the
+% wording falls back on English, so a Dutch document that never declared Dutch reads
+% \enquote{Article 1(1)} in the middle of its own sentences. The languages are listed rather than counted,
+% since the one that is missing is the point.
+%
+% Under \package{tex4ht}, the configuration of this bundle is what turns an article into a section with a
+% heading. Without it the conversion still succeeds and produces neither: a heading becomes a paragraph of
+% text and nothing says so. The test is for the configuration itself, not for the file, so a copy that
+% shadows the one of the package fails it just as loudly as a missing one.
+%
+% Also under \package{tex4ht}: PDF management pulls in the list code of latex-lab, which leaves
+% \package{tex4ht} nothing to turn a \texttt{paras} item into, and the items come out as running text.
+% A document that is converted as well as typeset declares its \cmd{\DocumentMetadata} conditionally, which
+% is what the examples of this bundle do.
+%    \begin{macrocode}
+\newcommand\regulatory@checkenvironment{%
+    \def\regulatory@missinglangs{}%
+    \@ifundefined{bbl@loaded}{}{%
+        \@for\regulatory@lang:=\bbl@loaded\do{%
+            \@ifundefined{ver@regulatory-\regulatory@lang.def}{%
+                \edef\regulatory@missinglangs{%
+                    \regulatory@missinglangs
+                    \ifx\regulatory@missinglangs\@empty\else, \fi
+                    \regulatory@lang}%
+            }{}%
+        }%
+    }%
+    \ifx\regulatory@missinglangs\@empty\else%
+        \PackageWarning{regulatory}{%
+            No definitions for the language(s) \regulatory@missinglangs;\MessageBreak
+            references in them are worded in English. Reported}%
+    \fi%
+    \ifdefined\HCode%
+        \@ifundefined{a:regarticle}{%
+            \PackageWarning{regulatory}{%
+                regulatory.4ht was not found, so an article and a\MessageBreak
+                paragraph convert to running text without a heading.\MessageBreak
+                Reported}%
+        }{}%
+        \IfDocumentMetadataTF{%
+            \PackageWarning{regulatory}{%
+                PDF management is active under tex4ht, which leaves it\MessageBreak
+                nothing to turn a paras item into. Declare\MessageBreak
+                \string\DocumentMetadata\space only when \string\HCode\space is undefined.\MessageBreak
+                Reported}%
+        }{}%
+    \fi%
+}
+\AddToHook{begindocument/end}{\regulatory@checkenvironment}
 %    \end{macrocode}
 % \end{macro}
 %
