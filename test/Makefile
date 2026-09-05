@@ -40,12 +40,13 @@ ENGINE ?= lualatex
 ENGINES ?= lualatex pdflatex
 COMPILER ?= $(ENGINE) --interaction=nonstopmode --shell-escape $(CNF_LINE)
 
-EXAMPLES = example1-nl example2-nl example1-en example2-en md-example
-# Which of them hand their definitions to bib2gls. md-example declares its own, in
-# the metadata and in the definition list of its Markdown source, so there is no
-# resource for bib2gls to read and calling it would be an error rather than a
-# no-op.
+# Which examples hand their definitions to bib2gls, and which have none to hand
+# over: md-example declares its own, in the metadata and in the definition list of
+# its Markdown source, and sign-example has no definitions at all. For those,
+# calling bib2gls would be an error rather than a no-op.
 BIBEXAMPLES = example1-nl example2-nl example1-en example2-en
+PLAINEXAMPLES = md-example sign-example
+EXAMPLES = $(BIBEXAMPLES) $(PLAINEXAMPLES)
 
 # make4ht ships with TeX Live, so the HTML test stays within what `test' promises:
 # a TeX installation and nothing else.
@@ -73,7 +74,8 @@ SUITES += conformance
 endif
 
 .PHONY: all test $(addprefix suite-,$(ENGINES) html conformance) \
-        test-engines test-html html-checks md-checks ref-checks conformance conformance-run \
+        test-engines test-html html-checks md-checks ref-checks sign-checks \
+        conformance conformance-run \
         conformance-check conformance-check-run conformance-stale \
         clean-examples clean-all-examples clean clean-all
 
@@ -96,7 +98,7 @@ suite-conformance: conformance
 # which is why every path above is absolute. The directory is named after the
 # engine, and so is the engine it builds with: `make build-pdflatex' is pdflatex.
 build-%:
-	$(call run_in,$*,all ref-checks md-checks ENGINE=$*)
+	$(call run_in,$*,all ref-checks md-checks sign-checks ENGINE=$*)
 
 .DELETE_ON_ERROR:
 
@@ -118,9 +120,9 @@ $(addsuffix .pdf,$(BIBEXAMPLES)): %.pdf: %.glstex
 	$(COMPILER) $*
 	$(COMPILER) $*
 
-md-example.pdf: md-example.aux
-	$(COMPILER) md-example
-	$(COMPILER) md-example
+$(addsuffix .pdf,$(PLAINEXAMPLES)): %.pdf: %.aux
+	$(COMPILER) $*
+	$(COMPILER) $*
 
 # Both example documents refer to each other, so the labels of the second one
 # have to be on disk before the first one is typeset.
@@ -143,6 +145,18 @@ ref-checks: $(addsuffix .pdf,$(EXAMPLES))
 	 fi; \
 	 if [ "$$dup" -gt 0 ]; then \
 	     echo "refs: a label was defined twice; see the example logs" >&2; exit 1; \
+	 fi
+
+# A signature field is a PDF annotation over a drawn box. The box is drawn by TeX
+# and shows up whatever happens; the annotation is what makes it a field, and its
+# absence is invisible on paper -- it only shows when someone tries to sign. The
+# example is therefore written uncompressed, so that the field can be read back
+# out of the PDF here without a PDF tool.
+sign-checks: sign-example.pdf
+	@fields=$$(grep -ac '/FT /Sig' sign-example.pdf || true); \
+	 echo "sign: $$fields signature fields"; \
+	 if [ "$$fields" -lt 2 ]; then \
+	     echo "sign: the box was drawn but no field was placed over it" >&2; exit 1; \
 	 fi
 
 # What a Markdown source loses when something is wrong with it, it loses quietly:

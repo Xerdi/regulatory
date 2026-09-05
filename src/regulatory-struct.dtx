@@ -18,7 +18,7 @@
 % This work consists of the files regulatory.ins,
 % regulatory-struct.dtx, regulatory-ref.dtx,
 % regulatory-defs.dtx, regulatory-attachments.dtx,
-% regulatory-md.dtx,
+% regulatory-md.dtx, regulatory-sign.dtx,
 % regulatory-html.dtx,
 % regulatory-english.def, regulatory-dutch.def,
 % regulatory-syntax.lua,
@@ -70,7 +70,8 @@
 % \subsubsection{The bundle}
 %
 % The \package{regulatory} package itself is nothing more than a wrapper around the modules that are
-% always loaded. Every option is handed over to \package{regulatory-struct}, which administers the options for the
+% always loaded. \package{regulatory-sign} is among them: it defines two commands and emits nothing until
+% one of them is used, and a document that needs a signature field is exactly the kind this bundle is for. Every option is handed over to \package{regulatory-struct}, which administers the options for the
 % whole bundle. Both other modules request their prerequisites themselves, so the order below merely
 % documents the dependency chain.
 % \iffalse
@@ -83,6 +84,7 @@
 \RequirePackage{regulatory-defs}
 \RequirePackage{regulatory-ref}
 \RequirePackage{regulatory-attachments}
+\RequirePackage{regulatory-sign}
 %    \end{macrocode}
 % \iffalse
 %</wrapper>

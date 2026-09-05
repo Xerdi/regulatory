@@ -1,0 +1,182 @@
+% \iffalse meta-comment
+%
+%% regulatory-sign.dtx
+%% Copyright 2024-2026 E. Nijenhuis
+%
+% This work may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License, either version 1.3c
+% of this license or (at your option) any later version.
+% The latest version of this license is in
+% http://www.latex-project.org/lppl.txt
+% and version 1.3c or later is part of all distributions of LaTeX
+% version 2005/12/01 or later.
+%
+% This work has the LPPL maintenance status ‘maintained’.
+%
+% The Current Maintainer of this work is E. Nijenhuis.
+%
+% This work consists of the files listed in the meta-comment of
+% regulatory-struct.dtx.
+%
+% \fi
+%
+% \iffalse
+%<*driver>
+\ProvidesFile{regulatory-sign.dtx}
+%</driver>
+%<package>\NeedsTeXFormat{LaTeX2e}
+%<package>\ProvidesPackage{regulatory-sign}
+%<package>    [2026/09/05 0.0.5 Xerdi's Regulatory Package (Signatures)]
+%
+%<*driver>
+\documentclass[10pt,english]{ltxdoc}
+%! suppress = InclusionLoop
+\usepackage{regulatory}
+\usepackage{tabularx}
+\usepackage[english,dutch]{babel}
+\input{regulatory-preamble}
+\newcommand\translation[2]{#1}
+\begin{document}
+    \selectlanguage{english}
+    \DocInput{regulatory-sign.dtx}
+\end{document}
+%</driver>
+% \fi
+%
+% \subsection{\texorpdfstring{\package{regulatory-sign}}{regulatory-sign}}
+% \setcounter{CodelineNo}{0}
+%
+% This module comes from \package{xdp-sign} of Xerdi's Documentation Project, where it was written for the
+% agreement class of that bundle. A signature belongs to the same kind of document as the rest of this
+% package, and a document that needs one should not have to reach for a package that is in no
+% distribution, so it is maintained here.
+%
+% \subsubsection{\translation{Prerequisites}{Vereisten}}
+%
+% A signature field is a widget annotation, which needs \package{hyperref} for the form machinery it
+% belongs to. It is loaded by \package{regulatory-struct}, which is stated here for the document that
+% loads this module on its own. Options for \package{hyperref} have to be passed before either is loaded,
+% for instance with \cmd{\PassOptionsToPackage}\marg{hidelinks}\marg{hyperref}.
+% \iffalse
+%<*package>
+% \fi
+%    \begin{macrocode}
+\RequirePackage{regulatory-struct}
+\RequirePackage{hyperref}
+%    \end{macrocode}
+%
+% \subsubsection{\translation{The annotation}{De annotatie}}
+%
+% \begin{macro}{\regulatory@sign@annot}
+% Draws a box of \meta{width} by \meta{height} with a rule at the top and at the bottom, and puts a PDF
+% annotation of exactly that rectangle over it, so that a viewer offers the field where the box is.
+%
+% There are two ways to place one, and which is available depends on the document rather than on the
+% engine. With PDF management active\,---\,which is what \cmd{\DocumentMetadata} turns on, and what
+% \package{regulatory-attachments} needs anyway\,---\,the annotation goes through
+% \verb|\pdfannot_box:nnnn| of the kernel, which knows about the page it lands on and about the standards
+% the document declares. Without it, the engine primitive is the only route: \verb|\pdfextension annot|
+% under Lua\TeX{} and current pdf\TeX{}, \cmd{\pdfannot} under an older one. Measured: the kernel command
+% exists only under \cmd{\DocumentMetadata}, so the test is for the command and not for the engine.
+%
+% A document that has neither gets a warning and a drawn box without a field, which is a signature line to
+% write on but not one to sign in a viewer. That is worth saying out loud: a missing annotation is
+% invisible on paper and the difference only shows when someone tries to sign.
+%    \begin{macrocode}
+\newcommand*\regulatory@sign@annot[3]{%
+    \begingroup
+    \setlength{\dimen0}{#1}%
+    \setlength{\dimen1}{#2}%
+    \leavevmode
+    \hbox to \dimen0{%
+        \vbox to \dimen1{%
+            \hrule height0.4pt\relax
+            \vfill
+            \hrule height0.4pt\relax
+        }\hss
+    }%
+    \kern-\dimen0
+    \raisebox{0pt}[0pt][0pt]{%
+        \hbox to 0pt{%
+            \hskip0pt
+            \regulatory@sign@place{#3}%
+            \hss
+        }%
+    }%
+    \kern\dimen0
+    \endgroup
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\regulatory@sign@place}
+% Emits the annotation itself, by whichever of the three routes this document has.
+%    \begin{macrocode}
+\ExplSyntaxOn
+\cs_new_protected:Npn \regulatory@sign@place #1
+{
+    \cs_if_exist:NTF \pdfannot_box:nnnn
+        { \pdfannot_box:nnnn { \dimen0 } { \dimen1 } { 0pt } { #1 } }
+        {
+            \cs_if_exist:NTF \pdfextension
+                { \tex_pdfextension:D annot ~ width ~ \dimen0 ~
+                  height ~ \dimen1 ~ depth ~ 0pt ~ { #1 } }
+                {
+                    \cs_if_exist:NTF \pdfannot
+                        { \pdfannot ~ width ~ \dimen0 ~
+                          height ~ \dimen1 ~ depth ~ 0pt ~ { #1 } }
+                        {
+                            \msg_warning:nn { regulatory-sign } { no-annotation }
+                        }
+                }
+        }
+}
+
+\msg_new:nnn { regulatory-sign } { no-annotation }
+    {
+        This~engine~offers~no~way~to~place~an~annotation,~so~the~signature~\\
+        field~is~a~drawn~box~and~nothing~more.~Declare~\iow_char:N\\DocumentMetadata~
+        to~let~the~kernel~place~it.
+    }
+\ExplSyntaxOff
+%    \end{macrocode}
+% \end{macro}
+%
+% \subsubsection{\translation{Signature fields}{Handtekeningvelden}}
+%
+% \begin{macro}{\signaturefield}
+% Draws a signature field of \meta{width} by \meta{height} under the name \meta{name}, which is the name a
+% viewer stores the signature under and the one a signing tool asks for. The optional \meta{tooltip} is
+% what a reader is told the field is for, which is also what a screen reader announces, so it is worth
+% giving.
+%    \begin{macrocode}
+\newcommand\signaturefield[4][]{%
+    \def\regulatory@sign@tooltip{#1}%
+    \regulatory@sign@annot{#3}{#4}{%
+        /Subtype /Widget
+        /FT /Sig
+        /T (#2)
+        \ifx\regulatory@sign@tooltip\@empty\else /TU (#1)\fi
+        /BS << /W 0 >>
+        /F 4
+        /DA (/Helv 0 Tf 0 g)
+    }%
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\SignatureField}
+% The name this command had in \package{xdp-sign}, kept so that a document written for that package keeps
+% working when it is moved over. New documents use the lowercase name, which is the one the rest of this
+% bundle is written in.
+%    \begin{macrocode}
+\let\SignatureField\signaturefield
+\let\SignatureAnnotation\regulatory@sign@annot
+%    \end{macrocode}
+% \end{macro}
+% \iffalse
+%</package>
+% \fi
+%
+% \Finale
+%

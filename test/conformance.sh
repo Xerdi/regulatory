@@ -33,7 +33,9 @@ TAGGED='testphase={phase-III,title}'
 #
 # The documents differ in what they embed, which is what the A-standards care
 # about: md-example embeds nothing, example1-nl embeds a bib file (not a PDF),
-# example2-nl embeds another PDF.
+# example2-nl embeds another PDF. sign-example embeds nothing either but carries
+# two signature fields, which is a kind of annotation the standards make their own
+# demands of.
 #
 # The A-4 case is deliberately untagged. With testphase=phase-III latex-lab hangs
 # latex-list-css.html and latex-align-css.html on the catalog as associated
@@ -47,6 +49,7 @@ a4f-ua2|example2-nl|pdfstandard=A-4f,pdfstandard=UA-2,$TAGGED|4f:pass,ua2:pass
 a3a-ua1|example2-nl|pdfstandard=A-3a,pdfstandard=UA-1,$TAGGED|3a:pass,ua1:pass
 a3b|example1-nl|pdfstandard=A-3b|3b:xfail
 a2b-embedded-nonpdf|example1-nl|pdfstandard=A-2b|2b:fail
+a2b-signed|sign-example|pdfstandard=A-2b|2b:xfail
 "
 
 # Everything that can change a verdict: the package, the documents, and the matrix
@@ -57,7 +60,7 @@ inputs_hash() {
                  "$HERE"/example1.tex "$HERE"/example2.tex "$HERE"/example.md \
                  "$HERE"/example1-nl.tex "$HERE"/example1-en.tex \
                  "$HERE"/example2-nl.tex "$HERE"/example2-en.tex \
-                 "$HERE"/md-example.tex \
+                 "$HERE"/md-example.tex "$HERE"/sign-example.tex \
                  "$HERE"/example1.bib "$HERE"/example2.bib \
                  "$HERE"/conformance.sh 2>/dev/null |
     sha256sum | cut -d' ' -f1

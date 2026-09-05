@@ -1054,6 +1054,73 @@ en / and \aref{ex1-sub:lorem,ex1-sub:lorem2,ex1-sub:lorem3,ex1-sub:lorem4}.
 
 \clearpage
 
+\section{\translation{Signatures}{Handtekeningen}}\label{sec:sign}
+\translation{%
+    An agreement is signed, and a PDF can carry the field to sign it in. The
+    \package{regulatory-sign} module draws such a field and puts a signature widget over it, so that a
+    reader who opens the document in a viewer that can sign is offered the field where the line is.
+
+    It comes from \package{xdp-sign} of Xerdi's Documentation Project and is maintained here, so that a
+    document that needs a signature does not depend on a package that is in no distribution.%
+}{%
+    Een overeenkomst wordt ondertekend, en een PDF kan het veld dragen om dat in te doen. De module
+    \package{regulatory-sign} tekent zo'n veld en legt er een handtekeningwidget overheen, zodat een lezer
+    die het document opent in een viewer die kan ondertekenen het veld aangeboden krijgt waar de lijn
+    staat.
+
+    De module komt uit \package{xdp-sign} van Xerdi's Documentation Project en wordt hier onderhouden,
+    zodat een document dat een handtekening nodig heeft niet afhangt van een pakket dat in geen enkele
+    distributie zit.%
+}\\
+
+\noindent
+\DescribeMacro{\signaturefield\\\oarg{tooltip}\\\marg{name}\\\marg{width}\\\marg{height}}
+\translation{%
+    Draws a signature field of \meta{width} by \meta{height}. The \meta{name} is what a viewer stores the
+    signature under and what a signing tool asks for, so it is worth giving a telling one. The optional
+    \meta{tooltip} says what the field is for, which is also what a screen reader announces.
+
+    The field is placed through the kernel when \cmd{\DocumentMetadata} is declared, and through the
+    engine otherwise. A document that offers neither gets a warning and a drawn box without a field: a
+    line to sign on paper, but nothing to sign in a viewer.%
+}{%
+    Tekent een handtekeningveld van \meta{breedte} bij \meta{hoogte}. De \meta{naam} is waaronder een
+    viewer de handtekening bewaart en waar een ondertekentool om vraagt, dus een sprekende naam loont. De
+    optionele \meta{tooltip} zegt waar het veld voor is, en dat is ook wat een schermlezer voorleest.
+
+    Het veld wordt via de kernel geplaatst wanneer \cmd{\DocumentMetadata} is gedeclareerd, en anders via
+    de engine. Een document dat geen van beide biedt krijgt een waarschuwing en een getekend kader zonder
+    veld: een lijn om op papier te tekenen, maar niets om in een viewer te ondertekenen.%
+}
+\begin{lstlisting}[style=tex]
+\article{Ondertekening}
+\begin{paras}
+    \item De opdrachtgever tekent hieronder.\\
+        \signaturefield[Handtekening van de opdrachtgever]{opdrachtgever}{6cm}{2cm}
+\end{paras}
+\end{lstlisting}
+\translation{%
+    \cmd{\SignatureField} is the name this command had in \package{xdp-sign} and still answers to, so a
+    document written for that package keeps working when it moves over.
+
+    A signature costs the document its PDF/A-2b conformance. Measured with veraPDF: a document with a
+    field fails rule 6.3.3-1, which is about what an annotation has to carry to be shown, and it is not
+    the default appearance that does it\,---\,leaving that out changes nothing. An appearance stream of
+    the kind the kernel can make was tried and did not settle it either. The case is in the table of
+    \zcref{sec:conformance} as a known failure, so that the day it passes is a day one can see.%
+}{%
+    \cmd{\SignatureField} is de naam die dit commando in \package{xdp-sign} had en waar het nog steeds op
+    luistert, zodat een document dat voor dat pakket geschreven is blijft werken wanneer het overkomt.
+
+    Een handtekening kost het document zijn PDF/A-2b conformiteit. Gemeten met veraPDF: een document met
+    een veld faalt op regel 6.3.3-1, die gaat over wat een annotatie moet dragen om getoond te worden, en
+    het ligt niet aan de standaardverschijning\,---\,die weglaten verandert niets. Een appearance stream
+    zoals de kernel die kan maken is geprobeerd en loste het evenmin op. Het geval staat als bekende
+    faler in de tabel van \zcref{sec:conformance}, zodat de dag waarop het wél slaagt een dag is die je
+    kunt zien.%
+}
+\clearpage
+
 \section{\translation{Language Support}{Taalondersteuning}}\label{sec:lang}
 \translation{%
     Initially, this package only provided support for Dutch.
@@ -1533,7 +1600,8 @@ en / and \aref{ex1-sub:lorem,ex1-sub:lorem2,ex1-sub:lorem3,ex1-sub:lorem4}.
 
 \noindent
 \translation{%
-    The \texttt{xfail} case fails ISO 19005-3 rule 6.8-4 on a file specification for the external
+    Two cases are \texttt{xfail}. The signature one is described in \zcref{sec:sign}; the other fails
+    ISO 19005-3 rule 6.8-4 on a file specification for the external
     document: it carries \texttt{/AFRelationship /Unspecified}, has no \texttt{/EF} and is not
     listed in \texttt{/AF}. It is written for the hyperlink to that document, not by this package,
     so PDF/A-3 stays out of reach for a document that refers to the provisions of another one until
@@ -1545,7 +1613,8 @@ en / and \aref{ex1-sub:lorem,ex1-sub:lorem2,ex1-sub:lorem3,ex1-sub:lorem4}.
     Measured: the offending specification is gone from the one document and still present in the
     other.%
 }{%
-    Het \texttt{xfail} geval faalt op regel 6.8-4 van ISO 19005-3, op een bestandsspecificatie voor
+    Twee gevallen staan op \texttt{xfail}. Dat van de handtekening staat beschreven in
+    \zcref{sec:sign}; het andere faalt op regel 6.8-4 van ISO 19005-3, op een bestandsspecificatie voor
     het externe document: die draagt \texttt{/AFRelationship /Unspecified}, heeft geen \texttt{/EF}
     en staat niet in \texttt{/AF}. Hij wordt geschreven voor de hyperlink naar dat document en niet
     door dit pakket, dus PDF/A-3 blijft buiten bereik voor een document dat naar de bepalingen van
@@ -1596,6 +1665,7 @@ en / and \aref{ex1-sub:lorem,ex1-sub:lorem2,ex1-sub:lorem3,ex1-sub:lorem4}.
 \DocInput{regulatory-ref.dtx}
 \DocInput{regulatory-attachments.dtx}
 \DocInput{regulatory-md.dtx}
+\DocInput{regulatory-sign.dtx}
 % The syntax extension is read by markdown rather than by TeX, so it is a Lua
 % source of its own, documented from its own comments with comment2tex.
 \includelua{../src/regulatory-syntax.lua}
