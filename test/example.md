@@ -1,23 +1,48 @@
-# Definitiones
-\label{art:defs}
-\glssetwidest{Nam dui}
+---
+definitions:
+  - label: onderhands
+    name: Onderhandse akte
+    description: >-
+      Een akte die zonder tussenkomst van een ambtenaar is opgemaakt,
+      gedeclareerd in de metadata van dit bestand.
+---
 
-Lorem
-:   \describe{def1}
-Nam dui
-:   \describe{def2}
-Nulla
-:   \describe{def3}
+# Definitiones {#art:defs}
 
-# Quisque ullamcorper
+De begrippen in deze overeenkomst hebben de betekenis die hieronder aan
+hen wordt toegekend.
 
-1. \label{lid:lorem}\textfill
-2. \label{lid:lorem2}\textfill
-    1. \label{sub:lorem}\textfill~\Aref{lid:lorem}.
-    2. \label{sub:lorem2}\textfill~\Aref{ex2-lid:lorem}.
-    3. \label{sub:lorem3}\textfill~\Aref{lid:lorem,lid:lorem2}.
-    4. \label{sub:lorem4}\textfill~\Aref{ex2-lid:lorem,ex2-lid:lorem2,ex2-lid:lorem3}.
-    5. \label{sub:lorem5}\textfill~\Aref{ex2-lid:lorem,ex2-lid:lorem2,ex2-lid:lorem3,ex2-lid:lorem5}.
-    6. \label{sub:lorem6}\textfill~\Gls{def1} ipsum dolor sit amed.
-    7. \label{sub:lorem7}\textfill~\Aref{ex2-sub:lorem,ex2-sub:lorem2,ex2-sub:lorem4}.
-    8. \label{sub:lorem8}\textfill
+[Lorem]{#def1}
+
+:   Een begrip dat in de definitielijst van deze bron is gedeclareerd en
+    dat elders met een span wordt aangehaald.
+
+[Nam dui]{#def2}
+
+:   Een tweede begrip, dat laat zien dat de langste naam de uitlijning
+    van de lijst bepaalt.
+
+::: {.definitions widest="Onderhandse akte"}
+
+De volgende begrippen worden in deze overeenkomst gebruikt.
+
+:::
+
+# Quisque ullamcorper {#art:lorem}
+
+1. {#lid:lorem} Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+2. {#lid:lorem2} Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+    1. {#sub:lorem} Ut enim ad minim veniam, zie <#lid:lorem>.
+    2. {#sub:lorem2} Quis nostrud exercitation, zie <#ex2-lid:lorem>.
+    3. {#sub:lorem3} Duis aute irure dolor, zie <#lid:lorem,lid:lorem2>.
+    4. {#sub:lorem4} Excepteur sint occaecat, zie <#ex2-lid:lorem,ex2-lid:lorem2,ex2-lid:lorem3>.
+    5. {#sub:lorem5} Cupidatat non proident, zie lid [](#lid:lorem2) en <#art:defs>.
+    6. {#sub:lorem6} Sunt in culpa qui officia deserunt mollit anim id est laborum.
+    7. {#sub:lorem7} Nam dui ligula, zie [het eerste lid](#lid:lorem) en <#def1>.
+    8. Fringilla a, euismod sodales, sollicitudin vel, wisi. Dit lid draagt geen label.
+
+# Suspendisse {#art:susp}
+
+Morbi in sem quis dui placerat ornare. Een <#def1> en een
+[onderhandse akte](#onderhands) worden hier aangehaald; artikel~2 blijft
+bij elkaar staan.

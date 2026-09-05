@@ -31,6 +31,10 @@
 % and regulatory.4ht.
 \usepackage{gitinfo-lua}
 \usepackage{listings}
+% The Markdown syntax extension is Lua, not TeX, so it is not documented with
+% docstrip but from its own comments, as a listing with prose in between.
+\usepackage{comment2tex}
+\ctxuselistings
 \usepackage{adjustbox}
 \usepackage{tikz}
 \usetikzlibrary{arrows.meta}
@@ -51,7 +55,7 @@
     language=[LaTeX]TeX,
     keywordsprefix={\\},
     alsoletter={\\},
-    morekeywords={article,para,textfill,masterdocument,refdocument,loadglsdefs,printdefs,setmiddleconjunction,setlastconjunction,setrangeconjunction,setconjunction,markdownInput,glssetwidest,describe}
+    morekeywords={article,para,textfill,masterdocument,refdocument,loadglsdefs,printdefs,setmiddleconjunction,setlastconjunction,setrangeconjunction,setconjunction,markdownInput,glssetwidest,describe,newdefinition,autocitedefs}
 }
 
 \lstdefinestyle{bash}{%
@@ -59,14 +63,14 @@
     morekeywords={pdflatex,lualatex,latexmk,makeglossaries,bib2gls}
 }
 
-\lstdefinelanguage{Markdown}[LaTeX]{TeX}{%
-    sensitive=false,
-    morecomment=[l][\bfseries\ttfamily\color{green}]{\#},
-    morecomment=[s][\bfseries\ttfamily\color{purple}]{:\ \ }{\ },
-    morestring=[s][\color{black}]{\{}{\}},
-    morekeywords={article,para,textfill,masterdocument,refdocument,loadglsdefs,printdefs,setmiddleconjunction,setlastconjunction,setrangeconjunction,setconjunction,markdownInput,glssetwidest,describe},
-    keywordsprefix={\\},
-    alsoletter={\\},
+% A Markdown source of this bundle holds no TeX any more, so the language is no
+% longer derived from it: what is worth marking is where a label is written and
+% where one is read.
+\lstdefinelanguage{Markdown}{%
+    sensitive=true,
+    moredelim=[s][\bfseries\color{blue}]{\{\#}{\}},
+    moredelim=[s][\color{purple}]{<\#}{>},
+    moredelim=[s][\color{purple}]{(\#}{)},
 }
 
 \lstdefinestyle{md}{%

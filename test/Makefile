@@ -20,11 +20,17 @@ export BIBINPUTS := $(TESTDIR):$(BIBINPUTS)
 # build directory self-contained.
 SOURCES := $(notdir $(wildcard $(TESTDIR)/*.tex) $(wildcard $(TESTDIR)/*.bib)) example.md latexmkrc
 
-# Populates a build directory and runs a target in it.
+# Populates a build directory and runs a target in it. The markdown cache goes
+# with the sources: it is keyed by the conversion options, which name the syntax
+# extension by filename rather than by what is in it, so an edited extension is
+# answered from the cache as if nothing had changed. Its files also outlive the
+# source they came from, which would leave an assertion reading a conversion that
+# no longer exists.
 define run_in
 	@echo "== $(1)"
 	@mkdir -p $(OUT)/$(1)
 	@cp $(addprefix $(TESTDIR)/,$(SOURCES)) $(OUT)/$(1)/
+	@rm -rf $(OUT)/$(1)/_markdown_*
 	@$(MAKE) -C $(OUT)/$(1) -f $(TESTDIR)/Makefile $(2)
 endef
 
@@ -35,6 +41,11 @@ ENGINES ?= lualatex pdflatex
 COMPILER ?= $(ENGINE) --interaction=nonstopmode --shell-escape $(CNF_LINE)
 
 EXAMPLES = example1-nl example2-nl example1-en example2-en md-example
+# Which of them hand their definitions to bib2gls. md-example declares its own, in
+# the metadata and in the definition list of its Markdown source, so there is no
+# resource for bib2gls to read and calling it would be an error rather than a
+# no-op.
+BIBEXAMPLES = example1-nl example2-nl example1-en example2-en
 
 # make4ht ships with TeX Live, so the HTML test stays within what `test' promises:
 # a TeX installation and nothing else.
@@ -56,7 +67,7 @@ SUITES += conformance
 endif
 
 .PHONY: all test $(addprefix suite-,$(ENGINES) html conformance) \
-        test-engines test-html html-checks conformance conformance-run \
+        test-engines test-html html-checks md-checks conformance conformance-run \
         conformance-check conformance-check-run conformance-stale \
         clean-examples clean-all-examples clean clean-all
 
@@ -79,7 +90,7 @@ suite-conformance: conformance
 # which is why every path above is absolute. The directory is named after the
 # engine, and so is the engine it builds with: `make build-pdflatex' is pdflatex.
 build-%:
-	$(call run_in,$*,all ENGINE=$*)
+	$(call run_in,$*,all md-checks ENGINE=$*)
 
 .DELETE_ON_ERROR:
 
@@ -97,9 +108,13 @@ all: $(addsuffix .pdf,$(EXAMPLES))
 	bib2gls $*
 
 # Twice, because the examples refer to each other's articles and definitions.
-%.pdf: %.glstex
+$(addsuffix .pdf,$(BIBEXAMPLES)): %.pdf: %.glstex
 	$(COMPILER) $*
 	$(COMPILER) $*
+
+md-example.pdf: md-example.aux
+	$(COMPILER) md-example
+	$(COMPILER) md-example
 
 # Both example documents refer to each other, so the labels of the second one
 # have to be on disk before the first one is typeset.
@@ -108,6 +123,32 @@ example1-nl.aux: example2-nl.glstex
 example1-en.aux: example2-en.glstex
 
 md-example.pdf: example1-nl.pdf example2-nl.pdf
+
+# What a Markdown source loses when something is wrong with it, it loses quietly:
+# raw TeX is typeset as its own characters, a reference that resolved to nothing
+# prints two question marks, and a definition list that is declared but never
+# printed leaves an empty article. None of that stops a run, so each is asserted
+# on what the run leaves behind. Everything here is read from files TeX itself
+# wrote, so the suite still needs nothing but a TeX installation.
+md-checks: md-example.pdf
+	@raw=$$(cat _markdown_md-example/*.md.tex | grep -o 'markdownRendererBackslash' | wc -l); \
+	 ext=$$(cat _markdown_md-example/*.md.tex | grep -o 'markdownRendererRegulatoryLabel' | wc -l); \
+	 undef=$$(grep -c 'Reference .* undefined' md-example.log || true); \
+	 dup=$$(grep -c 'multiply defined' md-example.log || true); \
+	 warn=$$(grep -c 'regulatory-md Warning' md-example.log || true); \
+	 echo "md: $$raw raw TeX, $$ext extension labels, $$undef undefined, $$dup duplicate, $$warn module warnings"; \
+	 if [ "$$raw" -gt 0 ]; then \
+	     echo "md: the source still holds TeX, which is now typeset rather than obeyed" >&2; exit 1; \
+	 fi; \
+	 if [ "$$ext" -lt 1 ]; then \
+	     echo "md: no standalone identifier was read; was the syntax extension found?" >&2; exit 1; \
+	 fi; \
+	 if [ "$$undef" -gt 0 ] || [ "$$dup" -gt 0 ]; then \
+	     echo "md: a label did not come out as one label" >&2; exit 1; \
+	 fi; \
+	 if [ "$$warn" -gt 0 ]; then \
+	     echo "md: the module reported something; see md-example.log" >&2; exit 1; \
+	 fi
 
 # Runs every example through every supported engine, each in out/<engine>, so both
 # results survive and can be compared. The engines are a subset of the suites, kept

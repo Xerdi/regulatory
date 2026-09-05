@@ -298,26 +298,209 @@ lualatex main
     The \package{regulatory-md} module translates the constructs of a Markdown source into the structures
     above.
     It is loaded as soon as \package{markdown} is, whatever the order of both packages, and the package
-    option \option{md} comes down to loading \package{markdown} with the options this bundle expects.
+    option \option{md} loads \package{markdown} itself.
     That option is the safe way around, since \package{markdown} has to be loaded before
     \package{enumitem} to leave the lists of this package intact.
-    With it, this package ensures that all these structures are handled.
-    However, this means that no chapters or other standard components can be typed.
-    Instead, the writer is specifically limited to the components described in this chapter.
-    Refer to \zcref{code:example-md} for a Markdown example, and check \zcref{code:md-example} to see how such a Markdown source can ultimately be used from within \LaTeX{} (\zcref{sec:example}).
+    A Markdown source is therefore limited to the constructs described here; chapters and the other
+    components of a document class have no counterpart.
+    Refer to \zcref{code:example-md} for a Markdown example, and check \zcref{code:md-example} to see how
+    such a Markdown source can ultimately be used from within \LaTeX{} (\zcref{sec:example}).
+
+    A Markdown source contains no \TeX{}. The module used to be loaded with the \option{hybrid} option of
+    \package{markdown}, which let every backslash through, and the examples of this bundle wrote their
+    labels and references that way; \package{markdown} has deprecated it. Without it, a backslash is
+    printed rather than obeyed, and a source that still holds one loses its references without a single
+    error being raised, so a document converted from an older source is worth reading through once.
+    Everything that used to need it is written in Markdown below.%
 }{%
     De \package{regulatory-md} module vertaalt de onderdelen van een Markdown bron naar de structuren
     hierboven.
     Deze wordt geladen zodra \package{markdown} dat is, ongeacht de volgorde van beide pakketten, en de
-    pakketoptie \option{md} komt neer op het laden van \package{markdown} met de opties die deze bundel
-    verwacht.
+    pakketoptie \option{md} laadt \package{markdown} zelf.
     Die optie is de veilige weg, aangezien \package{markdown} vóór \package{enumitem} geladen moet worden
     om de lijsten van dit pakket heel te laten.
-    Daarmee zorgt dit pakket ervoor dat al deze structuren gehanteerd worden.
-    Dit betekend echter wel dat er geen hoofdstukken of andere standaard onderdelen meer getypt kunnen worden.
-    In plaats daarvan is de schrijver juist beperkt tot de onderdelen omschreven in dit hoofdstuk.
-    Kijk naar \zcref{code:example-md} voor een markdown voorbeeld en naar \zcref{code:md-example} hoe zo'n Markdown bron uiteindelijk kan gebruikt worden vanuit \LaTeX{} (\zcref{sec:example}).
+    Een Markdown bron is daarmee beperkt tot de onderdelen die hier beschreven staan; hoofdstukken en de
+    overige onderdelen van een documentklasse hebben geen tegenhanger.
+    Kijk naar \zcref{code:example-md} voor een Markdown voorbeeld en naar \zcref{code:md-example} hoe zo'n
+    Markdown bron uiteindelijk gebruikt kan worden vanuit \LaTeX{} (\zcref{sec:example}).
+
+    Een Markdown bron bevat geen \TeX{}. De module werd geladen met de optie \option{hybrid} van
+    \package{markdown}, die iedere backslash doorliet, en de voorbeelden van deze bundel schreven hun
+    labels en verwijzingen op die manier; \package{markdown} heeft die optie afgeschaft. Zonder haar wordt
+    een backslash afgedrukt in plaats van uitgevoerd, en een bron die er nog één bevat verliest zijn
+    verwijzingen zonder dat er ook maar iets misgaat, dus een document dat uit een oudere bron komt is het
+    waard één keer doorgelezen te worden.
+    Alles wat die optie nodig had wordt hieronder in Markdown geschreven.%
 }
+
+\subsubsection{\translation{Labels and references}{Labels en verwijzingen}}
+\translation{%
+    An attribute writes a label and a link reads one. A heading and a bracketed span both take an
+    identifier between braces, which becomes the label of the article or of the paragraph it is written
+    in:%
+}{%
+    Een attribuut schrijft een label en een link leest er één. Een kop en een bracketed span nemen allebei
+    een identifier tussen accolades, die het label wordt van het artikel of van het lid waarin hij staat:%
+}
+\begin{lstlisting}[style=md]
+# Quisque ullamcorper {#art:lorem}
+
+1. [Lorem ipsum dolor sit amet.]{#lid:lorem}
+2. [Sed do eiusmod tempor incididunt.]{#lid:lorem2}
+\end{lstlisting}
+\translation{%
+    A reference is a link whose target starts with \texttt{\#}, and the three shapes a Markdown link can
+    take are the three references of \zcref{sec:ref}:%
+}{%
+    Een verwijzing is een link waarvan het doel met \texttt{\#} begint, en de drie vormen die een Markdown
+    link kan aannemen zijn de drie verwijzingen uit \zcref{sec:ref}:%
+}
+\begin{labeling}{\texttt{[tekst](\#label)}}
+    \item[\texttt{<\#label>}] \translation
+        {names the structure it points at, as \cmd{\Aref} does, and takes several labels at once:
+         \texttt{<\#lid:a,lid:b>}.}
+        {noemt de structuur waar hij naar wijst, zoals \cmd{\Aref} doet, en neemt meerdere labels
+         tegelijk: \texttt{<\#lid:a,lid:b>}.}
+    \item[\texttt{[](\#label)}] \translation
+        {the number alone, as \cmd{\rref} does.}
+        {het nummer alleen, zoals \cmd{\rref} doet.}
+    \item[\texttt{[tekst](\#label)}] \translation
+        {keeps the text and links it.}
+        {behoudt de tekst en maakt er een link van.}
+\end{labeling}
+\translation{%
+    A label of another document is referred to in the same way, with the prefix that \cmd{\refdocument}
+    gave it: \texttt{<\#ex2-lid:lorem>}.
+
+    A bracketed span may hold a reference of the first shape, but not a second span or a link written with
+    brackets; \package{markdown} then leaves the whole construct as it stands. For a paragraph that both
+    carries a label and cites a definition there is the identifier of \zcref{sec:syntax}.%
+}{%
+    Naar een label van een ander document wordt op dezelfde manier verwezen, met de prefix die
+    \cmd{\refdocument} eraan gaf: \texttt{<\#ex2-lid:lorem>}.
+
+    Een bracketed span mag een verwijzing van de eerste vorm bevatten, maar geen tweede span en geen link
+    met blokhaken; \package{markdown} laat de hele constructie dan staan zoals hij is. Voor een lid dat
+    zowel een label draagt als een definitie aanhaalt is er de identifier van \zcref{sec:syntax}.%
+}
+
+\subsubsection{\translation{An identifier of its own}{Een eigen identifier}}\label{sec:syntax}
+\translation{%
+    A bracketed span may not hold another span or a link written with brackets, which is a limit of
+    Markdown itself and an awkward one for a provision that both carries a label and cites a definition.
+    This bundle therefore adds one rule to the grammar of the reader, which lets the identifier stand on
+    its own, before the text it labels:%
+}{%
+    Een bracketed span mag geen tweede span bevatten en geen link met blokhaken, wat een beperking van
+    Markdown zelf is en een ongelukkige voor een lid dat zowel een label draagt als een definitie
+    aanhaalt. Deze bundel voegt daarom één regel toe aan de grammatica van de lezer, waarmee de identifier
+    op zichzelf staat, vóór de tekst die hij labelt:%
+}
+\begin{lstlisting}[style=md]
+1. {#lid:lorem} Een [persoonsgegeven](#pg) wordt verwerkt, zie <#lid:eerder>.
+\end{lstlisting}
+\translation{%
+    Only \texttt{\{\#} opens such an identifier, so a brace anywhere else in the text is left alone. The
+    rule lives in \file{regulatory-syntax.lua}, which \package{markdown} reads itself, and which is listed
+    with the implementation in \zcref{sec:impl}: it is Lua rather than \TeX{}, since a renderer can only
+    decide how a construct that the reader already knows is typeset, and this one has to be recognised
+    first.%
+}{%
+    Alleen \texttt{\{\#} opent zo'n identifier, dus een accolade elders in de tekst blijft ongemoeid. De
+    regel staat in \file{regulatory-syntax.lua}, dat \package{markdown} zelf inleest, en dat bij de
+    implementatie is opgenomen in \zcref{sec:impl}: het is Lua en geen \TeX{}, aangezien een renderer
+    alleen bepaalt hoe een constructie die de lezer al kent gezet wordt, en deze eerst herkend moet
+    worden.%
+}
+
+\subsubsection{\translation{Definitions in Markdown}{Definities in Markdown}}
+\translation{%
+    A definition list declares definitions. The term carries the label as a bracketed span and the body of
+    the item becomes the description, which is the same thing \cmd{\newdefinition} does
+    (\zcref{sec:defs}):%
+}{%
+    Een definitielijst declareert definities. De term draagt het label als bracketed span en de inhoud van
+    het item wordt de beschrijving, wat hetzelfde is als wat \cmd{\newdefinition} doet
+    (\zcref{sec:defs}):%
+}
+\begin{lstlisting}[style=md]
+[Onderhandse akte]{#onderhands}
+
+:   Een akte die zonder tussenkomst van een ambtenaar is opgemaakt.
+\end{lstlisting}
+\translation{%
+    The other way is the \textsc{yaml} block a Markdown source may open with, where a definition is a
+    record with named fields rather than a construct of the text. It is the sturdier of the two, since
+    nothing in the prose can perturb it, and the one to reach for when the definitions are maintained
+    apart from the text:%
+}{%
+    De andere manier is het \textsc{yaml} blok waarmee een Markdown bron mag beginnen, waar een definitie
+    een record met benoemde velden is in plaats van een onderdeel van de tekst. Dat is de steviger van de
+    twee, aangezien niets in de lopende tekst hem kan verstoren, en de aangewezen manier wanneer de
+    definities los van de tekst worden bijgehouden:%
+}
+\begin{lstlisting}[style=md]
+---
+definitions:
+  - label: onderhands
+    name: Onderhandse akte
+    description: Een akte die zonder tussenkomst van een ambtenaar is opgemaakt.
+---
+\end{lstlisting}
+\translation{%
+    Neither of the two prints anything where it stands. Where the list appears is decided by
+    \cmd{\printdefs}, or from the source by a division, which takes the two arguments of that command as
+    attributes and prints the list after its own content:%
+}{%
+    Geen van beide drukt iets af op de plek waar hij staat. Waar de lijst verschijnt wordt bepaald door
+    \cmd{\printdefs}, of vanuit de bron door een divisie, die de twee argumenten van dat commando als
+    attributen neemt en de lijst na zijn eigen inhoud afdrukt:%
+}
+\begin{lstlisting}[style=md]
+::: {.definitions style=description widest="Onderhandse akte"}
+
+De volgende begrippen worden in deze overeenkomst gebruikt.
+
+:::
+\end{lstlisting}
+\translation{%
+    A division with nothing in it is not recognised by \package{markdown}, so a line of text belongs in
+    it. When definitions are declared and the list is never printed, the module says so at the end of the
+    run.
+
+    A definition is cited the way anything else is referred to, with a link: \texttt{<\#onderhands>}
+    prints the name of the entry and \texttt{[een onderhandse akte](\#onderhands)} keeps the wording of
+    the sentence, both hyperlinked to the definition list.%
+}{%
+    Een divisie zonder inhoud wordt niet herkend door \package{markdown}, dus er hoort een regel tekst in.
+    Wanneer er definities gedeclareerd worden en de lijst nooit wordt afgedrukt, zegt de module dat aan
+    het eind van de run.
+
+    Een definitie wordt aangehaald zoals naar al het andere verwezen wordt, met een link:
+    \texttt{<\#onderhands>} drukt de naam van de entry af en \texttt{[een onderhandse
+    akte](\#onderhands)} behoudt de formulering van de zin, beide met een link naar de definitielijst.%
+}
+
+\DescribeMacro{\autocitedefs}
+\translation{%
+    Marks every occurrence of the name of a definition in the text that follows, without the text having
+    to say so. It is opt-in, and worth weighing: the matching is literal, so it is case sensitive, blind to
+    inflection\,---\,\enquote{persoonsgegevens} is not \enquote{persoonsgegeven}\,---\,and it does not see
+    a term that a line break has split. It also only affects what is converted after the call, so the
+    definitions belong in a source of their own, converted first.%
+}{%
+    Markeert iedere plek waar de naam van een definitie in de tekst daarna voorkomt, zonder dat de tekst
+    dat hoeft aan te geven. Het is een bewuste keuze, en er valt iets af te wegen: de vergelijking is
+    letterlijk, dus hoofdlettergevoelig, blind voor verbuiging\,---\,\enquote{persoonsgegevens} is niet
+    \enquote{persoonsgegeven}\,---\,en hij ziet een term niet die door een regeleinde in tweeën is
+    gebroken. Bovendien werkt hij alleen op wat na de aanroep omgezet wordt, dus de definities horen in
+    een eigen bron, die als eerste omgezet wordt.%
+}
+\begin{lstlisting}[style=tex]
+\markdownInput{definities.md}
+\autocitedefs
+\markdownInput{overeenkomst.md}
+\end{lstlisting}
 \clearpage
 
 \section{\translation{Definitions}{Definities}}\label{sec:defs}
@@ -467,13 +650,19 @@ lualatex main
 \noindent
 \DescribeMacro{\describe}
 \translation{%
-    To achieve the same result with \cmd{\describe}\marg{label}, it is first necessary to invoke \cmd{\glssetwidest}, for example, in Markdown (see \zcref{code:example-md}).
-    The \cmd{\describe} macro is well-suited for manually placing definition descriptions.
-    This macro adds an anchor point, required for functional hyperlinks.%
+    \cmd{\describe}\marg{label} prints the description of one definition where it stands, which is the way
+    to lay out a definitions article by hand rather than as a list.
+    It adds the anchor point the hyperlinks of \cmd{\gls} need, which is what distinguishes it from
+    printing the description with \cmd{\glsentrydesc}.
+    A list built this way is aligned by whatever surrounds it, so \cmd{\glssetwidest} is only of interest
+    when that surrounding is a \texttt{labeling} environment of one's own.%
 }{%
-    Om hetzelfde resultaat te behalen met \cmd{\describe}\marg{label} is het eerst nodig om \cmd{\glssetwidest} aan te roepen in b\ij{}voorbeeld Markdown (zie \zcref{code:example-md}).
-    De macro \cmd{\describe} leent zich uitstekend om handmatig definitie beschrijvingen te plaatsen.
-    Deze macro voegt namelijk een ankerpunt toe, vereist voor werkende hyperlinks.%
+    \cmd{\describe}\marg{label} drukt de beschrijving van één definitie af op de plek waar hij staat, wat
+    de manier is om een definitieartikel met de hand op te maken in plaats van als lijst.
+    Hij voegt het ankerpunt toe dat de hyperlinks van \cmd{\gls} nodig hebben, en dat is wat hem
+    onderscheidt van het afdrukken van de beschrijving met \cmd{\glsentrydesc}.
+    Een zo opgebouwde lijst wordt uitgelijnd door wat eromheen staat, dus \cmd{\glssetwidest} is alleen van
+    belang wanneer dat een eigen \texttt{labeling} omgeving is.%
 }\\
 
 \noindent
@@ -516,7 +705,7 @@ lualatex main
 }
 \clearpage
 
-\section{\translation{References}{Verwijzingen}}
+\section{\translation{References}{Verwijzingen}}\label{sec:ref}
 \translation{%
     For referencing articles, members, and parts, \package{zref} is used behind the scenes.
     All components mentioned in \zcref{sec:struct} are configured for this purpose.
@@ -1395,6 +1584,9 @@ en / and \aref{ex1-sub:lorem,ex1-sub:lorem2,ex1-sub:lorem3,ex1-sub:lorem4}.
 \DocInput{regulatory-ref.dtx}
 \DocInput{regulatory-attachments.dtx}
 \DocInput{regulatory-md.dtx}
+% The syntax extension is read by markdown rather than by TeX, so it is a Lua
+% source of its own, documented from its own comments with comment2tex.
+\includelua{../src/regulatory-syntax.lua}
 % The tex4ht configuration is no package, but it is generated from a source of
 % its own all the same, so it is documented with the modules.
 \DocInput{regulatory-html.dtx}

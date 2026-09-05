@@ -21,6 +21,7 @@
 % regulatory-md.dtx,
 % regulatory-html.dtx,
 % regulatory-english.def, regulatory-dutch.def,
+% regulatory-syntax.lua,
 % regulatory.tex, regulatory-preamble.tex,
 % regulatory-nl.tex, regulatory-en.tex,
 % example1.bib, example2.bib,
@@ -159,16 +160,34 @@
 % Whenever \package{markdown} is loaded, the renderers of \package{regulatory-md} translate its constructs
 % into the structures of this module. The hook fires whatever the order of both packages is, since it is
 % executed right away for a \package{markdown} that is loaded already.
+%
+% It cannot fire in the middle of this module, though, and the \option{md} option below makes it try:
+% \package{regulatory-md} needs \package{regulatory-defs}, which loads \package{glossaries}, and
+% \package{glossaries} decides whether its entries become hyperlinks by looking for \package{hyperref},
+% which this module only loads a few lines further down. A document with the \option{md} option therefore
+% used to get definitions without a single link, and nothing said so. The load is postponed to the end of
+% this file instead, where every prerequisite is in place.
 %    \begin{macrocode}
-\AddToHook{package/markdown/after}{\RequirePackage{regulatory-md}}
+\newif\ifregulatory@md@pending
+\newif\ifregulatory@ready
+\AddToHook{package/markdown/after}{%
+    \ifregulatory@ready
+        \RequirePackage{regulatory-md}%
+    \else
+        \regulatory@md@pendingtrue
+    \fi
+}
 %    \end{macrocode}
 %
-% The \option{md} option comes down to loading \package{markdown} with the options this bundle expects.
-% This has to happen before \package{enumitem} is loaded, otherwise \package{markdown} breaks the list
-% definitions further down, which is the reason for loading it here rather than leaving it to the document.
+% The \option{md} option comes down to loading \package{markdown} itself. This has to happen before
+% \package{enumitem} is loaded, otherwise \package{markdown} breaks the list definitions further down,
+% which is the reason for loading it here rather than leaving it to the document. The options
+% \package{markdown} is to be given are not stated here but in \package{regulatory-md}, which sets them
+% with \cmd{\markdownSetup}: a document that loads \package{markdown} by itself then gets the same
+% conversion as one that used the \option{md} option.
 %    \begin{macrocode}
 \ifregulatory@markdown
-\RequirePackage[hashEnumerators,definitionLists,hybrid,headerAttributes=true]{markdown}
+\RequirePackage{markdown}
 \fi
 %    \end{macrocode}
 %
@@ -461,6 +480,17 @@
 \AddToHook{begindocument/before}{\regulatory@load@languages}
 %    \end{macrocode}
 % \end{macro}
+%
+% \subsubsection{\translation{Postponed modules}{Uitgestelde modules}}
+%
+% Everything this module provides is now in place, so \package{regulatory-md} can be loaded for the
+% \package{markdown} that was loaded above, or for one the document loaded before this module.
+%    \begin{macrocode}
+\regulatory@readytrue
+\ifregulatory@md@pending
+\RequirePackage{regulatory-md}
+\fi
+%    \end{macrocode}
 % \iffalse
 %</package>
 % \fi

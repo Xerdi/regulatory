@@ -11,7 +11,10 @@ GENERATED := tex/regulatory.sty tex/regulatory-struct.sty tex/regulatory-defs.st
 
 # The language definition files are written by hand, so they are copied rather
 # than generated. Translators work in src/, the package reads them from tex/.
-COPIED_SOURCES := $(wildcard src/*.def)
+# The Markdown syntax extension is copied for the same reason: it is Lua read by
+# the markdown package, not TeX, and it is documented from its own comments with
+# comment2tex rather than through docstrip.
+COPIED_SOURCES := $(wildcard src/*.def) $(wildcard src/*.lua)
 COPIED_FILES := $(patsubst src/%,tex/%,$(COPIED_SOURCES))
 
 .PHONY: package generate build-docs test conformance conformance-check conformance-stale install-hooks clean
@@ -30,6 +33,10 @@ tex/regulatory.sty: $(DTX_SOURCES) $(INS_SOURCE)
 $(filter-out tex/regulatory.sty,$(GENERATED)): tex/regulatory.sty
 
 tex/%.def: src/%.def
+	mkdir -p tex
+	cp $< $@
+
+tex/%.lua: src/%.lua
 	mkdir -p tex
 	cp $< $@
 

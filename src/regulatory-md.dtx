@@ -61,7 +61,44 @@
 \RequirePackage{markdown}
 %    \end{macrocode}
 %
-% \subsubsection{\translation{Renderers}{Vertalers}}
+% \subsubsection{\translation{Conversion options}{Conversieopties}}
+%
+% The renderers below only see what the reader was told to look for, so the options they depend on are
+% set here rather than left to the document or to the \option{md} option of \package{regulatory-struct}.
+% A document that loads \package{markdown} by itself then gets the same conversion as one that asked for
+% it through the option.
+%
+% \package{markdown} forwards its package options to \cmd{\markdownSetup} and reads them at conversion
+% time rather than at load time, so setting them here is the same thing as naming them when the package
+% is loaded, only later.
+%
+% \option{extension} names the file that adds the standalone identifier of \zcref{sec:syntax} to the
+% grammar of the reader. It is the singular of \option{extensions}, which appends rather than replaces, so
+% an extension of the document's own is left in place. \package{markdown} looks the file up with kpathsea
+% and stops with an error when it is not there, which is the one way round this bundle can fail loudly.
+%
+% \option{hybrid} is off. It made every backslash in a Markdown source reach \TeX{}, which is how the
+% examples of this bundle used to write a label or a reference; \package{markdown} soft-deprecated it and
+% names \option{rawAttribute} among its replacements. What it costs to leave it on is not a warning but a
+% wrong document: with \option{hybrid} off, raw \TeX{} is typeset verbatim, so a source that still
+% contains it prints its own control sequences and loses every reference without a single error. The
+% constructs that used to need it each have a Markdown form of their own below.
+%    \begin{macrocode}
+\markdownSetup{
+    extension = regulatory-syntax.lua,
+    hybrid = false,
+    hashEnumerators,
+    headerAttributes,
+    bracketedSpans,
+    relativeReferences,
+    definitionLists,
+    fencedDivs,
+    jekyllData,
+    tightLists,
+}
+%    \end{macrocode}
+%
+% \subsubsection{\translation{Structures}{Structuren}}
 %
 % A renderer tells \package{markdown} how to typeset one construct of a Markdown source. Only the
 % constructs that have a counterpart in this bundle are redirected; everything else keeps the rendering of
@@ -70,6 +107,11 @@
 % \begin{macro}{\markdownRendererHeadingOne}
 % A first level heading is an article. Deeper headings are left alone: a regulatory document numbers its
 % paragraphs as list items, not as headings.
+%
+% An article is labelled with the attribute syntax of \option{headerAttributes}, \verb|# Heading {#art:x}|.
+% The \package{markdown} defaults theme turns such an identifier into a \cmd{\label} of its own, after the
+% heading renderer has run, so the label lands on the article and carries its reference properties without
+% this module having to do anything.
 %    \begin{macrocode}
 \markdownSetup{
     renderers = {
@@ -79,30 +121,383 @@
 %
 % \begin{macro}{\markdownRendererOlBegin}
 % \begin{macro}{\markdownRendererOlItemWithNumber}
-% An ordered list is a \texttt{paras} environment, of which the label is composed by this bundle rather
-% than taken from the Markdown source. The number of the source is kept as a label, so a numbered item can
-% be referred to with \cmd{\rref}\marg{ml:\meta{number}} as well. Tight and loose lists are rendered the
-% same way, since the spacing of \texttt{paras} is set by \package{enumitem}.
+% An ordered list is a \texttt{paras} environment, and its numbering is composed by this bundle rather than
+% taken from the Markdown source. Tight and loose lists are rendered the same way, since the spacing of
+% \texttt{paras} is set by \package{enumitem}.
+%
+% The item carries no label of its own. It used to be given one made from the number in the source,
+% \texttt{ml:}\meta{number}, but \package{markdown} hands a renderer nothing except that number: no
+% nesting depth, no list identity. The number restarts in every list, so \texttt{ml:1} existed once per
+% list and per article, and a reference to it silently resolved to whichever item was declared last.
+% Worse, such a key is positional: inserting a paragraph moves every reference after it to another
+% provision without anything failing. An item that is referred to is labelled by hand, with the bracketed
+% span below.
 %    \begin{macrocode}
         olBegin = {\begin{paras}},
         olEnd = {\end{paras}},
         olBeginTight = {\begin{paras}},
         olEndTight = {\end{paras}},
-        olItemWithNumber = {\item{}\label{ml:#1}},
+        olItemWithNumber = {\item{}},
 %    \end{macrocode}
 % \end{macro}
 % \end{macro}
 %
-% \begin{macro}{\markdownRendererDlBegin}
-% A definition list is a \texttt{labeling} environment of \package{scrextend}, aligned on the widest name
-% \package{glossaries-extra} knows of. That name is only known after \cmd{\glssetwidest}, which a Markdown
-% source calls before its definition list, as \zcref{code:example-md} shows.
+% \begin{macro}{\markdownRendererLink}
+% Every reference of a Markdown source arrives here: \option{relativeReferences} lets an autolink hold
+% something that is not a web address, and a link whose target starts with \texttt{\#} is a reference to a
+% label of this document or of another one declared with \cmd{\refdocument}.
+%
+% The three shapes a Markdown link can take are enough to reach the whole reference family without any
+% syntax of our own, and each of them says what it means:
+%
+% \begin{labeling}{\texttt{[text](\#label)}}
+%     \item[\texttt{<\#label>}] an autolink, where the text equals the target, becomes \cmd{\Aref}: the
+%         reference names the structures it points at, and several labels may be given at once,
+%         \verb|<#lid:a,lid:b>|.
+%     \item[\texttt{[](\#label)}] a link with no text becomes \cmd{\rref}: the bare number of the
+%         structure.
+%     \item[\texttt{[text](\#label)}] a link with text keeps that text and turns it into a hyperlink.
+% \end{labeling}
+%
+% An attribute writes a label and a link reads one, which is the whole of it: \verb|{#lid:a}| on a heading
+% or a span is where a provision is named, and the three shapes above are how it is referred to. A
+% definition is referred to in exactly the same way. Its label is not a label of the document but an entry
+% of the glossary, so the target is looked up there first: a reference to one is a citation, hyperlinked to
+% the definition list, which is what \cmd{\gls} and \cmd{\glslink} produce.
+%
+% The target arrives in the third argument, which \package{markdown} escapes far less than the first two:
+% braces, backslashes and line ends only, so a label comes through exactly as it was written. Anything
+% that is not a reference is handed back to the \package{markdown} prototype, which is what turns a real
+% web address into a link.
 %    \begin{macrocode}
-        dlBegin = {\begin{labeling}{\@glswidestname}},
-        dlEnd = {\end{labeling}},
-        dlBeginTight = {\begin{labeling}{\@glswidestname}},
-        dlEndTight = {\end{labeling}},
+        link = {\regulatory@md@link{#1}{#2}{#3}{#4}},
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\markdownRendererDlItem}
+% A definition list declares definitions. The term carries the label as a bracketed span,
+% \verb|[Term]{#label}|, and the body of the item becomes the description, so that one construct produces
+% an entry that both prints in the list and can be cited with \cmd{\gls} elsewhere in the document.
+%
+% The list itself typesets nothing where it stands. Where the definitions appear is decided by
+% \cmd{\printdefs}, or from the source by the division below, which keeps the declaration and the
+% placement apart in the same way the file-based routes of \zcref{sec:defs} do.
+%    \begin{macrocode}
+        dlBegin = {},
+        dlEnd = {},
+        dlBeginTight = {},
+        dlEndTight = {},
+        dlItem = {\regulatory@md@dlitem{#1}},
+        dlItemEnd = {\regulatory@md@dlitemend},
     },
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\markdownRendererTilde}
+% Without \option{hybrid} a tilde no longer reaches \TeX{} as the non-breaking space it is there; the
+% default prototype prints the character itself. A legal text is full of them\,---\,\enquote{artikel~2}
+% keeps its number on the same line as its noun\,---\,so the prototype is set back to what an author
+% typing a tilde means by it.
+%    \begin{macrocode}
+    rendererPrototypes = {
+        tilde = {~},
+    },
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\markdownRendererRegulatoryLabel}
+% The renderer the syntax extension calls. An identifier that stands on its own is a label, and nothing
+% else: it is written where it stands, so within a \texttt{paras} item it names that item.
+%
+% The renderer is declared rather than set through \cmd{\markdownSetup}, which only accepts the names
+% \package{markdown} knows.
+%    \begin{macrocode}
+\newcommand\markdownRendererRegulatoryLabel[1]{\label{#1}}
+%    \end{macrocode}
+% \end{macro}
+%
+% \subsubsection{\translation{References}{Verwijzingen}}
+%
+% \begin{macro}{\regulatory@md@link}
+% Decides which of the three shapes above a link has. The test is on the target: a leading \texttt{\#}
+% makes it a reference, and what remains is the label list, handed to the reference family as it stands.
+% The labels are trimmed, since \verb|<#a, b>| is the natural thing to write and a space would otherwise
+% end the list at the first item.
+%    \begin{macrocode}
+\newcommand\regulatory@md@full[1]{%
+    \ifglsentryexists{#1}{\gls{#1}}{\Aref{#1}}%
+}
+\newcommand\regulatory@md@bare[1]{%
+    \ifglsentryexists{#1}{\gls{#1}}{\rref{#1}}%
+}
+\newcommand\regulatory@md@named[2]{%
+    \ifglsentryexists{#1}{\glslink{#1}{#2}}{\hyperref[#1]{#2}}%
+}
+
+\ExplSyntaxOn
+\str_new:N \l__regulatory_md_target_str
+\tl_new:N \l__regulatory_md_labels_tl
+\seq_new:N \l__regulatory_md_labels_seq
+
+\cs_new_protected:Npn \__regulatory_md_labels:n #1
+{
+    \seq_set_split:Nnn \l__regulatory_md_labels_seq { , } { #1 }
+    \seq_set_map_x:NNn \l__regulatory_md_labels_seq \l__regulatory_md_labels_seq
+        { \tl_trim_spaces:n { ##1 } }
+    \tl_set:Nx \l__regulatory_md_labels_tl
+        { \seq_use:Nn \l__regulatory_md_labels_seq { , } }
+}
+
+\cs_new_protected:Npn \regulatory@md@link #1#2#3#4
+{
+    \str_set:Nn \l__regulatory_md_target_str { #3 }
+    \str_if_eq:eeTF { \str_range:Nnn \l__regulatory_md_target_str { 1 } { 1 } }
+        { \c_hash_str }
+        {
+            \__regulatory_md_labels:n
+                { \str_range:Nnn \l__regulatory_md_target_str { 2 } { -1 } }
+            \tl_if_blank:nTF { #1 }
+                { \exp_args:NV \regulatory@md@bare \l__regulatory_md_labels_tl }
+                {
+                    \str_if_eq:nnTF { #1 } { #2 }
+                        { \exp_args:NV \regulatory@md@full \l__regulatory_md_labels_tl }
+                        { \exp_args:NV \regulatory@md@named \l__regulatory_md_labels_tl { #1 } }
+                }
+        }
+        { \markdownRendererLinkPrototype { #1 } { #2 } { #3 } { #4 } }
+}
+\ExplSyntaxOff
+%    \end{macrocode}
+% \end{macro}
+%
+% \subsubsection{\translation{Definitions}{Definities}}
+%
+% \begin{macro}{\regulatory@md@dlitem}
+% Collects one item of a definition list. The term is executed into a box that is thrown away, with the
+% attribute renderers replaced, so that the identifier of its bracketed span is captured instead of
+% becoming a label of its own and the name is captured instead of being typeset. Executing it is what
+% makes the capture work: the renderers of \package{markdown} are not expandable, so reading the term as
+% text would store the calls themselves rather than what they carry. A term that turns out to have no
+% span is read as text after all, since then it holds nothing but the name.
+%
+% A term without an identifier still becomes a definition, but one that cannot be cited by name, so it is
+% reported.
+%    \begin{macrocode}
+\ExplSyntaxOn
+\cs_new_protected:Npn \regulatory@md@declare #1#2#3
+{
+    \use:x
+    {
+        \exp_not:N \newdefinition { #1 }
+            { \exp_not:V #2 } { \exp_not:V #3 }
+    }
+}
+\ExplSyntaxOff
+
+\newcommand\regulatory@md@deflabel{}
+\newcommand\regulatory@md@defname{}
+\newcommand\regulatory@md@defbody{}
+\newcounter{regulatory@md@defs}
+\newcounter{regulatory@md@declared}
+
+\newcommand\regulatory@md@dlitem[1]{%
+    \gdef\regulatory@md@deflabel{}%
+    \gdef\regulatory@md@defname{}%
+    \gdef\regulatory@md@defbody{}%
+    \begingroup%
+        \def\markdownRendererBracketedSpanAttributeContextBegin{}%
+        \def\markdownRendererBracketedSpanAttributeContextEnd{}%
+        \def\markdownRendererAttributeIdentifier##1{\gdef\regulatory@md@deflabel{##1}}%
+        \def\markdownRendererAttributeClassName##1{}%
+        \def\markdownRendererAttributeKeyValue##1##2{}%
+        \def\markdownRendererBracketedSpan##1{\gdef\regulatory@md@defname{##1}}%
+        \setbox\z@\hbox{#1}%
+    \endgroup%
+    \ifx\regulatory@md@defname\@empty%
+        \protected@xdef\regulatory@md@defname{#1}%
+    \fi%
+    \ifx\regulatory@md@deflabel\@empty%
+        \stepcounter{regulatory@md@defs}%
+        \xdef\regulatory@md@deflabel{regulatory@md@\arabic{regulatory@md@defs}}%
+        \PackageWarning{regulatory-md}{%
+            Definition without an identifier; give the term a bracketed\MessageBreak
+            span with one, so that it can be cited with \string\gls. Reported}%
+    \fi%
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\markdownRendererDlDefinitionBegin}
+% The description of a definition is not handed to a renderer as an argument: it is streamed between
+% \cmd{\markdownRendererDlDefinitionBegin} and \cmd{\markdownRendererDlDefinitionEnd}, which are both
+% ordinary tokens in the converted file. Making the first of the two a delimited macro therefore hands
+% the whole body over as an argument. A term may carry more than one description, which are collected in
+% the order they are written.
+%    \begin{macrocode}
+\long\def\markdownRendererDlDefinitionBegin#1\markdownRendererDlDefinitionEnd{%
+    \ifx\regulatory@md@defbody\@empty%
+        \protected@xdef\regulatory@md@defbody{#1}%
+    \else%
+        \protected@xdef\regulatory@md@defbody{\regulatory@md@defbody\space#1}%
+    \fi%
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\regulatory@md@dlitemend}
+% Declares what was collected. \cmd{\newdefinition} is the same route a document takes when it declares a
+% definition by hand, so a Markdown definition list and a \cmd{\newdefinition} in the preamble produce
+% entries that are indistinguishable afterwards.
+%    \begin{macrocode}
+\newcommand\regulatory@md@dlitemend{%
+    \stepcounter{regulatory@md@declared}%
+    \regulatory@md@declare\regulatory@md@deflabel\regulatory@md@defname\regulatory@md@defbody%
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\markdownRendererFencedDivAttributeContextBegin}
+% A division marks where the definitions are printed, \verb|::: {.definitions}|. The class is what selects
+% it; a \texttt{style} and a \texttt{widest} attribute may be given along with it, which are the two
+% arguments of \cmd{\printdefs}. The list is printed after the content of the division, so that a
+% sentence introducing it can be written inside.
+%
+% \package{markdown} does not recognise an empty division, so a division that is to print nothing but the
+% list still needs a line of text in it.
+%    \begin{macrocode}
+\newcommand\regulatory@md@divdefs{false}
+\newcommand\regulatory@md@divstyle{\regulatory@defstyle}
+\newcommand\regulatory@md@divwidest{}
+
+\renewcommand\markdownRendererFencedDivAttributeContextBegin{%
+    \def\regulatory@md@divdefs{false}%
+    \def\regulatory@md@divstyle{\regulatory@defstyle}%
+    \def\regulatory@md@divwidest{}%
+    \def\markdownRendererAttributeClassName##1{%
+        \def\regulatory@md@class{##1}%
+        \def\regulatory@md@definitionsclass{definitions}%
+        \ifx\regulatory@md@class\regulatory@md@definitionsclass%
+            \def\regulatory@md@divdefs{true}%
+        \fi%
+    }%
+    \def\markdownRendererAttributeKeyValue##1##2{%
+        \def\regulatory@md@key{##1}%
+        \def\regulatory@md@stylekey{style}%
+        \def\regulatory@md@widestkey{widest}%
+        \ifx\regulatory@md@key\regulatory@md@stylekey\def\regulatory@md@divstyle{##2}\fi%
+        \ifx\regulatory@md@key\regulatory@md@widestkey\def\regulatory@md@divwidest{##2}\fi%
+    }%
+}
+
+\renewcommand\markdownRendererFencedDivAttributeContextEnd{%
+    \def\regulatory@md@true{true}%
+    \ifx\regulatory@md@divdefs\regulatory@md@true%
+        \par%
+        \printdefs[\regulatory@md@divstyle]{\regulatory@md@divwidest}%
+    \fi%
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \subsubsection{\translation{Definitions in the metadata}{Definities in de metadata}}
+%
+% \begin{macro}{\regulatory@md@yaml}
+% The other way to declare a definition is the \textsc{yaml} block a Markdown source may open with, where
+% a definition is a record with named fields rather than a construct of the text. It is the sturdier of
+% the two: nothing in the prose can perturb it, and any field \package{glossaries} knows could be added to
+% it. What it costs is that the definitions are no longer where the reader of the source expects them.
+%
+% The fields of one record do not arrive in the order they are written but alphabetically, so they are
+% collected and the entry is declared when the record ends. That is a prototype rather than a renderer:
+% the renderer of a mapping end is what pops the address stack of \package{markdown} itself, so it is
+% appended to instead of replaced.
+%    \begin{macrocode}
+\newcommand\regulatory@md@yamllabel{}
+\newcommand\regulatory@md@yamlname{}
+\newcommand\regulatory@md@yamldesc{}
+
+\markdownSetup{
+    jekyllDataRenderers = {
+        /definitions/*/label = {\gdef\regulatory@md@yamllabel{#1}},
+        /definitions/*/name = {\gdef\regulatory@md@yamlname{#1}},
+        /definitions/*/description = {\gdef\regulatory@md@yamldesc{#1}},
+    },
+    rendererPrototypes = {
+        jekyllDataMappingEnd + = {\regulatory@md@yamlflush},
+    },
+}
+
+\newcommand\regulatory@md@yamlflush{%
+    \ifx\regulatory@md@yamllabel\@empty\else%
+        \stepcounter{regulatory@md@declared}%
+        \regulatory@md@declare\regulatory@md@yamllabel\regulatory@md@yamlname\regulatory@md@yamldesc%
+        \gdef\regulatory@md@yamllabel{}%
+        \gdef\regulatory@md@yamlname{}%
+        \gdef\regulatory@md@yamldesc{}%
+    \fi%
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \subsubsection{\translation{Citing a definition}{Een definitie aanhalen}}
+%
+% \begin{macro}{\autocitedefs}
+% A definition is cited the same way anything else is referred to, with a bracketed span:
+% \verb|[verwerking]{#vw}| prints that text and links it to the entry. That is explicit, and it is the
+% documented way.
+%
+% \cmd{\autocitedefs} is the other one, for a document that would rather keep its prose free of markup: it
+% hands the names of the definitions declared so far to the \option{acronyms} machinery of
+% \package{markdown}, which then marks up every occurrence of such a name in the text that follows and
+% turns it into a \cmd{\gls}. It is opt-in for good reason. The matching is literal: case sensitive, blind
+% to inflection\,---\,\enquote{persoonsgegevens} is not \enquote{persoonsgegeven}\,---\,and it does not
+% see a term that a line break has split. It also only affects text converted after the call, so the
+% definitions have to be declared in a file of their own, converted first.
+%    \begin{macrocode}
+\ExplSyntaxOn
+\prop_new:N \g__regulatory_md_names_prop
+\tl_new:N \l__regulatory_md_name_tl
+
+\cs_new_protected:Npn \regulatory@md@register #1
+{
+    \tl_set:Nx \l__regulatory_md_name_tl { \glsentryname { #1 } }
+    \prop_gput:NVn \g__regulatory_md_names_prop \l__regulatory_md_name_tl { #1 }
+    \tl_gput_right:Nx \markdownOptionAcronyms
+        { , { \l__regulatory_md_name_tl } }
+}
+
+\cs_new_protected:Npn \regulatory@md@cite #1
+{
+    \prop_get:NnNTF \g__regulatory_md_names_prop { #1 } \l__regulatory_md_name_tl
+        { \exp_args:NV \gls \l__regulatory_md_name_tl }
+        { #1 }
+}
+\ExplSyntaxOff
+
+\newcommand\autocitedefs{%
+    \forglsentries[definitions]\regulatory@md@entry{%
+        \expandafter\regulatory@md@register\expandafter{\regulatory@md@entry}%
+    }%
+    \renewcommand\markdownRendererAcronymPrototype[1]{\regulatory@md@cite{##1}}%
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\regulatory@md@nodefs}
+% A definition list that is never printed is the one mistake this module cannot catch while it happens:
+% the entries are declared, the conversion succeeds, and the definitions article of the document is simply
+% empty. The end of the document is the first moment at which that is knowable, so it is said there.
+%    \begin{macrocode}
+\AtEndDocument{%
+    \ifnum\value{regulatory@md@declared}>0%
+        \ifnum\value{regulatory@defsprinted}=0%
+            \PackageWarning{regulatory-md}{%
+                Definitions were declared but never printed;\MessageBreak
+                call \string\printdefs\space or mark the place with a\MessageBreak
+                definitions division. Reported}%
+        \fi%
+    \fi%
 }
 %    \end{macrocode}
 % \end{macro}
