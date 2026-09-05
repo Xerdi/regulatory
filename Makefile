@@ -22,7 +22,13 @@ COPIED_FILES := $(patsubst src/%,tex/%,$(COPIED_SOURCES))
 package: $(TAR_BALL)
 	@echo "Created $(TAR_BALL)"
 
-generate: $(GENERATED) $(COPIED_FILES)
+# One docstrip run writes every generated file, and the rule that does so belongs
+# to the first of them, so make cannot make any other one on its own: a file that
+# went missing would stay missing while make reported there was nothing to do.
+# Dropping the first file when any of them is absent puts the whole set back.
+generate:
+	@for file in $(GENERATED); do test -f $$file || rm -f tex/regulatory.sty; done
+	@$(MAKE) $(GENERATED) $(COPIED_FILES)
 
 # Docstrip writes every generated file in one run, so the remaining files
 # are made along with the first one.

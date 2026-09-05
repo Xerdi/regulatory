@@ -348,6 +348,29 @@
 %    \end{macrocode}
 % \end{macro}
 %
+% \begin{macro}{\regulatory@extdefs@nohyper}
+% A definition of another document is printed in that other document, not in this one, so the anchor its
+% citation would point at is not here. \package{glossaries} links to it all the same, and the result is a
+% link that goes nowhere: measured on the examples, the PDF of the second one holds a link to
+% \texttt{glo:def1} and no destination by that name, and the HTML of it holds an \texttt{href} to a
+% fragment that lives in the other file.
+%
+% The hyperlink is therefore withdrawn for the \texttt{externals} type, in the hook \package{glossaries}
+% offers for exactly this, after the options of a citation are set and before it is typeset. The citation
+% itself stays, and so does the mention of the document it comes from, which is what tells a reader where
+% to look\,---\,the same thing \package{regulatory-html} does for a reference to a provision of another
+% document.
+%    \begin{macrocode}
+\def\regulatory@externalstype{externals}
+\renewcommand*{\glslinkpostsetkeys}{%
+    \edef\regulatory@thisdeftype{\glsentrytype{\glslabel}}%
+    \ifx\regulatory@thisdeftype\regulatory@externalstype%
+        \setkeys{glslink}{hyper=false}%
+    \fi%
+}
+%    \end{macrocode}
+% \end{macro}
+%
 % \begin{macro}{\refdocument}
 % Declares another \package{regulatory} document to refer to, of which the labels are read with
 % \cmd{\zexternaldocument} of \package{zref-xr} and prefixed with \meta{prefix}.

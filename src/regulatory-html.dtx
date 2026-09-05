@@ -172,6 +172,8 @@
 
 \NewConfigure{regarticle}{4}
 \NewConfigure{regpara}{4}
+\NewConfigure{regextlink}{2}
+\Configure{regextlink}{false}{}
 %    \end{macrocode}
 % \iffalse
 %</html>
@@ -226,8 +228,10 @@
 
 \def\article{\@ifstar\reg@article@star\reg@article@plain}%
   %
-  % titlesec's sectioning signature is \article*[toc-entry]{title}; both forms
-  % are accepted so no existing document needs changing.
+  % The sectioning signature is \article*[toc-entry]{title}, whichever of the two
+  % branches of regulatory-struct built it -- titlesec, or the heading instance of
+  % latex-lab that a \DocumentMetadata brings with it -- so both forms are accepted
+  % here and no existing document needs changing.
 \newcommand\reg@article@plain[2][]{%
     \reg@closearticle
     \reg@blockmode
@@ -355,24 +359,85 @@
 % \texttt{para} is the sectioning command, which this file \emph{does} anchor, while \texttt{parasi}
 % and \texttt{parasii} are the enumerate levels of the \texttt{paras} list, which it cannot.
 % Testing the counter rather than the type keeps a linked sub-heading linked.
+%
+% The two levels are recognised by their name beginning with \texttt{paras} rather than by being named
+% one by one. \package{regulatory-struct} declares the list with two levels today; naming the counters
+% here would tie this file to that number, and a third level would stop being recognised without anything
+% saying so, which is the failure this whole file is written against.
+%
+% The five letters matter: \texttt{para} is four, so the heading, which does have an anchor, falls outside
+% the test and keeps its link. Shortening the comparison to the first four characters would silently take
+% the headings with it.
+%
+% \subsubsection{Links to another document}
+%
+% A reference to a provision of another document is not linked by default. The other document is a PDF
+% as far as this run knows: whether it is published as HTML as well is a property of how a family is
+% published, not of the document, and a link to a file that is not there is worse than no link at all.
+%
+% That is a default, not a rule, and a family that \emph{is} published as HTML wants those links. Hence
+% \verb|\Configure{regextlink}{true}{.html}| in the \file{cfg} of such a family, which turns them into an
+% \cmd{\href}. The second argument is what the URL of the other document is missing: that URL is the name
+% the artifact was declared under, without an extension, since it names a document rather than a file. A
+% link to \texttt{example2-nl} reaches nothing in a browser, and a link to \texttt{example2-nl.html} does.
+%
+% It belongs in the \file{cfg} that \texttt{make4ht -c} reads, not in the preamble of the document: the
+% configuration of a package is applied when that package is read, which is after the preamble has been
+% seen, so a \cmd{\Configure} there is overwritten by the default below. Measured both ways: without it a
+% reference to an article of another document comes out as \texttt{Artikel 1, van Voorbeeld Twee}, and
+% with it as \verb|<a href='example2-nl.html#article.1'>|.
+%
+% The switch stands per conversion, not per document referred to. A family in which some of the referred
+% documents are published and others are not has no good setting: off loses the links that would work, on
+% writes the ones that do not. No such family has come up, so no shape has been invented for it; if one
+% does, the setting to make is a property of the artifact rather than of the run.
+%
+% \subsubsection{Labels that never reached zref}
+%
+% \package{tex4ht} replaces \cmd{\label} with one of its own (\file{latex.4ht}, at
+% \verb|\def\label|), which keeps the original under \verb|\:label| and calls it only when no
+% sectioning unit is open; inside one it calls \verb|\l:bel| instead, and that one writes the anchor
+% and the \cmd{\newlabel} by itself. It does not run the \texttt{label} hook of the kernel, which is
+% where \package{zref-clever} writes the zref label that this bundle refers by.
+%
+% The consequence was measured on the examples: an aux file written by \texttt{pdflatex} holds eleven
+% zref labels, the same document converted by \texttt{make4ht} holds none. Nothing failed. Within one
+% document it goes unnoticed, since \package{tex4ht} resolves its own \cmd{\newlabel}; between two
+% documents it does not, because \cmd{\zexternaldocument} reads zref labels and there were none to
+% read, so every reference to another document came out as two question marks.
+%
+% Only the branch that skips the hook is patched, so a label outside a sectioning unit is not
+% recorded twice. The name is reached through \cmd{\csname}, since it holds a colon and this file
+% cannot count on that being a letter.
 % \iffalse
 %<*html>
 % \fi
 %    \begin{macrocode}
-\def\reg@parasictr{parasi}
-\def\reg@parasiictr{parasii}
-\newif\ifreg@anchorless
-\newcommand\reg@checkanchorless{%
-  \reg@anchorlessfalse
-  \edef\reg@thisctr{\rref@current@counter}%
-  \ifx\reg@thisctr\reg@parasictr \reg@anchorlesstrue \fi
-  \ifx\reg@thisctr\reg@parasiictr \reg@anchorlesstrue \fi
+\expandafter\let\expandafter\reg@ht@lbel\csname l:bel\endcsname
+\expandafter\def\csname l:bel\endcsname#1{%
+  \reg@ht@lbel{#1}%
+  \zref@wrapper@babel\zref@label{#1}%
 }
+
+\newif\ifreg@anchorless
+\ExplSyntaxOn
+\str_new:N \l__regulatory_html_counter_str
+\cs_new_protected:Npn \reg@checkanchorless
+  {
+    \reg@anchorlessfalse
+    \str_set:Nx \l__regulatory_html_counter_str { \rref@current@counter }
+    \str_if_eq:eeT { \str_range:Nnn \l__regulatory_html_counter_str { 1 } { 5 } }
+      { paras } { \reg@anchorlesstrue }
+  }
+\ExplSyntaxOff
+
+\def\reg@extlinkyes{true}
 
 \def\rref@linkpr#1{%
   \begingroup
   \reg@checkanchorless
   \edef\reg@refurl{\rref@current@url}%
+  \edef\reg@extlink{\a:regextlink}%
   \ifreg@anchorless
     % No anchor by that name in this output, so no link.
     \endgroup#1%
@@ -380,8 +445,14 @@
     \ifx\reg@refurl\@empty
       \endgroup\href{\rref@current@fullurl}{#1}%
     \else
-      % Another document, not published as HTML, so no link.
-      \endgroup#1%
+      \ifx\reg@extlink\reg@extlinkyes
+        % A family published as HTML: the other document is a file next to this one,
+        % under the name it has here plus whatever suffix that publication gives it.
+        \endgroup\href{\rref@current@url\b:regextlink\hashchar\rref@current@anchor}{#1}%
+      \else
+        % Another document, not published as HTML, so no link.
+        \endgroup#1%
+      \fi
     \fi
   \fi
 }

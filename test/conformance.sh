@@ -44,7 +44,7 @@ CASES="
 a2b|md-example|pdfstandard=A-2b|2b:pass
 a4|md-example|pdfstandard=A-4|4:pass
 a4f-ua2|example2-nl|pdfstandard=A-4f,pdfstandard=UA-2,$TAGGED|4f:pass,ua2:pass
-a3a-ua1|example2-nl|pdfstandard=A-3a,pdfstandard=UA-1,$TAGGED|3a:xfail,ua1:pass
+a3a-ua1|example2-nl|pdfstandard=A-3a,pdfstandard=UA-1,$TAGGED|3a:pass,ua1:pass
 a3b|example1-nl|pdfstandard=A-3b|3b:xfail
 a2b-embedded-nonpdf|example1-nl|pdfstandard=A-2b|2b:fail
 "

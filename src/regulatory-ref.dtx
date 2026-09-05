@@ -487,18 +487,34 @@
 % \end{macro}
 %
 % \begin{macro}{\rref@labellist}
-% Reads an enumeration of labels into \cmd{\rref@labels} with the spaces taken out. A space is what a
-% writer naturally puts after a comma, and it used to be fatal in a way that said nothing: the number of a
-% label with a leading space cannot be extracted, the default of that extraction is $-1$, and $-1$ is the
-% terminator of the enumeration, so the list ended silently at the first space and every label behind it
-% was dropped.
+% Reads an enumeration of labels into \cmd{\rref@labels}. A space is what a writer naturally puts after a
+% comma, and it used to be fatal in a way that said nothing: the number of a label with a leading space
+% cannot be extracted, the default of that extraction is $-1$, and $-1$ is the terminator of the
+% enumeration, so the list ended silently at the first space and every label behind it was dropped.
+%
+% The list is therefore split on the commas and each label is trimmed on its own. Taking every space out
+% of the whole list would be shorter and wrong: a label may perfectly well have a space inside it, and a
+% document that writes \verb|\aref{lid:meerwerk niet akkoord}| would then be looking for a label nobody
+% ever declared, which is exactly the kind of silent miss this is meant to end.
 %    \begin{macrocode}
 \ExplSyntaxOn
 \tl_new:N \rref@labels
+\seq_new:N \l__regulatory_ref_labels_seq
+
+\cs_new_protected:Npn \__regulatory_ref_append:n #1
+{
+    \tl_put_right:Nn \rref@labels { #1 }
+}
+
 \cs_new_protected:Npn \rref@labellist #1
 {
-    \tl_set:Nn \rref@labels { #1 }
-    \tl_remove_all:Nn \rref@labels { ~ }
+    \seq_set_split:Nnn \l__regulatory_ref_labels_seq { , } { #1 }
+    \tl_clear:N \rref@labels
+    \seq_map_inline:Nn \l__regulatory_ref_labels_seq
+    {
+        \tl_if_empty:NF \rref@labels { \tl_put_right:Nn \rref@labels { , } }
+        \tl_trim_spaces_apply:nN { ##1 } \__regulatory_ref_append:n
+    }
 }
 \ExplSyntaxOff
 %    \end{macrocode}

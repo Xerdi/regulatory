@@ -55,6 +55,12 @@ HTML_EXAMPLE = example1-nl
 # The second one covers the definitions declared in the document itself, which no
 # other check would see disappear: they fail by being absent, not by erroring.
 HTML_DEFS_EXAMPLE = example2-nl
+# And the Markdown one, which is the only place where the module of that name and
+# the syntax extension meet tex4ht. It is converted with lualatex, where the
+# markdown package reads its source through the Lua interpreter it is already
+# running in; under another engine it would reach for shell escape, which this
+# suite does not ask for.
+HTML_MD_EXAMPLE = md-example
 
 # One suite is one build directory and one target, so they can be asked for
 # together or one at a time. Conformance is not among them: it needs Docker and
@@ -67,7 +73,7 @@ SUITES += conformance
 endif
 
 .PHONY: all test $(addprefix suite-,$(ENGINES) html conformance) \
-        test-engines test-html html-checks md-checks conformance conformance-run \
+        test-engines test-html html-checks md-checks ref-checks conformance conformance-run \
         conformance-check conformance-check-run conformance-stale \
         clean-examples clean-all-examples clean clean-all
 
@@ -90,7 +96,7 @@ suite-conformance: conformance
 # which is why every path above is absolute. The directory is named after the
 # engine, and so is the engine it builds with: `make build-pdflatex' is pdflatex.
 build-%:
-	$(call run_in,$*,all md-checks ENGINE=$*)
+	$(call run_in,$*,all ref-checks md-checks ENGINE=$*)
 
 .DELETE_ON_ERROR:
 
@@ -124,6 +130,21 @@ example1-en.aux: example2-en.glstex
 
 md-example.pdf: example1-nl.pdf example2-nl.pdf
 
+# A reference that resolved to nothing prints two question marks and warns; the run
+# succeeds either way, so the warning is what is read here. Over every example, not
+# only the Markdown one: a label with a space in it resolved to nothing while every
+# example here used labels without one, so the suite had nothing to notice it with.
+ref-checks: $(addsuffix .pdf,$(EXAMPLES))
+	@undef=$$(cat $(addsuffix .log,$(EXAMPLES)) | grep -c 'Reference .* undefined' || true); \
+	 dup=$$(cat $(addsuffix .log,$(EXAMPLES)) | grep -c 'multiply defined' || true); \
+	 echo "refs: $$undef undefined, $$dup defined twice"; \
+	 if [ "$$undef" -gt 0 ]; then \
+	     echo "refs: a reference resolved to nothing; see the example logs" >&2; exit 1; \
+	 fi; \
+	 if [ "$$dup" -gt 0 ]; then \
+	     echo "refs: a label was defined twice; see the example logs" >&2; exit 1; \
+	 fi
+
 # What a Markdown source loses when something is wrong with it, it loses quietly:
 # raw TeX is typeset as its own characters, a reference that resolved to nothing
 # prints two question marks, and a definition list that is declared but never
@@ -133,18 +154,13 @@ md-example.pdf: example1-nl.pdf example2-nl.pdf
 md-checks: md-example.pdf
 	@raw=$$(cat _markdown_md-example/*.md.tex | grep -o 'markdownRendererBackslash' | wc -l); \
 	 ext=$$(cat _markdown_md-example/*.md.tex | grep -o 'markdownRendererRegulatoryLabel' | wc -l); \
-	 undef=$$(grep -c 'Reference .* undefined' md-example.log || true); \
-	 dup=$$(grep -c 'multiply defined' md-example.log || true); \
 	 warn=$$(grep -c 'regulatory-md Warning' md-example.log || true); \
-	 echo "md: $$raw raw TeX, $$ext extension labels, $$undef undefined, $$dup duplicate, $$warn module warnings"; \
+	 echo "md: $$raw raw TeX, $$ext extension labels, $$warn module warnings"; \
 	 if [ "$$raw" -gt 0 ]; then \
 	     echo "md: the source still holds TeX, which is now typeset rather than obeyed" >&2; exit 1; \
 	 fi; \
 	 if [ "$$ext" -lt 1 ]; then \
 	     echo "md: no standalone identifier was read; was the syntax extension found?" >&2; exit 1; \
-	 fi; \
-	 if [ "$$undef" -gt 0 ] || [ "$$dup" -gt 0 ]; then \
-	     echo "md: a label did not come out as one label" >&2; exit 1; \
 	 fi; \
 	 if [ "$$warn" -gt 0 ]; then \
 	     echo "md: the module reported something; see md-example.log" >&2; exit 1; \
@@ -207,14 +223,29 @@ conformance-check-run: all
 test-html:
 	$(call run_in,html,html-checks)
 
-html-checks: $(HTML_EXAMPLE).html $(HTML_DEFS_EXAMPLE).html
+# The one refers to the other, so the labels of the second have to be on disk
+# before the first is converted -- the same order the PDF suite needs, for the same
+# reason. Without it the references between the two documents come out as question
+# marks on a first run and quietly repair themselves on a second, which is the kind
+# of result that says nothing about the state of the package.
+$(HTML_EXAMPLE).html: $(HTML_DEFS_EXAMPLE).html
+$(HTML_MD_EXAMPLE).html: $(HTML_DEFS_EXAMPLE).html
+
+html-checks: $(HTML_EXAMPLE).html $(HTML_DEFS_EXAMPLE).html $(HTML_MD_EXAMPLE).html
 	@sections=$$(grep -o '<section' $(HTML_EXAMPLE).html | wc -l); \
 	 headings=$$(grep -oE '<h[1-6]' $(HTML_EXAMPLE).html | wc -l); \
 	 items=$$(grep -o 'enumitem-paras' $(HTML_EXAMPLE).html | wc -l); \
 	 defs=$$(grep -o 'glo_def1' $(HTML_EXAMPLE).html | wc -l); \
 	 inline=$$(grep -o "id='glo_inline'" $(HTML_DEFS_EXAMPLE).html | wc -l); \
 	 deflist=$$(grep -o "dl class='description'" $(HTML_DEFS_EXAMPLE).html | wc -l); \
-	 echo "html: $$sections sections, $$headings headings, $$items paras items, $$defs definitions, $$inline inline, $$deflist description list"; \
+	 undef=$$(cat $(HTML_EXAMPLE).log $(HTML_DEFS_EXAMPLE).log $(HTML_MD_EXAMPLE).log \
+	     | grep -c 'Reference .* undefined' || true); \
+	 labeling=$$(grep -o 'regulatory-definitions' $(HTML_EXAMPLE).html | wc -l); \
+	 mdsections=$$(grep -o '<section' $(HTML_MD_EXAMPLE).html | wc -l); \
+	 mditems=$$(grep -o 'enumitem-paras' $(HTML_MD_EXAMPLE).html | wc -l); \
+	 mddefs=$$(grep -o "id='glo_" $(HTML_MD_EXAMPLE).html | wc -l); \
+	 echo "html: $$sections sections, $$headings headings, $$items paras items, $$defs definitions, $$inline inline, $$deflist description list, $$labeling labeling list, $$undef undefined"; \
+	 echo "html md: $$mdsections sections, $$mditems paras items, $$mddefs definitions"; \
 	 if [ "$$sections" -lt 1 ] || [ "$$headings" -lt 1 ]; then \
 	     echo "html: no structure in the output; was regulatory.4ht found?" >&2; exit 1; \
 	 fi; \
@@ -227,16 +258,35 @@ html-checks: $(HTML_EXAMPLE).html $(HTML_DEFS_EXAMPLE).html
 	 if [ "$$inline" -lt 1 ]; then \
 	     echo "html: the inline definition did not reach the list" >&2; exit 1; \
 	 fi; \
+	 if [ "$$undef" -gt 0 ]; then \
+	     echo "html: a reference resolved to nothing; are the zref labels written?" >&2; exit 1; \
+	 fi; \
+	 if [ "$$labeling" -lt 1 ]; then \
+	     echo "html: the labeling style produced no list of its own" >&2; exit 1; \
+	 fi; \
+	 if [ "$$mdsections" -lt 1 ] || [ "$$mditems" -lt 1 ] || [ "$$mddefs" -lt 1 ]; then \
+	     echo "html: the Markdown example lost its structure or its definitions" >&2; exit 1; \
+	 fi; \
 	 if [ "$$deflist" -lt 1 ]; then \
 	     echo "html: the definitions are not a list; did the defstyle survive?" >&2; exit 1; \
 	 fi
 
-# Three steps, as for the PDF: the definitions come from bib2gls, which needs the
-# aux of a first run.
+# Four steps, one more than the PDF needs: the definitions come from bib2gls,
+# which needs the aux of a first run, and the labels of the examples settle a run
+# later than they do under pdflatex.
 %.html: %.tex $(PROJECT)/tex/regulatory.4ht
 	TEXMFHOME=$(PROJECT) $(MAKE4HT) $<
 	$(BIB2GLS) $*
 	TEXMFHOME=$(PROJECT) $(MAKE4HT) $<
+	TEXMFHOME=$(PROJECT) $(MAKE4HT) $<
+
+# The Markdown example declares its own definitions, so bib2gls has nothing to
+# read here either; -l converts with lualatex, which is what lets the markdown
+# package work without shell escape.
+$(HTML_MD_EXAMPLE).html: $(HTML_MD_EXAMPLE).tex $(PROJECT)/tex/regulatory.4ht \
+                         $(PROJECT)/tex/regulatory-syntax.lua
+	TEXMFHOME=$(PROJECT) $(MAKE4HT) -l $<
+	TEXMFHOME=$(PROJECT) $(MAKE4HT) -l $<
 
 # Clears the test directory itself, where `all' builds the examples that the
 # documentation lists and attaches. Keeps out/ standing: the suites build there,

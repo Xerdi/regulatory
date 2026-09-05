@@ -2,7 +2,7 @@
     \Huge \translation{Example One}{Voorbeeld Één}
 \end{center}
 \article{Definitiones}\label{art:defs}
-\printdefs{Nam dui}
+\printdefs[labeling]{Nam dui}
 \article{Quisque ullamcorper}\label{art:lorem}
 \begin{paras}
     \item \label{lid:lorem} \textfill
@@ -15,7 +15,7 @@
         \item \label{sub:lorem5} \textfill~\Aref{ex2-lid:lorem,ex2-lid:lorem2,ex2-lid:lorem3,ex2-lid:lorem5}.
         \item \label{sub:lorem6} \textfill~\Gls{def1} ipsum dolor sit amed.
         \item \label{sub:lorem7} \textfill~\Aref{ex2-sub:lorem,ex2-sub:lorem2,ex2-sub:lorem4}.
-        \item \label{sub:lorem8} \textfill
+        \item \label{sub:lorem8} \textfill~\Aref{ex2-lid:met spatie, ex2-lid:lorem}.
     \end{paras}
 \end{paras}
 \article{Etiam ac leo}\label{art:lorem2}

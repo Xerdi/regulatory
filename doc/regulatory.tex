@@ -1533,16 +1533,28 @@ en / and \aref{ex1-sub:lorem,ex1-sub:lorem2,ex1-sub:lorem3,ex1-sub:lorem4}.
 
 \noindent
 \translation{%
-    The two \texttt{xfail} cases fail ISO 19005-3 rule 6.8-4 on a file specification for the
-    external document: it carries \texttt{/AFRelationship /Unspecified}, has no \texttt{/EF} and
-    is not listed in \texttt{/AF}. It is written for the hyperlink to that document, not by this
-    package, so PDF/A-3 stays out of reach until that is settled upstream.%
+    The \texttt{xfail} case fails ISO 19005-3 rule 6.8-4 on a file specification for the external
+    document: it carries \texttt{/AFRelationship /Unspecified}, has no \texttt{/EF} and is not
+    listed in \texttt{/AF}. It is written for the hyperlink to that document, not by this package,
+    so PDF/A-3 stays out of reach for a document that refers to the provisions of another one until
+    that is settled upstream.
+
+    The second document reached PDF/A-3a when the citation of a definition that lives elsewhere
+    stopped being a hyperlink to that document. That link went to an anchor which is not in this
+    file, so it led nowhere in any case; withdrawing it took the file specification with it.
+    Measured: the offending specification is gone from the one document and still present in the
+    other.%
 }{%
-    De twee \texttt{xfail} gevallen falen op regel 6.8-4 van ISO 19005-3, op een
-    bestandsspecificatie voor het externe document: die draagt
-    \texttt{/AFRelationship /Unspecified}, heeft geen \texttt{/EF} en staat niet in \texttt{/AF}.
-    Hij wordt geschreven voor de hyperlink naar dat document en niet door dit pakket, dus
-    PDF/A-3 blijft buiten bereik tot dat verderop opgelost is.%
+    Het \texttt{xfail} geval faalt op regel 6.8-4 van ISO 19005-3, op een bestandsspecificatie voor
+    het externe document: die draagt \texttt{/AFRelationship /Unspecified}, heeft geen \texttt{/EF}
+    en staat niet in \texttt{/AF}. Hij wordt geschreven voor de hyperlink naar dat document en niet
+    door dit pakket, dus PDF/A-3 blijft buiten bereik voor een document dat naar de bepalingen van
+    een ander verwijst, tot dat verderop opgelost is.
+
+    Het tweede document haalde PDF/A-3a op het moment dat de aanhaling van een definitie die elders
+    staat geen hyperlink naar dat document meer werd. Die link wees naar een anker dat niet in dit
+    bestand staat, dus hij ging sowieso nergens heen; hem intrekken nam de bestandsspecificatie mee.
+    Gemeten: de bewuste specificatie is weg uit het ene document en staat nog in het andere.%
 }
 \clearpage
 
