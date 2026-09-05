@@ -1,0 +1,254 @@
+% \iffalse meta-comment
+%
+%% regulatory-defs.dtx
+%% Copyright 2024-2026 E. Nijenhuis
+%
+% This work may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License, either version 1.3c
+% of this license or (at your option) any later version.
+% The latest version of this license is in
+% http://www.latex-project.org/lppl.txt
+% and version 1.3c or later is part of all distributions of LaTeX
+% version 2005/12/01 or later.
+%
+% This work has the LPPL maintenance status ‘maintained’.
+%
+% The Current Maintainer of this work is E. Nijenhuis.
+%
+% This work consists of the files listed in the meta-comment of
+% regulatory-struct.dtx.
+%
+% \fi
+%
+% \iffalse
+%<*driver>
+\ProvidesFile{regulatory-defs.dtx}
+%</driver>
+%<package>\NeedsTeXFormat{LaTeX2e}
+%<package>\ProvidesPackage{regulatory-defs}
+%<package>    [2026/09/05 0.0.5 Xerdi's Regulatory Package (Definitions)]
+%
+%<*driver>
+\documentclass[10pt,english]{ltxdoc}
+%! suppress = InclusionLoop
+\usepackage{regulatory}
+\usepackage{tabularx}
+\usepackage[english,dutch]{babel}
+\input{regulatory-preamble}
+\newcommand\translation[2]{#1}
+\begin{document}
+    \selectlanguage{english}
+    \DocInput{regulatory-defs.dtx}
+\end{document}
+%</driver>
+% \fi
+%
+% \subsection{\texorpdfstring{\package{regulatory-defs}}{regulatory-defs}}
+% \setcounter{CodelineNo}{0}
+%
+% \subsubsection{\translation{Prerequisites}{Vereisten}}
+%
+% \package{glossaries-extra} is loaded whichever way the definitions are fed in. Only the \texttt{record}
+% option depends on \option{bib2gls}, since that is what hands the recording over to it; everything else
+% this module uses -- \cmd{\printunsrtglossary}, \cmd{\glsdefpostlink}, the \texttt{alttree} style -- has
+% to be there for the routes that do without \package{bib2gls} as well.
+% \iffalse
+%<*package>
+% \fi
+%    \begin{macrocode}
+\RequirePackage{regulatory-struct}
+\RequirePackage[sanitize=none,nopostdot]{glossaries}
+\ifregulatory@bibtogls
+\RequirePackage[record,style=alttree]{glossaries-extra}
+\else
+\RequirePackage[style=alttree]{glossaries-extra}
+\fi
+%    \end{macrocode}
+%
+% \subsubsection{\translation{The definitions glossary}{De definitielijst}}
+%
+% Definitions of the document itself and definitions of other documents are kept apart in two glossary
+% types. The \texttt{externals} type is added by \package{regulatory-attachments}.
+%    \begin{macrocode}
+\newglossary*{definitions}{Definitions}
+%    \end{macrocode}
+%
+% Definition lists are typeset as part of the running text, so the section heading of the glossary is
+% dropped altogether. Whenever the list is the first thing in the document, it gets an article heading of
+% its own.
+%    \begin{macrocode}
+\newboolean{regulatory@defslisted}
+\setboolean{regulatory@defslisted}{false}
+%    \end{macrocode}
+%
+% Whether the list was printed at all is counted rather than switched, since a counter is global: the list
+% may well be printed from inside a group\,---\,a Markdown conversion is one\,---\,and a switch set there
+% would be back to false by the end of the document, which is where the question is asked.
+%    \begin{macrocode}
+\newcounter{regulatory@defsprinted}
+\newboolean{regulatory@indexeddefs}
+\setboolean{regulatory@indexeddefs}{false}
+
+\renewcommand{\glossarysection}[2][]{\@gobble{#1}\@gobble{#2}}%
+\setglossarypreamble[definitions]{%
+    \ifnum\value{article}=0%
+        \article{\GetTranslation{Definitions}}\label{art:definitions}%
+        \vspace*{-\baselineskip}%
+    \else%
+        \ifnum\value{parasi}=0%
+            \vspace*{-\baselineskip}%
+        \fi%
+    \fi%
+}
+%    \end{macrocode}
+%
+% \subsubsection{\translation{List styles}{Lijststijlen}}
+%
+% \begin{macro}{regulatory-labeling}
+% \begin{macro}{regulatory-description}
+% A definition list is a term with its meaning, which is what a description list is for. Two of them are
+% offered next to the \texttt{alttree} style \package{glossaries} brings: one built on the
+% \texttt{labeling} environment of \package{scrextend}, which aligns every description on the widest name
+% given to \cmd{\printdefs}, and one on the \texttt{description} environment of the class, which leaves
+% the alignment to the class. Both put the anchor on the name, so a \cmd{\gls} link lands on the term
+% rather than beside it.
+%
+% Which one to reach for is a question of where the document goes. The \texttt{alttree} style is the
+% narrowest of the three in HTML: it is written in terms of boxes and widths and comes out as one flat
+% paragraph, while both list styles carry the term and its meaning as separate elements.
+%    \begin{macrocode}
+\newcommand\regulatory@defstyle@body[1]{%
+    \renewcommand*{\glossaryheader}{}%
+    \renewcommand*{\glsgroupheading}[1]{}%
+    \renewcommand*{\glsgroupskip}{}%
+    \renewcommand*{\glossentry}[2]{%
+        \item[\glstarget{##1}{\glossentryname{##1}}]%
+        \glossentrydesc{##1}\glspostdescription}%
+    \renewcommand*{\subglossentry}[3]{%
+        \glossentrydesc{##2}\glspostdescription}%
+}
+
+\newglossarystyle{regulatory-labeling}{%
+    \renewenvironment{theglossary}%
+        {\begin{labeling}{\@glswidestname}}%
+        {\end{labeling}}%
+    \regulatory@defstyle@body{}%
+}
+
+\newglossarystyle{regulatory-description}{%
+    \renewenvironment{theglossary}%
+        {\begin{description}}%
+        {\end{description}}%
+    \regulatory@defstyle@body{}%
+}
+%    \end{macrocode}
+% \end{macro}
+% \end{macro}
+%
+% \begin{macro}{\describe}
+% Prints the description of a single definition and marks it as the anchor of that definition, so
+% hyperlinks of \cmd{\gls} end up at the right spot.
+%    \begin{macrocode}
+\newcommand\describe[1]{\setboolean{regulatory@defslisted}{true}\glstarget{#1}{\glsentrydesc{#1}}}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\printdefs}
+% Prints the whole definition list, aligned on the width of \meta{width of text}. Within a paragraph the
+% list is wrapped in a \texttt{minipage}, to keep it from being broken across pages halfway an enumeration.
+%
+% The width is read before it is set, since \cmd{\glssetwidest} stores it in the very macro one would
+% reach for to name the widest name already known, and setting that macro to itself is a loop the run does
+% not come back from.
+%
+% The optional argument picks the style. A name for which a \texttt{regulatory-} style exists is taken
+% to mean that one, so \texttt{labeling} and \texttt{description} reach the two above; anything else is
+% handed to \package{glossaries} as it stands, which leaves every style it knows available. Without the
+% argument the \option{defstyle} option decides.
+%
+% Which of the two printing commands applies depends on how the entries arrived rather than on the
+% \option{bib2gls} option. \cmd{\printglossary} needs a sorted and indexed glossary, which only
+% \cmd{\loadglsentries} produces; \package{bib2gls} and \cmd{\newdefinition} both hand over entries
+% that are already in the order they should be printed in, and \cmd{\printunsrtglossary} prints those
+% without an external tool having to run at all.
+%    \begin{macrocode}
+\newcommand\printdefs[2][\regulatory@defstyle]{%
+    \renewcommand*{\glsnamefont}[1]{\textmd{##1}}%
+    \setboolean{regulatory@defslisted}{true}%
+    \stepcounter{regulatory@defsprinted}%
+    \protected@edef\regulatory@thiswidest{#2}%
+    \expandafter\glssetwidest\expandafter{\regulatory@thiswidest}%
+    \edef\regulatory@thisstyle{%
+        \ifcsname @glsstyle@regulatory-#1\endcsname regulatory-#1\else#1\fi}%
+    \ifnum\value{parasi}>0%
+        \def\@@wrapper##1{\begin{minipage}{\linewidth}##1\end{minipage}}%
+    \else%
+        \def\@@wrapper##1{##1}%
+    \fi%
+    \@@wrapper{%
+        \begingroup%
+        \setglossarystyle{\regulatory@thisstyle}%
+        \ifthenelse{\boolean{regulatory@indexeddefs}}{%
+            \printglossary[type=definitions,title={},nonumberlist=true]%
+        }{%
+            \printunsrtglossary[type=definitions,title={},nonumberlist=true]%
+        }%
+        \endgroup%
+    }%
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\loadglsdefs}
+% Loads the definitions of \meta{src} under the \texttt{definitions} type. With \package{bib2gls} the
+% \option{alldefs} option is the difference between listing every entry of the resource and only the used
+% ones.
+%    \begin{macrocode}
+\edef\@regulatory@bib@selection{}
+\ifregulatory@alldefs
+\edef\@regulatory@bib@selection{,selection=all}
+\fi
+
+\newcommand\loadglsdefs[1]{%
+    \setboolean{regulatory@defslisted}{true}%
+    \ifregulatory@bibtogls%
+        \GlsXtrLoadResources[type=definitions,src={#1},sort={nl-NL},category={defs}\@regulatory@bib@selection]%
+    \else%
+        \setboolean{regulatory@indexeddefs}{true}%
+        \loadglsentries[definitions]{#1}%
+    \fi%
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\newdefinition}
+% Declares one definition in the document itself, under the \texttt{definitions} type and the
+% \texttt{defs} category, so that it lands in the same list as the ones read from a file. This is the
+% route that needs no second file and no second program: the entries are printed in the order they are
+% declared in.
+%    \begin{macrocode}
+\newcommand\newdefinition[3]{%
+    \setboolean{regulatory@defslisted}{true}%
+    \newglossaryentry{#1}{type=definitions,category=defs,name={#2},description={#3}}%
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% Only the indexed route asks for a glossary to be made, which is what draws in \texttt{makeindex} or
+% \texttt{makeglossaries}; declaring the entries in the document or reading them with \package{bib2gls}
+% does not. With the \option{alldefs} option every unused definition is added at the end of the document,
+% so that it shows up in the list as well.
+%    \begin{macrocode}
+\AtEndPreamble{%
+\ifthenelse{\boolean{regulatory@indexeddefs}}{\makeglossaries}{}%
+}
+\AtEndDocument{%
+\ifregulatory@alldefs\glsaddallunused\fi%
+}
+%    \end{macrocode}
+% \iffalse
+%</package>
+% \fi
+%
+% \Finale
+%

@@ -1,4 +1,4 @@
-%% regulatory-en.tex
+%% example2-nl.tex
 %% Copyright 2024 E. Nijenhuis
 %
 % This work may be distributed and/or modified under the
@@ -30,43 +30,43 @@
 % regulatory-attachments.sty, regulatory-md.sty
 % and regulatory.4ht.
 % PDF management has to be active for the attachments of regulatory-attachments.
-\DocumentMetadata{}
-\documentclass[10pt,english]{ltxdoc}
-
-%! suppress = InclusionLoop
+% Declared here only when the commandline did not do it already, so that a
+% conformance flavour can be declared in front of this file (see test/Makefile),
+% and not at all under tex4ht: PDF management pulls in the latex-lab list code,
+% which leaves tex4ht nothing to turn a paras item into. \HCode is defined by
+% the tex4ht run before this file is read, which is what the test is for.
+\ifdefined\HCode\else\IfDocumentMetadataTF{}{\DocumentMetadata{}}\fi
+\documentclass[12pt,dutch]{article}
+\usepackage{babel}
 \usepackage{regulatory}
-\usepackage{tabularx}
-\usepackage[english,dutch]{babel}
+\usepackage{lipsum}
 
-\input{regulatory-preamble}
-\newcommand\translation[2]{#1}
-\masterdocument[ex1-]{example1-en}{%
-    path=../test/,%
+\newcounter{lip}
+\setcounter{lip}{1}
+\newcommand\textfill{\lipsum[\arabic{lip}]\stepcounter{lip}}
+
+\newcommand\translation[2]{#2}
+
+\newcommand\definitionlabel[1]{~(zie #1)}
+
+\masterdocument[ex1-]{example1-nl}{%
     defs=example1,%
     author=E. Nijenhuis,%
-    subject= Example One,%
-    description = The first example document,
-    ref label=of Example One
+    subject= Voorbeeld Één,%
+    description = Het éérste voorbeeld document,
+    footnote label = Bijlage:~,
+    ref label=van Voorbeeld Één,
+    def label=\definitionlabel
 }
+\loadglsdefs{example2}
 
-\masterdocument[ex2-]{example2-en}{%
-    path=../test/,%
-    defs=example2,%
-    author=E. Nijenhuis,%
-    subject= Example Two,%
-    description = The second example document,
-    ref label=of Example Two
-}
+% The third route of the definitions chapter: declared here, no second file
+% and no second program.
+\newdefinition{inline}{Onderhandse akte}{Een definitie die in het document zelf gedeclareerd is, zonder bib-bestand.}
 
-\newartifact{md-example}{%
-    path=../test/,%
-    author=E. Nijenhuis,%
-    subject= Markdown Example,%
-    description = The Markdown example
-}
+% PDF/UA wants a dc:title, which \title does not set.
+\hypersetup{pdftitle={Voorbeeld Twee}}
 
-% Document
 \begin{document}
-    \selectlanguage{english}
-    \input{regulatory}
+    \input{example2}
 \end{document}

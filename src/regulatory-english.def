@@ -1,0 +1,60 @@
+% \iffalse meta-comment
+%
+%% regulatory-english.def
+%% Copyright 2024-2026 E. Nijenhuis
+%
+% This work may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License, either version 1.3c
+% of this license or (at your option) any later version.
+% The latest version of this license is in
+% http://www.latex-project.org/lppl.txt
+% and version 1.3c or later is part of all distributions of LaTeX
+% version 2005/12/01 or later.
+%
+% This work has the LPPL maintenance status ‘maintained’.
+%
+% The Current Maintainer of this work is E. Nijenhuis.
+%
+% This work consists of the files listed in the meta-comment of
+% regulatory-struct.dtx.
+%
+% \fi
+%
+% \subsection{\translation{English definitions}{Engelse definities}}\label{sec:englishdef}
+% \setcounter{CodelineNo}{0}
+%
+% The English definitions are the defaults of this bundle, which is why no option at all is passed to
+% \cmd{\rref@setup}. The translations are stated all the same, so that the keys of \cmd{\GetTranslation}
+% are documented in one place. Translating this bundle into another language comes down to copying this
+% file to \texttt{regulatory-\meta{language}.def} and translating the right hand side of every
+% \cmd{\DeclareTranslation}; see \zcref{sec:dutchdef} for what a language that words its references
+% differently needs on top of that.
+%    \begin{macrocode}
+\ProvidesRegulatoryLanguage{english}
+    [2026/09/05 0.0.5 English definitions for regulatory]
+
+\DeclareTranslation{english}{article}{article}
+\DeclareTranslation{english}{Article}{Article}
+\DeclareTranslation{english}{articles}{articles}
+\DeclareTranslation{english}{Articles}{Articles}
+\DeclareTranslation{english}{paragraph}{paragraph}
+\DeclareTranslation{english}{Paragraph}{Paragraph}
+\DeclareTranslation{english}{paragraphs}{paragraphs}
+\DeclareTranslation{english}{Paragraphs}{Paragraphs}
+\DeclareTranslation{english}{subparagraph}{subparagraph}
+\DeclareTranslation{english}{Subparagraph}{Subparagraph}
+\DeclareTranslation{english}{subparagraphs}{subparagraphs}
+\DeclareTranslation{english}{Subparagraphs}{Subparagraphs}
+\DeclareTranslation{english}{to}{to}
+\DeclareTranslation{english}{Definitions}{Definitions}
+\DeclareTranslation{english}{of the}{of the}
+%    \end{macrocode}
+%
+% The reference formats are only set up when \package{regulatory-ref} is loaded, since a document that only
+% loads \package{regulatory-struct} has the translations above but none of the reference macros.
+%    \begin{macrocode}
+\regulatory@ifmodule{ref}{%
+    \rref@setup{english}{}{}{}%
+}{}
+%    \end{macrocode}
+%

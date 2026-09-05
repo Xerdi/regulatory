@@ -1,0 +1,114 @@
+% \iffalse meta-comment
+%
+%% regulatory-md.dtx
+%% Copyright 2024-2026 E. Nijenhuis
+%
+% This work may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License, either version 1.3c
+% of this license or (at your option) any later version.
+% The latest version of this license is in
+% http://www.latex-project.org/lppl.txt
+% and version 1.3c or later is part of all distributions of LaTeX
+% version 2005/12/01 or later.
+%
+% This work has the LPPL maintenance status ‘maintained’.
+%
+% The Current Maintainer of this work is E. Nijenhuis.
+%
+% This work consists of the files listed in the meta-comment of
+% regulatory-struct.dtx.
+%
+% \fi
+%
+% \iffalse
+%<*driver>
+\ProvidesFile{regulatory-md.dtx}
+%</driver>
+%<package>\NeedsTeXFormat{LaTeX2e}
+%<package>\ProvidesPackage{regulatory-md}
+%<package>    [2026/09/05 0.0.5 Xerdi's Regulatory Package (Markdown)]
+%
+%<*driver>
+\documentclass[10pt,english]{ltxdoc}
+%! suppress = InclusionLoop
+\usepackage{regulatory}
+\usepackage{tabularx}
+\usepackage[english,dutch]{babel}
+\input{regulatory-preamble}
+\newcommand\translation[2]{#1}
+\begin{document}
+    \selectlanguage{english}
+    \DocInput{regulatory-md.dtx}
+\end{document}
+%</driver>
+% \fi
+%
+% \subsection{\texorpdfstring{\package{regulatory-md}}{regulatory-md}}
+% \setcounter{CodelineNo}{0}
+%
+% \subsubsection{\translation{Prerequisites}{Vereisten}}
+%
+% This module is loaded by \package{regulatory-struct} as soon as \package{markdown} is loaded, which is
+% what the \option{md} option comes down to. \package{regulatory-defs} comes with it, because a Markdown
+% definition list is aligned on the widest name \package{glossaries-extra} knows of. Both prerequisites are therefore normally settled already;
+% they are stated for the document that loads this module on its own.
+% \iffalse
+%<*package>
+% \fi
+%    \begin{macrocode}
+\RequirePackage{regulatory-struct}
+\RequirePackage{regulatory-defs}
+\RequirePackage{markdown}
+%    \end{macrocode}
+%
+% \subsubsection{\translation{Renderers}{Vertalers}}
+%
+% A renderer tells \package{markdown} how to typeset one construct of a Markdown source. Only the
+% constructs that have a counterpart in this bundle are redirected; everything else keeps the rendering of
+% the \package{markdown} defaults.
+%
+% \begin{macro}{\markdownRendererHeadingOne}
+% A first level heading is an article. Deeper headings are left alone: a regulatory document numbers its
+% paragraphs as list items, not as headings.
+%    \begin{macrocode}
+\markdownSetup{
+    renderers = {
+        headingOne = {\article{#1}},
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\markdownRendererOlBegin}
+% \begin{macro}{\markdownRendererOlItemWithNumber}
+% An ordered list is a \texttt{paras} environment, of which the label is composed by this bundle rather
+% than taken from the Markdown source. The number of the source is kept as a label, so a numbered item can
+% be referred to with \cmd{\rref}\marg{ml:\meta{number}} as well. Tight and loose lists are rendered the
+% same way, since the spacing of \texttt{paras} is set by \package{enumitem}.
+%    \begin{macrocode}
+        olBegin = {\begin{paras}},
+        olEnd = {\end{paras}},
+        olBeginTight = {\begin{paras}},
+        olEndTight = {\end{paras}},
+        olItemWithNumber = {\item{}\label{ml:#1}},
+%    \end{macrocode}
+% \end{macro}
+% \end{macro}
+%
+% \begin{macro}{\markdownRendererDlBegin}
+% A definition list is a \texttt{labeling} environment of \package{scrextend}, aligned on the widest name
+% \package{glossaries-extra} knows of. That name is only known after \cmd{\glssetwidest}, which a Markdown
+% source calls before its definition list, as \zcref{code:example-md} shows.
+%    \begin{macrocode}
+        dlBegin = {\begin{labeling}{\@glswidestname}},
+        dlEnd = {\end{labeling}},
+        dlBeginTight = {\begin{labeling}{\@glswidestname}},
+        dlEndTight = {\end{labeling}},
+    },
+}
+%    \end{macrocode}
+% \end{macro}
+% \iffalse
+%</package>
+% \fi
+%
+% \Finale
+%

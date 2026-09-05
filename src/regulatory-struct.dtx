@@ -1,0 +1,469 @@
+% \iffalse meta-comment
+%
+%% regulatory-struct.dtx
+%% Copyright 2024-2026 E. Nijenhuis
+%
+% This work may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License, either version 1.3c
+% of this license or (at your option) any later version.
+% The latest version of this license is in
+% http://www.latex-project.org/lppl.txt
+% and version 1.3c or later is part of all distributions of LaTeX
+% version 2005/12/01 or later.
+%
+% This work has the LPPL maintenance status ‘maintained’.
+%
+% The Current Maintainer of this work is E. Nijenhuis.
+%
+% This work consists of the files regulatory.ins,
+% regulatory-struct.dtx, regulatory-ref.dtx,
+% regulatory-defs.dtx, regulatory-attachments.dtx,
+% regulatory-md.dtx,
+% regulatory-html.dtx,
+% regulatory-english.def, regulatory-dutch.def,
+% regulatory.tex, regulatory-preamble.tex,
+% regulatory-nl.tex, regulatory-en.tex,
+% example1.bib, example2.bib,
+% example1-nl.tex, example2-nl.tex,
+% example1-en.tex, example2-en.tex,
+% md-example.tex, example.md,
+% and the derived files regulatory.sty, regulatory-struct.sty,
+% regulatory-defs.sty, regulatory-ref.sty,
+% regulatory-attachments.sty, regulatory-md.sty
+% and regulatory.4ht.
+%
+% \fi
+%
+% \iffalse
+%<*driver>
+\ProvidesFile{regulatory-struct.dtx}
+%</driver>
+%<wrapper>\NeedsTeXFormat{LaTeX2e}
+%<wrapper>\ProvidesPackage{regulatory}
+%<wrapper>    [2026/09/05 0.0.5 Xerdi's Regulatory Package]
+%<package>\NeedsTeXFormat{LaTeX2e}
+%<package>\ProvidesPackage{regulatory-struct}
+%<package>    [2026/09/05 0.0.5 Xerdi's Regulatory Package (Structures)]
+%
+%<*driver>
+% The manuals in the doc directory are the actual drivers of this
+% bundle. This driver typesets this single module and is meant to be
+% run from within the doc directory.
+\documentclass[10pt,english]{ltxdoc}
+%! suppress = InclusionLoop
+\usepackage{regulatory}
+\usepackage{tabularx}
+\usepackage[english,dutch]{babel}
+\input{regulatory-preamble}
+\newcommand\translation[2]{#1}
+\begin{document}
+    \selectlanguage{english}
+    \DocInput{regulatory-struct.dtx}
+\end{document}
+%</driver>
+% \fi
+%
+% \subsection{\texorpdfstring{\package{regulatory-struct}}{regulatory-struct}}
+% \setcounter{CodelineNo}{0}
+%
+% \subsubsection{The bundle}
+%
+% The \package{regulatory} package itself is nothing more than a wrapper around the modules that are
+% always loaded. Every option is handed over to \package{regulatory-struct}, which administers the options for the
+% whole bundle. Both other modules request their prerequisites themselves, so the order below merely
+% documents the dependency chain.
+% \iffalse
+%<*wrapper>
+% \fi
+%    \begin{macrocode}
+\DeclareOption*{\PassOptionsToPackage{\CurrentOption}{regulatory-struct}}
+\ProcessOptions\relax
+\RequirePackage{regulatory-struct}
+\RequirePackage{regulatory-defs}
+\RequirePackage{regulatory-ref}
+\RequirePackage{regulatory-attachments}
+%    \end{macrocode}
+% \iffalse
+%</wrapper>
+% \fi
+%
+% \subsubsection{\translation{Package options}{Pakketopties}}
+%
+% Everything from here on belongs to \package{regulatory-struct}. The options are handled with
+% \package{pgfopts}, so all of them are stored in the \texttt{/regulatory} key family.
+% \iffalse
+%<*package>
+% \fi
+%    \begin{macrocode}
+\RequirePackage{pgfopts}
+\RequirePackage{xifthen}
+\RequirePackage{keyval}
+\RequirePackage{xspace}
+%    \end{macrocode}
+%
+% \begin{macro}{\ifregulatory@markdown}
+% \begin{macro}{\ifregulatory@bibtogls}
+% \begin{macro}{\ifregulatory@legacy}
+% \begin{macro}{\ifregulatory@alldefs}
+% \begin{macro}{\ifregulatory@nameinlink}
+% Each option is stored in a switch. The switches are shared by all three modules, which is the reason for
+% keeping them in this base module. The \texttt{nameinlink} switch is declared with \cmd{\newboolean},
+% because it is queried with \cmd{\ifthenelse} in \package{regulatory-ref} as well.
+%    \begin{macrocode}
+\newif\ifregulatory@markdown
+\newif\ifregulatory@bibtogls
+\newif\ifregulatory@legacy
+\newif\ifregulatory@alldefs
+\newboolean{regulatory@nameinlink}
+\pgfkeys{
+    /regulatory/.is family,
+    /regulatory,
+    md/.is if=regulatory@markdown,
+    md=false,
+    bib2gls/.is if=regulatory@bibtogls,
+    bib2gls=true,
+    legacy/.is if=regulatory@legacy,
+    legacy=false,
+    alldefs/.is if=regulatory@alldefs,
+    alldefs=false,
+    nameinlink/.is if=regulatory@nameinlink,
+    nameinlink=true,
+    defstyle/.store in=\regulatory@defstyle,
+    defstyle=alttree
+}
+%    \end{macrocode}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+%
+% \begin{macro}{\regulatory@defstyle}
+% The \option{defstyle} option is the only one that carries a value rather than a switch: it holds the
+% name of the style \cmd{\printdefs} reaches for when it is given no style of its own.
+% \end{macro}
+%
+% A local configuration file may set other defaults, before the options given to the package are processed.
+%    \begin{macrocode}
+\InputIfFileExists{regulatory.cfg}{%
+    \PackageInfo{regulatory}{Using local configuration file}%
+}{%
+    \PackageInfo{regulatory}{No local configuration file}%
+}
+
+\ProcessPgfPackageOptions{/regulatory}
+%    \end{macrocode}
+%
+% \subsubsection{\translation{Prerequisites}{Vereisten}}
+%
+% Whenever \package{markdown} is loaded, the renderers of \package{regulatory-md} translate its constructs
+% into the structures of this module. The hook fires whatever the order of both packages is, since it is
+% executed right away for a \package{markdown} that is loaded already.
+%    \begin{macrocode}
+\AddToHook{package/markdown/after}{\RequirePackage{regulatory-md}}
+%    \end{macrocode}
+%
+% The \option{md} option comes down to loading \package{markdown} with the options this bundle expects.
+% This has to happen before \package{enumitem} is loaded, otherwise \package{markdown} breaks the list
+% definitions further down, which is the reason for loading it here rather than leaving it to the document.
+%    \begin{macrocode}
+\ifregulatory@markdown
+\RequirePackage[hashEnumerators,definitionLists,hybrid,headerAttributes=true]{markdown}
+\fi
+%    \end{macrocode}
+%
+% The remaining prerequisites of the whole bundle are loaded here, in this exact order. Note that
+% \package{xr-hyper} and the \texttt{xr} option of \package{zref} are only used by
+% \package{regulatory-attachments}, but both have to be loaded before \package{hyperref}, which is loaded
+% by this module. \package{glossaries} is not among them: it belongs to \package{regulatory-defs}, so a
+% document that only wants the structures does not carry it.
+%    \begin{macrocode}
+\RequirePackage{xcolor}
+\RequirePackage{xpatch}
+\RequirePackage{enumitem}
+\RequirePackage{fmtcount}
+\RequirePackage{scrextend}
+\RequirePackage{xr-hyper}
+\RequirePackage[user,counter,hyperref,xr]{zref}
+\RequirePackage{zref-xr,zref-user,zref-clever,zref-hyperref}
+\RequirePackage{hyperref}
+\RequirePackage{pgf}
+\RequirePackage{translations}
+%    \end{macrocode}
+%
+% \begin{macro}{\regulatory@ifmodule}
+% The language definition files of \package{regulatory-ref} configure whatever module happens to be loaded.
+% This test tells them which parts to skip. Its first argument is the module name without the
+% \texttt{regulatory-} prefix.
+%    \begin{macrocode}
+\newcommand\regulatory@ifmodule[3]{%
+    \@ifundefined{ver@regulatory-#1.sty}{#3}{#2}%
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\GetTranslation}
+% English is the fallback of every translation used by this bundle. The languages themselves are declared
+% in the language definition files of \package{regulatory-ref}.
+%    \begin{macrocode}
+\DeclareTranslationFallback{article}{article}
+\DeclareTranslationFallback{Article}{Article}
+\DeclareTranslationFallback{articles}{articles}
+\DeclareTranslationFallback{Articles}{Articles}
+\DeclareTranslationFallback{paragraph}{paragraph}
+\DeclareTranslationFallback{Paragraph}{Paragraph}
+\DeclareTranslationFallback{paragraphs}{paragraphs}
+\DeclareTranslationFallback{Paragraphs}{Paragraphs}
+\DeclareTranslationFallback{subparagraph}{subparagraph}
+\DeclareTranslationFallback{Subparagraph}{Subparagraph}
+\DeclareTranslationFallback{subparagraphs}{subparagraphs}
+\DeclareTranslationFallback{Subparagraphs}{Subparagraphs}
+\DeclareTranslationFallback{Definitions}{Definitions}
+%    \end{macrocode}
+% \end{macro}
+%
+% \subsubsection{\translation{Colors}{Kleuren}}
+%
+% All colors default to black, so they only have to be redefined, e.g.\ with \cmd{\colorlet}, whenever
+% headings should stand out.
+%    \begin{macrocode}
+\providecolor{artlabel}{rgb}{0,0,0}
+\providecolor{arttitle}{rgb}{0,0,0}
+\providecolor{paralabel}{rgb}{0,0,0}
+\providecolor{paratitle}{rgb}{0,0,0}
+\providecolor{sublabel}{rgb}{0,0,0}
+\providecolor{subtitle}{rgb}{0,0,0}
+%    \end{macrocode}
+%
+% \subsubsection{\translation{Headings}{Koppen}}
+%
+% \begin{macro}{\article}
+% \begin{macro}{\para}
+% Articles and paragraphs are ordinary counters, where the paragraph counter is reset by the article
+% counter.
+%    \begin{macrocode}
+\newcounter{article}
+\newcounter{para}
+\counterwithin{para}{article}
+
+\renewcommand{\thearticle}{\arabic{article}}
+\renewcommand{\thepara}{\arabic{para}}
+%    \end{macrocode}
+% The headings themselves are provided by \package{titlesec}. As soon as the new \LaTeX{} heading interface
+% is available, \cmd{\ParseLaTeXeHeading} is defined and both headings are declared as \texttt{heading}
+% instances instead, since \package{titlesec} and the new interface exclude each other.
+%    \begin{macrocode}
+\@ifundefined{ParseLaTeXeHeading}{%
+    \RequirePackage{titlesec}%
+    \titleclass{\article}[0]{straight}%
+    \titleformat{\article}{\normalfont\color{arttitle}}{\bfseries\color{artlabel}\GetTranslation{Article} \thearticle.\quad}{1em}{}%
+    \titlespacing*{\article}{0pt}{3.5ex plus 1ex minus .2ex}{5pt}%
+    \titleclass{\para}{straight}[\article]%
+    \titleformat{\para}{\normalfont\color{paratitle}}{\normalfont\color{paralabel}\thearticle.\thepara.\quad}{1em}{}%
+    \titlespacing*{\para}{0pt}{3.5ex plus 1ex minus .2ex}{5pt}%
+}{%
+    \DeclareInstance{heading}{regulatory-article}{display}{
+        name                = article,
+        level               = 1,
+        heading-decls       = \normalfont\color{arttitle},
+        prefix              = \GetTranslation{Article},
+        prefix-decls        = \bfseries\color{artlabel},
+        number-decls        = \bfseries\color{artlabel},
+        number-format       = \thearticle.,
+        headformat-instance = regulatory-article,
+        before-vspace       = 3.5ex plus 1ex minus .2ex,
+        after-vspace        = 5pt,
+    }%
+    \DeclareInstance{headformat}{regulatory-article}{hang}{
+        heading-indent   = 0pt,
+        number-title-sep = 2em,
+    }%
+    \DeclareInstance{heading}{regulatory-para}{display}{
+        name                = para,
+        parent-name         = article,
+        level               = 2,
+        heading-decls       = \normalfont\color{paratitle},
+        number-decls        = \normalfont\color{paralabel},
+        number-format       = \thearticle.\thepara.,
+        headformat-instance = regulatory-para,
+        before-vspace       = 3.5ex plus 1ex minus .2ex,
+        after-vspace        = 5pt,
+    }%
+    \DeclareInstance{headformat}{regulatory-para}{hang}{
+        heading-indent   = 0pt,
+        number-title-sep = 2em,
+    }%
+    \DeclareDocumentCommand\article{som}{%
+        \ParseLaTeXeHeading{regulatory-article}{#1}{#2}{#3}%
+    }%
+    \DeclareDocumentCommand\para{som}{%
+        \ParseLaTeXeHeading{regulatory-para}{#1}{#2}{#3}%
+    }%
+}
+%    \end{macrocode}
+% Both headings take part in the table of contents at the level of subsections and subsubsections.
+%    \begin{macrocode}
+\newcommand{\l@article}{\@dottedtocline{1}{1.5em}{2.3em}}
+\def\toclevel@article{2}
+\newcommand{\l@para}{\@dottedtocline{1}{3.8em}{2.3em}}
+\def\toclevel@para{3}
+%    \end{macrocode}
+% \end{macro}
+% \end{macro}
+%
+% \subsubsection{\translation{Lists}{Lijsten}}
+%
+% \begin{environment}{provisions}
+% \begin{environment}{paras}
+% Provisions are a flat enumeration within a section, whereas paragraphs and subparagraphs are the two
+% levels of the \texttt{paras} environment. The label of the first level repeats the article number, and the
+% second level is enumerated alphabetically with \cmd{\abalphnum} of \package{fmtcount}, so it isn't limited
+% to 26 subparagraphs.
+%    \begin{macrocode}
+\newcounter{provisions}
+\newlist{provisions}{enumerate}{1}
+\setlist[provisions,1]{label=\arabic*.,align=left,itemsep=0pt}
+\counterwithin{provisions}{section}
+
+\newlist{paras}{enumerate}{2}
+\@ifpackageloaded{latex-lab-enumitem}{%
+    \setlist[paras,1]{label=\thearticle.\arabic*.,align=left,itemsep=0pt}%
+    \setlist[paras,2]{label=\abalphnum{\arabic*}),itemsep=0pt}%
+}{%
+    \setlist[paras,1]{label=\thearticle.\arabic*.,ref=\arabic*,align=left,itemsep=0pt}%
+    \setlist[paras,2]{label=\abalphnum{\arabic*}),ref=\arabic*,itemsep=0pt}%
+}
+\counterwithin{parasi}{article}
+\counterwithin{parasii}{parasi}
+%    \end{macrocode}
+% The list counters of \package{enumitem} are numbered per list, while references have to address them as
+% part of the document structure. Therefore both representations are rewritten right before every item.
+%    \begin{macrocode}
+\AddToHook{cmd/item/before}{%
+    \@ifundefined{c@parasi}{}{%
+        \renewcommand\theparasi{\thearticle.\arabic{parasi}}%
+        \renewcommand\theparasii{\theparasi\abalphnum{\arabic{parasii}}}%
+    }%
+}
+%    \end{macrocode}
+% \end{environment}
+% \end{environment}
+%
+% \subsubsection{\translation{Reference properties}{Verwijseigenschappen}}
+%
+% Every label records the article, paragraph and subparagraph it appears in, which is what
+% \package{regulatory-ref} builds its references upon. A paragraph is either a \cmd{\para} heading or the
+% first level of the \texttt{paras} environment, so both are stored in the same property.
+%    \begin{macrocode}
+\zref@newprop{article}[-1]{\number\value{article}}
+\zref@newprop{para}[-1]{\ifnum\value{para}>0\number\value{para}\else\number\value{parasi}\fi}
+\zref@newprop{sub}[-1]{\number\value{parasii}}
+\zref@addprops{main}{article,para,sub}
+%    \end{macrocode}
+%
+% Every \cmd{\label} records them without anything further being asked of it: \cmd{\zref@addprops} puts
+% the properties on the \texttt{main} list, and \package{zref-clever} labels with that list from the
+% \texttt{label} hook, which it installs itself unless its \option{labelhook} option says otherwise.
+%
+% This package used to hook \cmd{\zlabel} onto \cmd{\label} once more, through
+% \cmd{\RegisterPostLabelHook} of \package{xassoccnt}. That wrote a second and identical
+% \cmd{\zref@newlabel} for every label, which the next run reads back as a label that is defined twice:
+% every document built with this package carried a dozen or more `multiply defined' warnings and
+% nothing else went wrong, which is exactly why it took this long to notice.
+%
+% References made with \cmd{\zcref} of \package{zref-clever} get the designations of these structures, so
+% that both ways of referring stay consistent. The counters \texttt{parasi} and \texttt{parasii} are the
+% list variants of a paragraph and a subparagraph.
+%    \begin{macrocode}
+\zcRefTypeSetup{article}{%
+    Name-sg = \GetTranslation{Article},
+    name-sg = \GetTranslation{article},
+    Name-pl = \GetTranslation{Articles},
+    name-pl = \GetTranslation{articles}
+}
+\zcRefTypeSetup{para}{%
+    Name-sg = \GetTranslation{Paragraph},
+    name-sg = \GetTranslation{paragraph},
+    Name-pl = \GetTranslation{Paragraphs},
+    name-pl = \GetTranslation{paragraphs}
+}
+\zcRefTypeSetup{parasi}{%
+    Name-sg = \GetTranslation{Paragraph},
+    name-sg = \GetTranslation{paragraph},
+    Name-pl = \GetTranslation{Paragraphs},
+    name-pl = \GetTranslation{paragraphs}
+}
+\zcRefTypeSetup{parasii}{%
+    Name-sg = \GetTranslation{Subparagraph},
+    name-sg = \GetTranslation{subparagraph},
+    Name-pl = \GetTranslation{Subparagraphs},
+    name-pl = \GetTranslation{subparagraphs}
+}
+%    \end{macrocode}
+%
+% \subsubsection{\translation{Language files}{Taalbestanden}}
+%
+% Every language supported by this bundle has its own definition file \texttt{regulatory-\meta{language}.def},
+% comparable to the \texttt{fc-\meta{language}.def} files of \package{fmtcount}. Such a file declares the
+% translations of the bundle and, whenever \package{regulatory-ref} is loaded, the reference formats of that
+% language. The loading mechanism lives in this module, so a document that only loads
+% \package{regulatory-struct} is translated as well.
+%
+% \begin{macro}{\ProvidesRegulatoryLanguage}
+% Every language file identifies itself with this macro, just like \cmd{\ProvidesFile} does.
+%    \begin{macrocode}
+\newcommand\ProvidesRegulatoryLanguage[1]{%
+    \ProvidesFile{regulatory-#1.def}%
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\RegulatoryLoadLanguage}
+% Loads the definition file of \meta{language}, unless it is already loaded. A language without a definition
+% file is silently accepted, since \cmd{\regulatory@load@languages} offers every language known to
+% \package{babel}, most of which this bundle does not support. Definition files are read at the end of the
+% preamble, where the at sign is no letter, so its category code is set and restored around them.
+%    \begin{macrocode}
+\newcommand\RegulatoryLoadLanguage[1]{%
+    \@ifundefined{ver@regulatory-#1.def}{%
+        \edef\regulatory@restoreat{\catcode`\noexpand\@=\the\catcode`\@\relax}%
+        \makeatletter
+        \InputIfFileExists{regulatory-#1.def}{%
+            \PackageInfo{regulatory}{Loaded language definitions for `#1'}%
+        }{%
+            \PackageInfo{regulatory}{No language definitions for `#1'}%
+        }%
+        \regulatory@restoreat
+    }{}%
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\regulatory@load@languages}
+% English is always loaded, as it holds the defaults every other language builds upon. The languages of the
+% document itself are only known once \package{babel} or \package{polyglossia} is loaded, which is why this
+% runs at the very end of the preamble. Documents using another language selection mechanism can call
+% \cmd{\RegulatoryLoadLanguage} in their preamble instead.
+%    \begin{macrocode}
+\newcommand\regulatory@load@languages{%
+    \RegulatoryLoadLanguage{english}%
+    \@ifundefined{bbl@loaded}{}{%
+        \@for\regulatory@lang:=\bbl@loaded\do{%
+            \RegulatoryLoadLanguage{\regulatory@lang}%
+        }%
+    }%
+    \@ifundefined{xpg@loaded}{}{%
+        \@for\regulatory@lang:=\xpg@loaded\do{%
+            \RegulatoryLoadLanguage{\regulatory@lang}%
+        }%
+    }%
+}
+\AddToHook{begindocument/before}{\regulatory@load@languages}
+%    \end{macrocode}
+% \end{macro}
+% \iffalse
+%</package>
+% \fi
+%
+% \Finale
+%

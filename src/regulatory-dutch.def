@@ -1,0 +1,70 @@
+% \iffalse meta-comment
+%
+%% regulatory-dutch.def
+%% Copyright 2024-2026 E. Nijenhuis
+%
+% This work may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License, either version 1.3c
+% of this license or (at your option) any later version.
+% The latest version of this license is in
+% http://www.latex-project.org/lppl.txt
+% and version 1.3c or later is part of all distributions of LaTeX
+% version 2005/12/01 or later.
+%
+% This work has the LPPL maintenance status ‘maintained’.
+%
+% The Current Maintainer of this work is E. Nijenhuis.
+%
+% This work consists of the files listed in the meta-comment of
+% regulatory-struct.dtx.
+%
+% \fi
+%
+% \subsection{\translation{Dutch definitions}{Nederlandse definities}}\label{sec:dutchdef}
+% \setcounter{CodelineNo}{0}
+%
+% Dutch names an article `artikel', a paragraph `lid' and a subparagraph `onderdeel'. The
+% \package{translations} dictionary translates `and' and `see' already, but its `to' means `aan', while a
+% range of articles asks for `tot'.
+%    \begin{macrocode}
+\ProvidesRegulatoryLanguage{dutch}
+    [2026/09/05 0.0.5 Dutch definitions for regulatory]
+
+\DeclareTranslation{dutch}{article}{artikel}
+\DeclareTranslation{dutch}{Article}{Artikel}
+\DeclareTranslation{dutch}{articles}{artikelen}
+\DeclareTranslation{dutch}{Articles}{Artikelen}
+\DeclareTranslation{dutch}{paragraph}{lid}
+\DeclareTranslation{dutch}{Paragraph}{Lid}
+\DeclareTranslation{dutch}{paragraphs}{leden}
+\DeclareTranslation{dutch}{Paragraphs}{Leden}
+\DeclareTranslation{dutch}{subparagraph}{onderdeel}
+\DeclareTranslation{dutch}{Subparagraph}{Onderdeel}
+\DeclareTranslation{dutch}{subparagraphs}{onderdelen}
+\DeclareTranslation{dutch}{Subparagraphs}{Onderdelen}
+\DeclareTranslation{dutch}{to}{tot}
+\DeclareTranslation{dutch}{Definitions}{Definities}
+\DeclareTranslation{dutch}{of the}{van de}
+%    \end{macrocode}
+% Where English writes `article 2(2), first subparagraph', Dutch writes `artikel 2, tweede lid, onderdeel
+% a'. So a paragraph is written as an ordinal followed by its designation, a subparagraph is enumerated
+% alphabetically with its designation in front of it, and all parts are joined with a comma instead of
+% being wrapped in brackets.
+%    \begin{macrocode}
+\regulatory@ifmodule{ref}{%
+    \rref@setup{dutch}{
+        group conjunction={,~}
+    }{
+        ref format=\rref@refformat@ordinal,
+        label format=\rref@label@postfix,
+        group conjunction={,~},
+        group format=\rref@refformat@noop
+    }{
+        ref format=\rref@refformat@alpha,
+        label format=\rref@label@prefix,
+        group conjunction={,~},
+        group format=\rref@refformat@noop
+    }%
+}{}
+%    \end{macrocode}
+%

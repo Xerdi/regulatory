@@ -13,15 +13,27 @@
 %
 % The Current Maintainer of this work is E. Nijenhuis.
 %
-% This work consists of the files regulatory.tex,
-% regulatory-preamble.tex, regulatory-nl.tex, regulatory-en.tex,
+% This work consists of the files regulatory.ins,
+% regulatory-struct.dtx, regulatory-ref.dtx,
+% regulatory-defs.dtx, regulatory-attachments.dtx,
+% regulatory-md.dtx,
+% regulatory-html.dtx,
+% regulatory-english.def, regulatory-dutch.def,
+% regulatory.tex, regulatory-preamble.tex,
+% regulatory-nl.tex, regulatory-en.tex,
 % example1.bib, example2.bib,
 % example1-nl.tex, example2-nl.tex,
 % example1-en.tex, example2-en.tex,
 % md-example.tex, example.md,
-% regulatory.sty
+% and the derived files regulatory.sty, regulatory-struct.sty,
+% regulatory-defs.sty, regulatory-ref.sty,
+% regulatory-attachments.sty, regulatory-md.sty
+% and regulatory.4ht.
 \usepackage{gitinfo-lua}
 \usepackage{listings}
+\usepackage{adjustbox}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta}
 
 \usepackage{fontspec}
 \usepackage{textcomp}
@@ -98,6 +110,38 @@
 \newcommand\file{\texttt}
 \newcommand\option{\texttt}
 
+% Reads test/conformance.tex, which test/conformance.sh generates and which is
+% kept in the repository: veraPDF is not available everywhere this manual is
+% built, so the verdicts travel with the sources.
+\newcommand\conformanceversion{?}
+\newcommand\conformanceimage{?}
+% A digest carries no break points of its own and does not fit a line, so this
+% offers one after every character. The argument is expanded first, otherwise the
+% loop sees one macro instead of the characters it stands for.
+\newcommand\anywherebreakend{}
+\def\anywherebreakloop#1{%
+    \ifx#1\anywherebreakend\else#1\allowbreak\expandafter\anywherebreakloop\fi}
+\newcommand\anywherebreak[1]{\anywherebreakloop#1\anywherebreakend}
+\newcommand\conformanceimagetext{%
+    \expandafter\anywherebreak\expandafter{\conformanceimage}}
+
+% \ignorespaces, because this macro typesets nothing while its line in the
+% generated file still ends in a newline, and that space would otherwise open
+% the first cell of the table.
+\newcommand\conformancevalidator[2]{%
+    \gdef\conformanceversion{#1}\gdef\conformanceimage{#2}\ignorespaces}
+\newcommand\conformancerow[6]{%
+    \texttt{#1} & \texttt{#2} & \texttt{#3} & \texttt{#4} & \texttt{#5}%
+    \ifthenelse{\equal{#6}{}}{}{ \footnotesize(#6)} \\}
+
+% Points at the resulting PDF of an example, which is attached to this manual.
+% Its argument is the label of the artifact the example was declared with, and it
+% falls back to plain text whenever the PDF isn't there.
+\newcommand\exampleresult[1]{%
+    \par\noindent
+    \translation{The result of this example is}{Het resultaat van dit voorbeeld is}
+    \documentattachment{#1}{\file{\artifactfilename{#1}}}.\par}
+
 \def\packagedate{\gitdate}
 \def\packageversion{\gitversion}
 
@@ -108,3 +152,12 @@
   \mbox{\kern.06em\vrule height.3ex}%
   \vbox{\hrule width#1}%
   \hbox{\vrule height.3ex}}
+
+% Package zref-clever loads its language files lazily, which would otherwise
+% happen inside a \DocInput region, where the percent sign is ignored and the
+% comments of those files end up being parsed as keys. Touching every language
+% of this manual schedules them at the start of the document instead, while the
+% percent sign still is a comment character.
+\zcsetup{lang=english}
+\zcsetup{lang=dutch}
+\zcsetup{lang=current}

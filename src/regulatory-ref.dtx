@@ -1,0 +1,624 @@
+% \iffalse meta-comment
+%
+%% regulatory-ref.dtx
+%% Copyright 2024-2026 E. Nijenhuis
+%
+% This work may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License, either version 1.3c
+% of this license or (at your option) any later version.
+% The latest version of this license is in
+% http://www.latex-project.org/lppl.txt
+% and version 1.3c or later is part of all distributions of LaTeX
+% version 2005/12/01 or later.
+%
+% This work has the LPPL maintenance status ‘maintained’.
+%
+% The Current Maintainer of this work is E. Nijenhuis.
+%
+% This work consists of the files listed in the meta-comment of
+% regulatory-struct.dtx.
+%
+% \fi
+%
+% \iffalse
+%<*driver>
+\ProvidesFile{regulatory-ref.dtx}
+%</driver>
+%<package>\NeedsTeXFormat{LaTeX2e}
+%<package>\ProvidesPackage{regulatory-ref}
+%<package>    [2026/09/05 0.0.5 Xerdi's Regulatory Package (References)]
+%
+%<*driver>
+\documentclass[10pt,english]{ltxdoc}
+%! suppress = InclusionLoop
+\usepackage{regulatory}
+\usepackage{tabularx}
+\usepackage[english,dutch]{babel}
+\input{regulatory-preamble}
+\newcommand\translation[2]{#1}
+\begin{document}
+    \selectlanguage{english}
+    \DocInput{regulatory-ref.dtx}
+\end{document}
+%</driver>
+% \fi
+%
+% \subsection{\texorpdfstring{\package{regulatory-ref}}{regulatory-ref}}
+% \setcounter{CodelineNo}{0}
+%
+% \subsubsection{\translation{Prerequisites}{Vereisten}}
+%
+% The structures of \package{regulatory-struct} hold the counters and the reference properties every
+% reference is built upon, so this module loads it first. \package{xstring} is used to take apart the
+% comma separated label lists of \cmd{\aref}.
+%
+% Options are administered by \package{regulatory-struct} for the whole bundle, so they are handed over,
+% just like \package{regulatory} does. Whenever that module is loaded already, its options are settled and
+% there is nothing left to hand over.
+% \iffalse
+%<*package>
+% \fi
+%    \begin{macrocode}
+\@ifpackageloaded{regulatory-struct}{}{%
+    \DeclareOption*{\PassOptionsToPackage{\CurrentOption}{regulatory-struct}}%
+    \ProcessOptions\relax
+}
+\RequirePackage{regulatory-struct}
+\RequirePackage{xstring}
+%    \end{macrocode}
+%
+% The range conjunction and the conjunction of an enumeration are looked up with
+% \package{translations} as well, so that they follow the language selected at that very spot in the
+% document.
+%    \begin{macrocode}
+\DeclareTranslationFallback{and}{and}
+\DeclareTranslationFallback{to}{to}
+%    \end{macrocode}
+%
+% \subsubsection{\translation{Switches}{Schakelaars}}
+%
+% \begin{macro}{\hashchar}
+% Hyperlinks to another document are composed by hand, for which the hash character is needed with its
+% ordinary category code.
+%    \begin{macrocode}
+{\catcode`\#=12 \gdef\hashchar{#}}
+\def\rref@linkpr{\href{\rref@current@fullurl}}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@ifrrefcap}
+% A capitalized reference is requested by the \cmd{\Rref}, \cmd{\Nref} and \cmd{\Aref} variants. Only the
+% first designation printed may be capitalized, hence the switch resets itself as soon as it produced
+% something.
+%    \begin{macrocode}
+\newboolean{rref@cap}
+%    \end{macrocode}
+%
+% A designation that is not built from a language file never passes through here\,---\,an article is
+% referred to by its number alone\,---\,so the request would otherwise survive the reference that made it
+% and capitalize the next one instead. Every reference ends by withdrawing it.
+%    \begin{macrocode}
+\newcommand\rref@capreset{\setboolean{rref@cap}{false}}
+\def\@ifrrefcap#1#2{%
+    \ifthenelse{\boolean{rref@cap}}{%
+        #1%
+        \ifthenelse{\equal{#1}{}}{}{%
+            \setboolean{rref@cap}{false}%
+        }%
+    }{%
+        #2%
+    }%
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\@ifnameinlink}
+% Reads the \option{nameinlink} option of \package{regulatory-struct}, which decides whether the designation
+% is part of the hyperlink or only the number is.
+%    \begin{macrocode}
+\def\@ifnameinlink#1#2{%
+    \ifthenelse{\boolean{regulatory@nameinlink}}{#1}{#2}%
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \subsubsection{\translation{Conjunction}{Conjunctie}}
+%
+% \begin{macro}{\setmiddleconjunction}
+% \begin{macro}{\setlastconjunction}
+% \begin{macro}{\setrangeconjunction}
+% \begin{macro}{\setconjunction}
+% The conjunctions join the labels of an enumeration, of which the last one is joined differently, and a
+% range of three or more consecutive labels is joined with the range conjunction instead.
+%    \begin{macrocode}
+\newcommand\rref@middleconjunction{, }
+\newcommand\rref@lastconjunction{ \GetTranslation{and} }
+\newcommand\rref@rangeconjunction{ \GetTranslation{to} }
+
+\newcommand\setmiddleconjunction[1]{\renewcommand\rref@middleconjunction{#1}}
+\newcommand\setlastconjunction[1]{\renewcommand\rref@lastconjunction{#1}}
+\newcommand\setrangeconjunction[1]{\renewcommand\rref@rangeconjunction{#1}}
+
+\newcommand\setconjunction[3]{%
+    \setmiddleconjunction{#1}%
+    \setlastconjunction{#2}%
+    \setrangeconjunction{#3}%
+}
+%    \end{macrocode}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+% \end{macro}
+%
+% \begin{macro}{\setjuncto}
+% \begin{macro}{\unsetjuncto}
+% Legacy documents join the last label with `junctis', which the \option{legacy} option switches on right
+% away.
+%    \begin{macrocode}
+\newcommand\setjuncto{%
+\setlastconjunction{ jo.\ }%
+}
+
+\newcommand\unsetjuncto{%
+\setlastconjunction{ \GetTranslation{and} }%
+}
+
+\ifregulatory@legacy
+\setjuncto
+\fi
+%    \end{macrocode}
+% \end{macro}
+% \end{macro}
+%
+% \subsubsection{\translation{Reference formats}{Verwijsformaten}}
+%
+% These are the formats the language definition files pick from. A \texttt{ref format} turns the number of a
+% reference into its representation, a \texttt{label format} decides on the order of the designation and the
+% number, and a \texttt{group format} wraps the parent parts of a reference.
+%    \begin{macrocode}
+\newcommand\rref@refformat@noop[1]{#1}
+\newcommand\rref@refformat@parenthesis[1]{(#1)}
+\newcommand\rref@refformat@ordinal[1]{\@ifrrefcap{\Ordinalstringnum{#1}}{\ordinalstringnum{#1}}}
+\newcommand\rref@refformat@alpha[1]{\@ifrrefcap{\ABAlphnum{#1}}{\abalphnum{#1}}}
+\newcommand\rref@label@prefix[2]{#1 #2}
+\newcommand\rref@label@postfix[2]{#2 #1}
+\newcommand\rref@label@refonly[2]{\@gobble{#1}#2}
+\newcommand\rref@group@braced[1]{{[}#1{]~}}
+%    \end{macrocode}
+%
+% \subsubsection{\translation{Language configuration}{Taalconfiguratie}}
+%
+% Every language gets its own key family per type of reference, of which the initial values are the English
+% ones. A language definition file only has to state the differences.
+%    \begin{macrocode}
+\newcommand\rref@init@lang@article[1]{%
+    \pgfkeys{/rref/#1/article/.is family,
+        /rref/#1/article,
+        name/.initial=\GetTranslation{article},
+        Name/.initial=\GetTranslation{Article},
+        ref format/.initial=\rref@refformat@noop,
+        label format/.initial=\rref@label@prefix,
+        group conjunction/.initial={},
+        group format/.initial=\rref@refformat@noop
+    }
+}
+\newcommand\rref@init@lang@para[1]{%
+    \pgfkeys{/rref/#1/para/.is family,
+        /rref/#1/para,
+        name/.initial=\GetTranslation{paragraph},
+        Name/.initial=\GetTranslation{Paragraph},
+        ref format/.initial=\rref@refformat@parenthesis,
+        label format/.initial=\rref@label@refonly,
+        group conjunction/.initial={,},
+        group format/.initial=\rref@refformat@noop
+    }
+}
+\newcommand\rref@init@lang@sub[1]{%
+    \pgfkeys{/rref/#1/sub/.is family,
+        /rref/#1/sub,
+        name/.initial=\GetTranslation{subparagraph},
+        Name/.initial=\GetTranslation{Subparagraph},
+        ref format/.initial=\rref@refformat@ordinal,
+        label format/.initial=\rref@label@postfix,
+        group conjunction/.initial={,},
+        group format/.initial=\rref@group@braced
+    }
+}
+
+\newcommand\rref@setup@lang[3]{%
+    \pgfkeys{/rref/#1/#2,#3}
+}
+%    \end{macrocode}
+%
+% \begin{macro}{\rref@setup}
+% Declares \meta{language} and configures its three types at once. The declaration itself is recorded, so
+% that \cmd{\rref@lang} can tell a supported language from an unsupported one.
+%    \begin{macrocode}
+\newcommand\rref@setup[4]{%
+    \expandafter\gdef\csname rref@declared@#1\endcsname{}%
+    \rref@init@lang@article{#1}
+    \rref@init@lang@para{#1}
+    \rref@init@lang@sub{#1}
+    \rref@setup@lang{#1}{article}{#2}
+    \rref@setup@lang{#1}{para}{#3}
+    \rref@setup@lang{#1}{sub}{#4}
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\rref@lang}
+% The language a reference is formatted in. Whenever the current language has no configuration of its own,
+% the English one is used, which is always loaded. Note that this expands within \cmd{\csname}, so it must
+% not produce a single space.
+%    \begin{macrocode}
+\def\rref@lang{%
+    \ifcsname languagename\endcsname%
+        \ifcsname rref@declared@\languagename\endcsname\languagename\else english\fi%
+    \else english\fi%
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\rref@get}
+% \begin{macro}{\rref@set}
+% Reading a single key of the current, or of an explicitly given, language. Where \cmd{\rref@get} prints the
+% value, \cmd{\rref@set} stores it in the macro of its last argument.
+%    \begin{macrocode}
+\newcommand\rref@set[4][\rref@lang]{%
+    \pgfkeysgetvalue{/rref/#1/#2/#3}{#4}%
+}
+
+\newcommand\rref@get[3][\rref@lang]{%
+    \pgfkeysvalueof{/rref/#1/#2/#3}%
+}
+
+\newcommand\rref@name[2][\rref@lang]{\@ifrrefcap{\rref@get[#1]{#2}{Name}}{\rref@get[#1]{#2}{name}}}
+\def\rref@article@name{\rref@name{article}}
+\def\rref@para@name{\rref@name{para}}
+\def\rref@sub@name{\rref@name{sub}}
+%    \end{macrocode}
+% \end{macro}
+% \end{macro}
+%
+% The formats of the current type applied to a number. A link format is a label format of which either the
+% whole label or only the number is a hyperlink, depending on the \option{nameinlink} option.
+%    \begin{macrocode}
+\newcommand\rref@refformat[2][\rref@current@type]{\rref@set{#1}{ref format}{\@@rrefformat}\@@rrefformat{#2}}
+\newcommand\rref@labelformat[2][\rref@current@type]{\rref@set{#1}{label format}{\@@labelformat}\@@labelformat{\rref@name{#1}}{#2}}
+\newcommand\rref@linkformat[2][\rref@current@type]{%
+    \@ifnameinlink{%
+        \rref@linkpr{\rref@labelformat[#1]{\rref@refformat[#1]{#2}}}%
+    }{%
+        \rref@labelformat[#1]{\rref@linkpr{\rref@refformat[#1]{#2}}}%
+    }%
+}
+\newcommand\rref@reflink[2][\rref@current@type]{%
+    \rref@linkpr{\rref@refformat[#1]{#2}}%
+}
+\newcommand\rref@groupformat[2][\rref@current@type]{%
+    \rref@set{#1}{group format}{\@@groupformat}\@@groupformat{#2}%
+}
+%    \end{macrocode}
+%
+% \subsubsection{\translation{Reference macros}{Verwijsmacro's}}
+%
+% \begin{macro}{\rref}
+% \begin{macro}{\Rref}
+% Refers with the number only. Whenever the label is not one of the structures of this bundle, the
+% reference is handed over to \package{zref}, which knows how to refer to sections and the like.
+%    \begin{macrocode}
+\def\rref{\@ifstar\rref@star\rref@nostar}
+\def\rref@star#1{%
+    \rref@setcurrent{#1}%
+    \ifnum\rref@current@value>0%
+        \rref@refformat{\rref@current@value}%
+    \else%
+        \zref{#1}%
+    \fi%
+    \rref@capreset%
+}
+\def\rref@nostar#1{%
+    \rref@setcurrent{#1}%
+    \ifnum\rref@current@value>0%
+        \rref@linkpr{\rref@refformat{\rref@current@value}}%
+    \else%
+        \zcref[noname]{#1}%
+    \fi%
+    \rref@capreset%
+}
+\def\Rref{\@ifstar\Rref@star\Rref@nostar}
+\def\Rref@star#1{%
+    \setboolean{rref@cap}{true}%
+    \rref*{#1}%
+}
+\def\Rref@nostar#1{%
+    \setboolean{rref@cap}{true}%
+    \rref{#1}%
+}
+%    \end{macrocode}
+% \end{macro}
+% \end{macro}
+%
+% \begin{macro}{\nref}
+% \begin{macro}{\Nref}
+% Refers with the designation and the number, in the order the language prescribes.
+%    \begin{macrocode}
+\def\nref{\@ifstar\nref@star\nref@nostar}
+\def\nref@star#1{%
+    \rref@setcurrent{#1}%
+    \ifnum\rref@current@value>0%
+        \rref@labelformat{\rref@refformat{\rref@current@value}}%
+    \else%
+        \zcref*{#1}%
+    \fi%
+    \rref@capreset%
+}
+\def\nref@nostar#1{%
+    \rref@setcurrent{#1}%
+    \ifnum\rref@current@value>0%
+        \rref@linkformat{\rref@current@value}%
+    \else%
+        \zcref{#1}%
+    \fi%
+    \rref@capreset%
+}
+\def\Nref{\@ifstar\Nref@star\Nref@nostar}
+\def\Nref@star#1{%
+    \setboolean{rref@cap}{true}%
+    \nref*{#1}%
+}
+\def\Nref@nostar#1{%
+    \setboolean{rref@cap}{true}%
+    \nref{#1}%
+}
+%    \end{macrocode}
+% \end{macro}
+% \end{macro}
+%
+% \subsubsection{\translation{The current reference}{De huidige verwijzing}}
+%
+% \begin{macro}{\rref@setcurrent}
+% Reads all properties of \meta{label} recorded by \package{regulatory-struct} and works out which type of
+% reference it is.
+%    \begin{macrocode}
+\def\rref@setcurrent#1{%
+    \def\rref@current{#1}%
+    \def\rref@current@counter{\zref@extract{#1}{counter}}%
+    \def\rref@current@article{\zref@extract{#1}{article}}%
+    \def\rref@current@para{\zref@extract{#1}{para}}%
+    \def\rref@current@sub{\zref@extract{#1}{sub}}%
+    \rref@settype%
+    \rref@setlink%
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% The counter of a label tells the type. Both the \cmd{\para} heading and the first level of the
+% \texttt{paras} environment count as a paragraph, and anything else is left to \package{zref}, which is
+% what the value of $-1$ stands for.
+%    \begin{macrocode}
+\def\rref@settype{%
+    \ifthenelse{\equal{article}{\rref@current@counter}}{%
+        \def\rref@current@type{article}%
+        \def\rref@current@value{\rref@current@article}%
+        \def\rref@current@fullformat{}%
+    }{%
+        \ifthenelse{\equal{para}{\rref@current@counter}\or\equal{parasi}{\rref@current@counter}}{%
+            \def\rref@current@type{para}%
+            \def\rref@current@value{\rref@current@para}%
+        }{%
+            \ifthenelse{\equal{parasii}{\rref@current@counter}}{%
+                \def\rref@current@type{sub}%
+                \def\rref@current@value{\rref@current@sub}%
+            }{%
+                \def\rref@current@type{}%
+                \def\rref@current@value{-1}%
+            }%
+        }%
+    }%
+}
+%    \end{macrocode}
+%
+% The anchor of a label within the current document, or the anchor within the URL of another document,
+% which \package{regulatory-attachments} records with \cmd{\refdocument} and \cmd{\masterdocument}.
+%    \begin{macrocode}
+\def\rref@setlink{%
+    \def\rref@current@anchor{\zref@extract{\rref@current}{anchor}}%
+    \def\rref@current@url{\zref@extractdefault{\rref@current}{url}{}}%
+    \def\rref@current@fullurl{\rref@current@url\hashchar\rref@current@anchor}%
+}
+%    \end{macrocode}
+%
+% \begin{macro}{\rref@number}
+% The number of another label, of the type of the current reference. The sorting and the compaction of an
+% enumeration compare labels with it.
+%    \begin{macrocode}
+\newcommand\rref@number[1]{%
+    \zref@extractdefault{#1}{\rref@current@type}{-1}%
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \subsubsection{\translation{Complete references}{Volledige verwijzingen}}
+%
+% \begin{macro}{\aref@postlink@setup}
+% Whatever follows a complete reference, which is nothing as long as the label belongs to this document.
+% \package{regulatory-attachments} redefines this to mention the document a label of another document
+% belongs to.
+%    \begin{macrocode}
+\newcommand\aref@postlink@setup[1]{%
+    \def\@aref@postlink{}%
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\aref@setcurrent}
+% A complete reference states all parent parts of the label as well, so a paragraph is prefixed with its
+% article, and a subparagraph with both its article and its paragraph. Each of them is joined with the
+% group conjunction of its own type.
+%    \begin{macrocode}
+\newcommand\aref@setcurrent[1]{%
+    \def\aref@current@reflink{\rref@reflink[\rref@current@type]{\rref@current@value}}%
+    \aref@postlink@setup{#1}%
+    \ifthenelse{\equal{\rref@current@type}{article}}{%
+        \def\@aref@prefix{}%
+        \def\@aref@postfix{}%
+    }{%
+        \ifthenelse{\equal{\rref@current@type}{para}}{%
+            \def\@aref@prefix{%
+                \rref@labelformat[article]{\rref@current@article}\rref@get{article}{group conjunction}%
+            }%
+            \def\@aref@postfix{}%
+        }{%
+            \ifthenelse{\equal{\rref@current@type}{sub}}{%
+                \def\@aref@prefix{%
+                    \rref@labelformat[article]{\rref@refformat[article]{\rref@current@article}}\rref@get{article}{group conjunction}%
+                    \rref@labelformat[para]{\rref@refformat[para]{\rref@current@para}}\rref@get{para}{group conjunction}%
+                }%
+                \def\@aref@postfix{}%
+            }{%
+                \def\@aref@prefix{}%
+                \def\@aref@postfix{}%
+            }%
+        }%
+    }%
+}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\rref@labellist}
+% Reads an enumeration of labels into \cmd{\rref@labels} with the spaces taken out. A space is what a
+% writer naturally puts after a comma, and it used to be fatal in a way that said nothing: the number of a
+% label with a leading space cannot be extracted, the default of that extraction is $-1$, and $-1$ is the
+% terminator of the enumeration, so the list ended silently at the first space and every label behind it
+% was dropped.
+%    \begin{macrocode}
+\ExplSyntaxOn
+\tl_new:N \rref@labels
+\cs_new_protected:Npn \rref@labellist #1
+{
+    \tl_set:Nn \rref@labels { #1 }
+    \tl_remove_all:Nn \rref@labels { ~ }
+}
+\ExplSyntaxOff
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\aref}
+% \begin{macro}{\Aref}
+% A complete reference of one or more labels. All labels of an enumeration are of the same type, so the
+% first one determines the prefix and the designation of the whole group.
+%    \begin{macrocode}
+\newcommand{\aref}[1]{%
+    \rref@labellist{#1}%
+    \def\@@arefsetup##1##2{%
+        \rref@setcurrent{##1}%
+        \aref@setcurrent{##1}%
+        \rref@groupformat{\@aref@prefix}%
+        ##2%
+        \@aref@postfix\@aref@postlink%
+    }%
+    \expandafter\aref@dispatch\expandafter{\rref@labels}%
+    \rref@capreset%
+}
+
+\newcommand\aref@dispatch[1]{%
+    \IfSubStr{#1}{,}{%
+        \StrBefore[1]{#1}{,}[\firstarg]%
+        \@@arefsetup{\firstarg}{\rref@labelformat{\aref@group{#1}}}%
+    }{%
+        \@@arefsetup{#1}{\nref{#1}}%
+    }%
+}
+
+\newcommand{\Aref}[1]{%
+    \setboolean{rref@cap}{true}%
+    \aref{#1}%
+}
+%    \end{macrocode}
+% \end{macro}
+% \end{macro}
+%
+% \subsubsection{\translation{Enumerations}{Opsommingen}}
+%
+% An enumeration of labels is first sorted and then compacted, so that three or more consecutive numbers
+% become a range. Both walk the comma separated list with a terminator at the end.
+%    \begin{macrocode}
+\def\listterminator{-1}
+
+\newcommand\aref@group[1]{%
+    \bubblesort{#1}%
+    \expandafter\begincompaction\sortedlist,\listterminator,\relax%
+}
+%    \end{macrocode}
+%
+% \begin{macro}{\begincompaction}
+% \begin{macro}{\findendlist}
+% The compaction keeps track of the first label of the current run and of the last consecutive one found so
+% far. As soon as the run is broken, it is printed as a single reference, as a pair joined with a
+% conjunction, or as a range, after which the remainder of the list is compacted the same way.
+%    \begin{macrocode}
+\def\begincompaction#1,#2\relax{%
+    \def\startlist{#1}%
+    \def\currentendlist{#1}%
+    \findendlist#2\relax%
+}
+\def\findendlist#1,#2\relax{%
+    \ifnum\numexpr\rref@number{\currentendlist}+1\relax=\rref@number{#1}\relax%
+        \def\currentendlist{#1}%
+        \findendlist#2\relax%
+    \else%
+        \ifnum\rref@number{\startlist}=\rref@number{\currentendlist}\relax%
+            \ignorespaces\rref{\startlist}\unskip%
+        \else%
+            \ifnum\numexpr\rref@number{\startlist}+1\relax=\rref@number{\currentendlist}\relax%
+                \ignorespaces\rref{\startlist}\unskip%
+                \ifnum\rref@number{#1}=\listterminator\relax%
+                    \rref@lastconjunction%
+                \else%
+                    \rref@middleconjunction%
+                \fi\ignorespaces%
+                \rref{\currentendlist}\unskip%
+            \else%
+                \ignorespaces\rref{\startlist}\unskip\rref@rangeconjunction\ignorespaces%
+                \rref{\currentendlist}\unskip%
+            \fi%
+        \fi%
+        \ifnum\rref@number{#1}=\listterminator\else%
+            \IfStrEq{#2}{\listterminator,}{\rref@lastconjunction}{\rref@middleconjunction}\begincompaction#1,#2\relax%
+        \fi%
+    \fi%
+}
+%    \end{macrocode}
+% \end{macro}
+% \end{macro}
+%
+% \begin{macro}{\bubblesort}
+% Sorting is done on the number of the type of the current reference, by swapping the first two labels that
+% are out of order and starting over with the result.
+%    \begin{macrocode}
+\newcommand\bubblesort[1]{\def\sortedlist{}\sortlist#1,\listterminator,\relax}
+\def\sortlist#1,#2,#3\relax{%
+    \rref@setcurrent{#1}%
+    \aref@setcurrent{#1}%
+    \ifnum\rref@number{#2}=\listterminator\relax%
+        \edef\sortedlist{\sortedlist#1}%
+    \else%
+        \ifnum\rref@number{#1}<\rref@number{#2}\relax%
+            \edef\sortedlist{\sortedlist#1,}%
+            \sortlist#2,#3\relax%
+        \else%
+            \let\tmp\sortedlist%
+            \def\sortedlist{}%
+            \expandafter\sortlist\tmp#2,#1,#3\relax%
+        \fi%
+    \fi%
+}
+%    \end{macrocode}
+% \iffalse
+%</package>
+% \fi
+% \end{macro}
+%
+% \Finale
+%

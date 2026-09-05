@@ -1,0 +1,34 @@
+% PDF management has to be active for the attachments of regulatory-attachments.
+% Declared here only when the commandline did not do it already, so that a
+% conformance flavour can be declared in front of this file (see test/Makefile),
+% and not at all under tex4ht: PDF management pulls in the latex-lab list code,
+% which leaves tex4ht nothing to turn a paras item into. \HCode is defined by
+% the tex4ht run before this file is read, which is what the test is for.
+\ifdefined\HCode\else\IfDocumentMetadataTF{}{\DocumentMetadata{}}\fi
+\documentclass[12pt,dutch]{article}
+\usepackage{babel}
+\usepackage[md,alldefs]{regulatory}
+\usepackage{lipsum}
+
+\newcounter{lip}
+\setcounter{lip}{1}
+\newcommand\textfill{\lipsum[\arabic{lip}]\stepcounter{lip}}
+
+\refdocument[ex2-]{example2-nl}{
+    defs=example2,
+    ref label=van Voorbeeld Twee
+}
+
+\loadglsdefs{example1}
+
+% PDF/UA wants a dc:title, which \title does not set.
+\hypersetup{pdftitle={Voorbeeld Markdown}}
+
+\begin{document}
+    \begin{center}
+        \Huge Voorbeeld Markdown
+    \end{center}
+
+    \markdownInput{example.md}
+
+\end{document}

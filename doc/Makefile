@@ -1,4 +1,10 @@
 CNF_LINE = -cnf-line TEXMFHOME={../,$(shell kpsewhich --var-value TEXMFHOME)}
+# The dtx sources are documented with \DocInput from this directory, the examples
+# of the appendix are listed and attached from test/, and the generated package
+# has to win from any installed release of it: the project keeps its files in
+# tex/, which kpathsea only reaches after $TEXMFDIST/tex/latex.
+export TEXINPUTS := ../src:../tex:../test:$(TEXINPUTS)
+export BIBINPUTS := ../test:$(BIBINPUTS)
 COMPILER ?= lualatex --interaction=nonstopmode --shell-escape $(CNF_LINE)
 RM = rm -f
 ifeq ($(OS),Windows_NT)
@@ -6,12 +12,19 @@ ifeq ($(OS),Windows_NT)
 endif
 
 
-.PHONY: all extra clean clean-all clean-leftovers
+.PHONY: all examples clean clean-all
 .DELETE_ON_ERROR:
 
-all: clean-all regulatory-nl.pdf regulatory-en.pdf
+all: clean-all examples regulatory-nl.pdf regulatory-en.pdf
 
-extra: all md-example.pdf
+# Both manuals list, refer to and attach every example, so those are built first.
+# From scratch, and not only when a source changed: the manual reads the aux files
+# of the examples for its external references, `make build-docs' clears those
+# afterwards, and with the PDF files still standing make would rebuild nothing. The
+# references would then come out as ?? without anything having failed.
+examples:
+	$(MAKE) -C ../test -f Makefile clean-all-examples
+	$(MAKE) -C ../test -f Makefile all
 
 %.aux: %.tex
 	$(COMPILER) $*
@@ -19,18 +32,11 @@ extra: all md-example.pdf
 %.glstex: %.aux
 	bib2gls $*
 
+# Twice, because the page references of the appendix and of the attachments only
+# settle on the run after the one that wrote them.
 %.pdf: %.glstex
 	$(COMPILER) $*
-
-example1-nl.aux: example2-nl.glstex
-
-example1-en.aux: example2-en.glstex
-
-regulatory-nl.pdf: example1-nl.pdf example2-nl.pdf
-
-regulatory-en.pdf: example1-en.pdf example2-en.pdf
-
-md-example.pdf: example1-nl.pdf example2-nl.pdf
+	$(COMPILER) $*
 
 clean-%:
 	latexmk -f -c $*-en
@@ -40,8 +46,8 @@ clean-all-%:
 	latexmk -f -C $*-en
 	latexmk -f -C $*-nl
 
-clean: clean-example1 clean-example2 clean-regulatory
+clean: clean-regulatory
 	rm -f *.glstex
 
-clean-all: clean-all-example1 clean-all-example2 clean-all-regulatory
+clean-all: clean-all-regulatory
 	rm -f *.glstex

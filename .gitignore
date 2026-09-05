@@ -1,4 +1,15 @@
 *.tar.gz
+
+*.luabridge.lua
+
+## Everything in tex/ is generated from src/*.dtx by "make generate":
+/tex/
+
+## Scratch file of `make conformance-check':
+/test/conformance.check.tex
+
+## Every test suite builds in its own directory under here:
+/test/out/
 *.pdf
 ## Core latex/pdflatex auxiliary files:
 *.aux

@@ -1,0 +1,586 @@
+% \iffalse meta-comment
+%
+%% regulatory-html.dtx
+%% Copyright 2024-2026 E. Nijenhuis
+%
+% This work may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License, either version 1.3c
+% of this license or (at your option) any later version.
+% The latest version of this license is in
+% http://www.latex-project.org/lppl.txt
+% and version 1.3c or later is part of all distributions of LaTeX
+% version 2005/12/01 or later.
+%
+% This work has the LPPL maintenance status ‘maintained’.
+%
+% The Current Maintainer of this work is E. Nijenhuis.
+%
+% This work consists of the files listed in the meta-comment of
+% regulatory-struct.dtx.
+%
+% \fi
+%
+% \iffalse
+%<*driver>
+\ProvidesFile{regulatory-html.dtx}
+%</driver>
+%<html>\ProvidesFile{regulatory.4ht}
+%<html>    [2026/09/05 0.0.5 Xerdi's Regulatory Package (tex4ht configuration)]
+%
+%<*driver>
+\documentclass[10pt,english]{ltxdoc}
+%! suppress = InclusionLoop
+\usepackage{regulatory}
+\usepackage{tabularx}
+\usepackage[english,dutch]{babel}
+\input{regulatory-preamble}
+\newcommand\translation[2]{#1}
+\begin{document}
+    \selectlanguage{english}
+    \DocInput{regulatory-html.dtx}
+\end{document}
+%</driver>
+% \fi
+%
+% \subsection{\texorpdfstring{\file{regulatory.4ht}}{regulatory.4ht}}
+% \setcounter{CodelineNo}{0}
+%
+% This is the \package{tex4ht} configuration of \zcref{sec:html}, which is a source of its own
+% rather than a module of the bundle: it is not a package, it is read by \package{tex4ht} and by
+% nothing else, and it only exists at all because an HTML run replaces the machinery the printed
+% headings are built on. It identifies itself with \cmd{\ProvidesFile} all the same, so that a
+% document can tell whether it was found: \package{tex4ht} ships no configuration for this package,
+% and a conversion without one fails silently rather than loudly (\zcref{sec:html}).
+%
+%
+% \subsubsection{What this fixes}
+%
+%
+% This file is what emits the structure of a regulatory document in HTML. It
+% replaces \cmd{\article} and \cmd{\para} outright, so it does that in either of the two
+% heading branches the package can take (see below), and without it there is no
+% structure at all: an article becomes a paragraph with a bold run in it, and
+% the output carries no \texttt{<h1>}..\texttt{<h6>} and no \texttt{<section>}. Measured on example1-nl,
+% four articles:
+%
+% \begin{center}
+%     \begin{tabular}{@{}lrrl@{}}
+%         & \texttt{<section>} & \texttt{<h\meta{n}>} & \texttt{make4ht} \\
+%         \hline
+%         without this file & 0 & 0 & exit 0 \\
+%         with it           & 5 & 5 & exit 0 \\
+%     \end{tabular}
+% \end{center}
+%
+% Note both exit codes. The conversion \emph{succeeds} without this file and produces a
+% document with no headings; what falls away does not announce itself.
+%
+% A document that does not declare \cmd{\DocumentMetadata} hits a hard failure on top
+% of that, because regulatory then builds \cmd{\article} with titlesec's \cmd{\titleclass}
+% and tex4ht replaces the sectioning machinery titlesec hooks into, leaving
+% \cmd{\titleformat} nothing to attach to. Measured on the same document with neither
+% this file nor \cmd{\DocumentMetadata}: make4ht exits 1 on `No format for this
+% command', `Missing number' and `Illegal unit of measure', and four faults arrive at
+% once, none of which announces itself:
+%
+% \begin{enumerate}
+%     \item \package{titlesec} errors per heading and leaks its spacing argument into the
+%         text: `0ptEerste artikel'. Measured: five occurrences of `0pt' in the output.
+%     \item It also consumes the first letter of the following text as an argument, so
+%         `Een genummerde paragraaf' comes out as `0ptE' plus `en genummerde paragraaf'.
+%         The text is not misformatted, it is broken apart.
+%     \item Article numbers vanish. In a legal instrument the number is not decoration; it
+%         is the address by which a clause is cited.
+%     \item \cmd{\aref} still emits \verb|<a href="#article.1">|, but nothing emits an
+%         element with that id. Measured: three such links, zero matching ids.
+% \end{enumerate}
+%
+% That branch is the narrower case, not the reason this file exists. A document
+% that attaches anything declares \cmd{\DocumentMetadata} already and never reaches
+% titlesec -- and still needs this file for everything above.
+%
+% The \texttt{paras} environment needs nothing here: it is an ordinary enumitem list
+% and tex4ht already renders it with correct numbering.
+%
+%
+% \subsubsection{Two traps}
+%
+%
+% This file must not use \cmd{\makeatletter} or \cmd{\makeatother}. The at sign is already a
+% letter when the file runs (measured: \verb|\catcode`\@| is 11), so \cmd{\makeatletter} is
+% redundant and the matching
+% \cmd{\makeatother} is destructive: it turns @ back into an ordinary character for
+% the rest of the package, so every \verb|\rref@|\dots{} internal silently becomes garbage.
+% The symptom is a build that hangs and then dies inside color.4ht with
+% \verb|Missing \begin{document}| -- an error naming a file that has nothing to do
+% with the cause.
+%
+% (An earlier version of this comment explained the catcode by saying tex4ht
+% inputs a .4ht `the moment it sees \cmd{\ProvidesPackage}'. That reason is wrong;
+% only the conclusion held. See the next paragraph for what was measured.)
+%
+% The redefinitions are made directly, not deferred. Measured 2026-09-05
+% against the split package (regulatory + -struct + -ref + -attachments), with
+% a stub .4ht per package reporting its own state: tex4ht defers each file past
+% the whole \texttt{usepackage} chain, not merely past the package that names it --
+% \file{regulatory-struct.4ht} already sees \cmd{\attachdocument}, which regulatory-attachments
+% defines afterwards. So \cmd{\article} and \cmd{\para} exist by the time we get here and we
+% are overwriting them. \cmd{\AtEndOfPackage} looks like the careful choice and is not:
+% it never fires, because by then no package is being loaded, and the
+% redefinitions then silently never happen at all.
+%
+% Ordering caveat if this file is ever split along the package lines: tex4ht's
+% own \file{titlesec.4ht} runs between the clusters: \file{regulatory.4ht} and
+% regulatory-struct.4ht before it, regulatory-ref.4ht and
+% regulatory-attachments.4ht after. An \cmd{\article}/\cmd{\para} fix must land in the first
+% two. Keeping everything in one file keeps it on the safe side of that line.
+%
+%
+% \subsubsection{Which heading branch this patches}
+%
+%
+% regulatory-struct builds \cmd{\article} through titlesec's \cmd{\titleclass} only when
+% \cmd{\ParseLaTeXeHeading} is absent. A bare \cmd{\DocumentMetadata}{} -- no testphase
+% needed -- loads latex-lab-testphase-sec-template.sty and defines it, so such a
+% document takes the \cmd{\DeclareInstance}{heading} branch and never reaches titlesec.
+% Measured under both pdflatex and lualatex, 2026-09-05.
+%
+% That does not make this file optional for those documents. It replaces \cmd{\article}
+% outright, so it is what emits the markup in either branch. Measured on one
+% document with two articles, \cmd{\DocumentMetadata}{} on line 1, differing only in
+% whether this file was present:
+%
+% \begin{center}
+%     \begin{tabular}{@{}lrrl@{}}
+%         & \texttt{<h\meta{n}>} & \texttt{regulatory-*} & \texttt{make4ht} \\
+%         \hline
+%         without this file & 0 & 0 & exit 0 \\
+%         with it           & 2 & 6 & exit 0 \\
+%     \end{tabular}
+% \end{center}
+%
+% The id='article.N' anchors are hyperref's and appear either way. So without
+% this file the conversion \emph{succeeds} and produces a document with no headings at
+% all -- the same shape as the titlesec finding on the PDF side, where a clean
+% build was no evidence either. What falls away does not announce itself.
+% \iffalse
+%<*html>
+% \fi
+%    \begin{macrocode}
+
+\immediate\write-1{regulatory.4ht 2026-09-05}
+
+\NewConfigure{regarticle}{4}
+\NewConfigure{regpara}{4}
+%    \end{macrocode}
+% \iffalse
+%</html>
+% \fi
+%
+% The anchor id must be the one \cmd{\aref} links to. hyperref's \cmd{\refstepcounter} sets
+% \verb|\@currentHref| to `article.N' -- exactly the `\#article.1' the broken output was
+% already pointing at -- so emitting that as the element id is what turns those
+% dead links into live ones.
+%
+% \iffalse
+%<*html>
+% \fi
+%    \begin{macrocode}
+\newcommand\reg@anchorid[1]{\HCode{ id="#1"}}
+%    \end{macrocode}
+% \iffalse
+%</html>
+% \fi
+%
+% Close any open paragraph before block-level markup, or the \texttt{<section>} is
+% emitted inside a \texttt{<p>}. \cmd{\IgnorePar} stops tex4ht opening a fresh one immediately.
+%
+% \iffalse
+%<*html>
+% \fi
+%    \begin{macrocode}
+\newcommand\reg@blockmode{\ifvmode\IgnorePar\fi\EndP}
+%    \end{macrocode}
+% \iffalse
+%</html>
+% \fi
+%
+% A \texttt{<section>} opened by \cmd{\article} has to be closed by the next \cmd{\article} or at the
+% end of the document. These are sectioning commands, not environments -- there
+% is no \cmd{\endarticle} to hook -- so an explicit flag tracks it.
+%
+% \iffalse
+%<*html>
+% \fi
+%    \begin{macrocode}
+\newif\ifreg@inarticle \reg@inarticlefalse
+\newif\ifreg@inpara    \reg@inparafalse
+
+\newcommand\reg@closepara{%
+  \ifreg@inpara \reg@blockmode\HCode{</section>}\reg@inparafalse \fi
+}
+\newcommand\reg@closearticle{%
+  \reg@closepara
+  \ifreg@inarticle \reg@blockmode\HCode{</section>}\reg@inarticlefalse \fi
+}
+
+\def\article{\@ifstar\reg@article@star\reg@article@plain}%
+  %
+  % titlesec's sectioning signature is \article*[toc-entry]{title}; both forms
+  % are accepted so no existing document needs changing.
+\newcommand\reg@article@plain[2][]{%
+    \reg@closearticle
+    \reg@blockmode
+    \refstepcounter{article}%
+    % \@currentlabel is what \label captures. Keep it the bare number so \aref
+    % and \ref print the same thing the heading does.
+    \def\@currentlabel{\thearticle}%
+    \a:regarticle\reg@anchorid{\@currentHref}\HCode{>}%
+    \b:regarticle\GetTranslation{Article}\ \thearticle.\c:regarticle
+    #2%
+    \d:regarticle
+    \reg@inarticletrue
+    \par\ShowPar
+}
+%    \end{macrocode}
+% \iffalse
+%</html>
+% \fi
+%
+% Starred: an unnumbered heading, so the counter is deliberately not stepped
+%
+% \iffalse
+%<*html>
+% \fi
+%    \begin{macrocode}
+  % and no anchor is emitted -- there is no number for anything to cite.
+\newcommand\reg@article@star[2][]{%
+    \reg@closearticle
+    \reg@blockmode
+    \a:regarticle\HCode{>}%
+    \b:regarticle\c:regarticle
+    #2%
+    \d:regarticle
+    \reg@inarticletrue
+    \par\ShowPar
+}
+%    \end{macrocode}
+% \iffalse
+%</html>
+% \fi
+%
+% \subsubsection{The \cmd{\para} heading}
+%
+%
+% \cmd{\para} is used, despite appearances. Grepping a legal source for \verb|\para| finds
+% mostly \verb|\param|, and grepping for \verb|^\para| finds nothing because the calls are
+% indented. It is what a document uses for sub-headings within an article, and
+% leaving it out leaves those broken in a document whose articles all look
+% correct.
+%
+% Nested inside the article's \texttt{<section>} rather than beside it: the sub-heading
+% belongs to the article above it, and a flat structure would tell anything
+% reading the outline otherwise.
+% \iffalse
+%<*html>
+% \fi
+%    \begin{macrocode}
+
+\def\para{\@ifstar\reg@para@star\reg@para@plain}
+
+\newcommand\reg@para@plain[2][]{%
+  \reg@closepara
+  \reg@blockmode
+  \refstepcounter{para}%
+  \def\@currentlabel{\thearticle.\thepara}%
+  \a:regpara\reg@anchorid{\@currentHref}\HCode{>}%
+  \b:regpara\thearticle.\thepara.\c:regpara
+  #2%
+  \d:regpara
+  \reg@inparatrue
+  \par\ShowPar
+}
+
+\newcommand\reg@para@star[2][]{%
+  \reg@closepara
+  \reg@blockmode
+  \a:regpara\HCode{>}%
+  \b:regpara\c:regpara
+  #2%
+  \d:regpara
+  \reg@inparatrue
+  \par\ShowPar
+}
+%    \end{macrocode}
+% \iffalse
+%</html>
+% \fi
+%
+% \subsubsection{Cross-document references}
+%
+%
+% A reference to another document must not become a hyperlink in HTML.
+%
+% In the PDF a link to another document is right whenever the reader holds both:
+% it opens a document they were sent. On the web that no longer follows. A
+% document cited with \cmd{\refdocument} or \cmd{\masterdocument} is commonly one issued to a
+% counterparty rather than published, and a link to it would point at a file that
+% is not there. A dead link in a legal text is worse than no link, since it
+% suggests the reader is being denied something.
+%
+% This is a choice, not a limitation. A publisher who does put every cited
+% document on the web wants the opposite, and gets it by redefining
+% \verb|\rref@linkpr| after this file is read.
+%
+% The reference itself stays: the sentence still says which article of which
+% agreement it means, which is what a reader needs in order to look it up in the
+% copy they were sent. Only the anchor goes.
+%
+% regulatory already draws the distinction we need. \verb|\rref@current@url| is set by
+% \verb|\rref@setlink| and is empty for a reference inside this document, non-empty
+% for one resolved through zref-xr from another document's .aux. One test, at the
+% single point where the package turns a reference into a link.
+%
+% Note this is a decision about the \emph{output format}, which is why it belongs here
+% and not in the source. Writing \cmd{\aref}* in the .tex would drop the link from the
+% PDF as well, where it is wanted.
+% A reference whose anchor this format cannot produce must not look like a link
+% either. In HTML a \texttt{paras} item carries no anchor under the name \cmd{\aref} points
+% at (see the limitation above), so linking it would promise a jump that does
+% not happen. The wording is what carries the meaning -- "het in eerste lid
+% genoemde bedrag" tells the reader exactly where to look -- and a link that
+% silently does nothing subtracts from that rather than adding to it.
+%
+% The counter is the discriminator, and it separates the two cases cleanly:
+% \texttt{para} is the sectioning command, which this file \emph{does} anchor, while \texttt{parasi}
+% and \texttt{parasii} are the enumerate levels of the \texttt{paras} list, which it cannot.
+% Testing the counter rather than the type keeps a linked sub-heading linked.
+% \iffalse
+%<*html>
+% \fi
+%    \begin{macrocode}
+\def\reg@parasictr{parasi}
+\def\reg@parasiictr{parasii}
+\newif\ifreg@anchorless
+\newcommand\reg@checkanchorless{%
+  \reg@anchorlessfalse
+  \edef\reg@thisctr{\rref@current@counter}%
+  \ifx\reg@thisctr\reg@parasictr \reg@anchorlesstrue \fi
+  \ifx\reg@thisctr\reg@parasiictr \reg@anchorlesstrue \fi
+}
+
+\def\rref@linkpr#1{%
+  \begingroup
+  \reg@checkanchorless
+  \edef\reg@refurl{\rref@current@url}%
+  \ifreg@anchorless
+    % No anchor by that name in this output, so no link.
+    \endgroup#1%
+  \else
+    \ifx\reg@refurl\@empty
+      \endgroup\href{\rref@current@fullurl}{#1}%
+    \else
+      % Another document, not published as HTML, so no link.
+      \endgroup#1%
+    \fi
+  \fi
+}
+%    \end{macrocode}
+% \iffalse
+%</html>
+% \fi
+%
+% \subsubsection{A known limitation: references to an item of \texttt{paras}}
+%
+%
+% References to an article work; references to a paragraph do not. A legal text cites
+% both -- `het in eerste lid genoemde bedrag' is as common as `zie artikel 3' --
+% so this is worth knowing about rather than discovering.
+%
+% The cause is a name clash, not a missing anchor. For a list item tex4ht emits
+% its own generic anchor (\texttt{x1-31}), while hyperref's \cmd{\refstepcounter} has
+% meanwhile recorded \verb|\@currentHref| as \texttt{parasi.1.1}. regulatory stores that
+% recorded value in zref, and \cmd{\aref} links to it -- so the link points at a name
+% nothing carries. Verified on a two-item probe:
+%
+% \begin{center}
+%     \begin{tabular}{@{}ll@{}}
+%         ids in the output & \texttt{x1-2r1}, \texttt{article.1}, \texttt{x1-31} \\
+%         link target       & \texttt{parasi.1.1} \\
+%     \end{tabular}
+% \end{center}
+%
+% What was tried and does \emph{not} work: hooking \cmd{\refstepcounter} to emit an extra
+% anchor with \verb|\@currentHref|, both directly and deferred to \cmd{\AtBeginDocument}.
+% Neither errors and neither produces an anchor -- \cmd{\refstepcounter} runs inside
+% the construction of the item's label, and output written there is discarded.
+% A working fix has to hook the item itself, not the counter.
+%
+% Left unfixed deliberately rather than half-fixed: an approach that silently
+% does nothing is worse in this file than an absence that is written down.
+% How a package should attach a hyperref anchor to an enumitem item is a question
+% for the tex4ht maintainer.
+%
+% \subsubsection{Attachments}
+%
+%
+% \cmd{\attachdocument} and \cmd{\documentattachment} do two things: embed a file inside the
+% PDF, and link to that embedded copy. Neither half survives this output format,
+% and both fail as an error rather than as an absence.
+%
+% \cmd{\embedfile} counts what it has embedded in \verb|\g__pdfmanagement_EmbeddedFiles_int|,
+% which exists only while pdfmanagement is active -- it is not, here, because
+% there is no \cmd{\DocumentMetadata} in an HTML run. The link is built from
+% \verb|\pdfannot_link_begin:nnw|, an l3pdfannot command with no meaning outside a PDF
+% backend. A single footnote carrying an attachment therefore produced six
+% `Undefined control sequence' errors and make4ht stopped.
+%
+% An HTML page has no attachments and cannot acquire any, so there is nothing to
+% translate the construct into. Both halves become no-ops and the link text is
+% typeset as text -- the same principle the cross-document references follow
+% above: a link this format cannot honour must not look like a link.
+%
+% Where that text argument happens to be a public URL the reader still sees where
+% to go. Do not turn it into an \cmd{\href} on the strength of such a case:
+% \cmd{\documentattachment} passes a document name in the same position, and a blanket
+% hyperlink would point that at nothing.
+%
+% The replacement is made at the two public commands, not at \cmd{\embedfile} and
+% \verb|\regulatory@attachmentlink| underneath them. Neutralising those two looks
+% tighter and does not hold: \cmd{\embedfile} is set up again by its own package at
+% begin-document, so a \cmd{\let} placed in a hook here is overwritten and the errors
+% come back -- measured, four of them left. Redefining the public commands
+% removes the only paths that reach \cmd{\embedfile} at all (\verb|\regulatory@embedonce| is
+% called from \cmd{\documentattachment} and nowhere else), so nothing downstream can
+% put it back.
+%
+% Parameters are taken outside the hook and the hook only \cmd{\let}s. Writing
+% \cmd{\renewcommand}...{\#2} inside a hook body does not survive the round of
+% parameter reduction the token list passes through: \#2 arrives as a literal
+% digit, so the footnote reads its own parameter number instead of the text.
+% \iffalse
+%<*html>
+% \fi
+%    \begin{macrocode}
+\newcommand\reg@attachdocument@text[3][]{#3}
+\newcommand\reg@documentattachment@text[2]{#2}
+\AtBeginDocument{%
+  \let\attachdocument\reg@attachdocument@text
+  \let\documentattachment\reg@documentattachment@text
+}
+%    \end{macrocode}
+% \iffalse
+%</html>
+% \fi
+%
+% \subsubsection{The definitions list}
+%
+%
+% The article that defines a contract's terms came out as one flat paragraph:
+% every term and its description separated by nothing but whitespace. For the
+% one article whose job is to distinguish a term from its meaning, that is the
+% worst place in the document to lose the distinction.
+%
+% It comes from KOMA-Script's \texttt{labeling}, which the legal documents use to list
+% the definitions explicitly:
+%
+% \begin{quote}\ttfamily
+% \textbackslash{}begin\{labeling\}\{Overeenkomst van opdracht\}\\
+% \hspace*{2em}\textbackslash{}item[Algemene Voorwaarden] \textbackslash{}describe\{terms\}\\
+% \hspace*{2em}\textbackslash{}item[Consument] \textbackslash{}describe\{consumer\}
+% \end{quote}
+%
+% tex4ht configures \texttt{itemize}, \texttt{enumerate} and \texttt{description}, but nothing ships
+% a configuration for \texttt{labeling} -- so it falls through to the generic handling
+% and the item structure is lost.
+%
+% Worth recording because it is where the search naturally goes first: the
+% glossary style is not involved. \package{regulatory} prints with \texttt{style=alttree}, and
+% changing that has no effect at all here -- verified by redefining the style
+% and by forcing \texttt{style=altlist} onto the print command. Neither changed
+% anything, because these documents do not print a glossary at this point; they
+% enumerate the terms by hand.
+%
+% A list of terms with their meanings is a description list, so \texttt{labeling} is
+% configured as one. Modelled on tex4ht's own \texttt{description} configuration in
+% docbook.4ht: five arguments -- open list, close list, start item, after label
+% -- with \cmd{\end:itm} carrying the close tag of the previous item, because a \texttt{<dd>}
+% can only be closed once the next \texttt{<dt>} arrives or the list ends.
+% \iffalse
+%<*html>
+% \fi
+%    \begin{macrocode}
+\ConfigureList{labeling}%
+   {\EndP\HCode{<dl class="regulatory-definitions">}%
+      \PushMacro\end:itm
+      \global\let\end:itm=\empty}
+   {\PopMacro\end:itm \global\let\end:itm \end:itm
+    \EndP\HCode{</dd></dl>}\ShowPar}
+   {\end:itm \global\def\end:itm{\EndP\HCode{</dd>}}%
+    \HCode{<dt class="regulatory-term">}}
+   {\EndP\HCode{</dt>}\HCode{<dd class="regulatory-definition">}\par\ShowPar}
+
+\AtEndDocument{\reg@closearticle}
+%    \end{macrocode}
+% \iffalse
+%</html>
+% \fi
+%
+% \subsubsection{Default markup}
+%
+%
+% \texttt{<section>} plus a real heading, not a \texttt{<div>} with a styled first line. The
+% number sits in its own \texttt{<span>} so a stylesheet can set it apart, while staying
+% inside the \texttt{<h2>} -- a screen reader should announce "Artikel 1. Wettelijke
+% kaders" as one heading, because that is what it is.
+%
+% h2 rather than h1: the document title is the h1 and an article sits under it,
+% which keeps the heading outline valid. Emitting headings at all is the whole
+% point; emitting them at the wrong level would trade one accessibility problem
+% for another.
+% \iffalse
+%<*html>
+% \fi
+%    \begin{macrocode}
+
+\Configure{regarticle}
+  {\HCode{<section class="regulatory-article"}}
+  {\HCode{<h2 class="regulatory-article-heading"><span class="regulatory-article-number">}}
+  {\HCode{</span> }}
+  {\HCode{</h2>}}
+
+\Configure{regpara}
+  {\HCode{<section class="regulatory-para"}}
+  {\HCode{<h3 class="regulatory-para-heading"><span class="regulatory-para-number">}}
+  {\HCode{</span> }}
+  {\HCode{</h3>}}
+%    \end{macrocode}
+% \iffalse
+%</html>
+% \fi
+%
+% \subsubsection{Translations}
+%
+%
+% Deferred for the same reason as the redefinitions: regulatory.sty requires the
+% translations package around line 99, well after this file is read. Calling
+% \cmd{\providetranslation} here makes it an undefined control sequence, its braced
+% arguments are typeset as text, and that ends the preamble.
+% \iffalse
+%<*html>
+% \fi
+%    \begin{macrocode}
+
+\AtBeginDocument{%
+  \providetranslation{Article}{Article}%
+  \providetranslation[to=dutch]{Article}{Artikel}%
+}
+
+\endinput
+%    \end{macrocode}
+% \iffalse
+%</html>
+% \fi
+%
+% \Finale
+%
