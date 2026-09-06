@@ -1199,6 +1199,75 @@ en / and \aref{ex1-sub:lorem,ex1-sub:lorem2,ex1-sub:lorem3,ex1-sub:lorem4}.
 }{%
     Lezen wat er gedeclareerd is. Een waarde is data en geen \TeX{}: hij komt terug zoals hij in het
     bestand staat.%
+}\\
+
+\noindent
+\DescribeMacro{\srcref\\\oarg{provision}\\\marg{key}}
+\translation{%
+    Cites a source, either as a whole or down to one of its provisions. The optional argument holds the
+    provision\,---\,\texttt{artikel}, \texttt{lid}, \texttt{onderdeel} and \texttt{onder}\,---\,and stands
+    before the key, as it does in \cmd{\cite}, so that a bracket in the sentence after a citation is not
+    mistaken for it.%
+}{%
+    Haalt een bron aan, in zijn geheel of tot op een van zijn bepalingen. Het optionele argument bevat de
+    bepaling\,---\,\texttt{artikel}, \texttt{lid}, \texttt{onderdeel} en \texttt{onder}\,---\,en staat
+    vóór de sleutel, zoals bij \cmd{\cite}, zodat een blokhaak in de zin ná een verwijzing er niet voor
+    wordt aangezien.%
+}
+\begin{lstlisting}[style=tex]
+\srcref[artikel=96, lid=2, onderdeel=c]{bw6}
+    artikel 96, tweede lid, onderdeel c, van Boek 6 van het Burgerlijk Wetboek
+\srcref*[artikel=96, lid=2, onderdeel=c]{bw6}
+    art. 6:96 lid 2 onder c BW
+\srcref[artikel=6, lid=1, onderdeel=a]{avg}
+    artikel 6, lid 1, punt a), van de Algemene verordening gegevensbescherming
+\srcref{avg}
+    de Algemene verordening gegevensbescherming
+\end{lstlisting}
+\translation{%
+    Two things decide how that reads, and neither of them is the language of the document.
+
+    The first is the \emph{register}, which belongs to the source: a citation is worded the way the legal
+    order of the instrument words it. A Dutch contract that cites a regulation of the Union writes
+    \enquote{lid 1, punt a)}, because that regulation writes it so itself\,---\,counted in the Dutch text
+    of the General Data Protection Regulation: \texttt{punt~a)} thirty-six times, \texttt{onderdeel~a)}
+    and \texttt{sub~a)} not once. The register comes from the type of the entry and can be overridden per
+    source with a \texttt{register} field.
+
+    The second is the \emph{system}: written out in full, or shortened. The running text of a document is
+    in full; a footnote is shortened, and so is a citation that stands between brackets in the running
+    text. The \option{bronstijl} option sets which of the two a document uses, and the star asks for the
+    other one. The full form is the one the Aanwijzingen voor de regelgeving prescribe for regulations
+    themselves\,---\,a model rather than a rule here, since those instructions bind ministries and not
+    contracts\,---\,and the shortened form is the one of the Leidraad voor juridische auteurs.%
+}{%
+    Twee dingen bepalen hoe dat eruitziet, en geen van beide is de taal van het document.
+
+    Het eerste is het \emph{register}, en dat hoort bij de bron: een verwijzing wordt verwoord zoals de
+    rechtsorde van het instrument hem verwoordt. Een Nederlands contract dat een verordening van de Unie
+    aanhaalt schrijft \enquote{lid 1, punt a)}, omdat die verordening dat zelf zo schrijft\,---\,geteld in
+    de Nederlandse tekst van de Algemene verordening gegevensbescherming: \texttt{punt~a)} zesendertig
+    keer, \texttt{onderdeel~a)} en \texttt{sub~a)} geen enkele keer. Het register komt van het type van de
+    entry en is per bron te overschrijven met een veld \texttt{register}.
+
+    Het tweede is het \emph{systeem}: voluit of verkort. De lopende tekst van een document is voluit; een
+    voetnoot is verkort, en een verwijzing die in de lopende tekst tussen haakjes staat ook. De optie
+    \option{bronstijl} zet welke van de twee een document gebruikt, en de ster vraagt om de andere. De
+    voluit-vorm is die welke de Aanwijzingen voor de regelgeving voor regelingen zelf voorschrijven\,---\,
+    hier een model en geen voorschrift, want die aanwijzingen binden ministeries en geen
+    contracten\,---\,en de verkorte is die van de Leidraad voor juridische auteurs.%
+}\\
+
+\noindent
+\DescribeMacro{\newsourceregister\\\marg{name}\\\marg{full}\\\marg{short}}
+\translation{%
+    Declares a register: seven keys for the full form and seven for the shortened one. Two are declared
+    already, \texttt{nl} and \texttt{nl\_eu}. A register is not a language: the same document may cite in
+    both, and it does so the moment it cites a Dutch statute next to a regulation of the Union.%
+}{%
+    Declareert een register: zeven sleutels voor de voluit-vorm en zeven voor de verkorte. Er zijn er twee
+    gedeclareerd, \texttt{nl} en \texttt{nl\_eu}. Een register is geen taal: hetzelfde document kan in
+    beide aanhalen, en doet dat zodra het naast een Nederlandse wet een verordening van de Unie noemt.%
 }
 \clearpage
 

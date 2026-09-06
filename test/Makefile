@@ -10,7 +10,10 @@ TESTDIR := $(patsubst %/,%,$(dir $(abspath $(firstword $(MAKEFILE_LIST)))))
 PROJECT := $(abspath $(TESTDIR)/..)
 OUT := $(TESTDIR)/out
 
-CNF_LINE = -cnf-line TEXMFHOME=$(PROJECT)
+# max_print_line as well: TeX wraps what it writes to the log at 79 characters,
+# and an assertion that reads a line back would fail on the wrap rather than on
+# what the line says.
+CNF_LINE = -cnf-line TEXMFHOME=$(PROJECT) -cnf-line max_print_line=9999
 export TEXINPUTS := $(PROJECT)/tex:$(TESTDIR):$(TEXINPUTS)
 export BIBINPUTS := $(TESTDIR):$(BIBINPUTS)
 
@@ -179,7 +182,9 @@ log-checks: $(addsuffix .pdf,$(EXAMPLES))
 	 fi
 
 # The reader of bib files is the one place in this bundle where we own a parser,
-# so it is asserted from both sides. What it read is checked field by field --
+# so it is asserted from both sides. The wording of a citation is asserted word for
+# word as well: every one of these forms comes from a source that prescribes it,
+# and a citation in the wrong register is a citation that fails nowhere. What it read is checked field by field --
 # a field that silently did not arrive is a citation that comes out empty -- and
 # the two files that are wrong on purpose have to make the run fail. A reader that
 # skips what it cannot read is worse than no reader.
@@ -193,7 +198,13 @@ SOURCE_EXPECT = 'SRC bw6 type = regeling' \
                 'SRC uavg citeertitel = Uitvoeringswet Algemene verordening gegevensbescherming' \
                 'SRC bw6 leeg = []' \
                 'SRC avg bestaat' \
-                'SRC onbekend ontbreekt'
+                'SRC onbekend ontbreekt' \
+                'CITE nl-voluit = artikel 96,~tweede lid,~onderdeel~c,~van~Boek 6 van het Burgerlijk Wetboek' \
+                'CITE nl-verkort = art. 6:96~lid~2~onder~c~BW' \
+                'CITE eu-voluit = artikel 6,~lid~1,~punt~a),~van~de Algemene verordening gegevensbescherming' \
+                'CITE eu-verkort = art. 6~lid~1~punt~a)~AVG' \
+                'CITE bron-voluit = de Algemene verordening gegevensbescherming' \
+                'CITE bron-verkort = AVG'
 
 source-checks: source-example.pdf
 	@missing=0; read_back=0; \

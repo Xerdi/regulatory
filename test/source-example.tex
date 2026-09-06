@@ -41,7 +41,13 @@
 % De derde route: een bron die in het document zelf staat, zonder bestand.
 \newsource{uavg}{regeling}{%
     citeertitel = Uitvoeringswet Algemene verordening gegevensbescherming,
-    afkorting = UAVG%
+    afkorting = UAVG,
+    lidwoord = de%
+}
+\newsource{wetib}{regeling}{%
+    citeertitel = Wet inkomstenbelasting 2001,
+    afkorting = Wet IB 2001,
+    lidwoord = de%
 }
 
 \hypersetup{pdftitle={Voorbeeld Bronnen}}
@@ -49,6 +55,12 @@
 % Wat de suite leest. Een veld dat verkeerd is ingelezen valt in de PDF niet op,
 % dus wordt het hier genoemd waar een controle erbij kan.
 \newcommand\report[2]{\typeout{SRC #1 #2 = \srcfield{#1}{#2}}}
+% Hetzelfde voor een verwijzing: die wordt eerst opgebouwd en dan gezet, dus het
+% opgebouwde is wat een controle kan lezen. Een verwijzing in het verkeerde
+% register faalt nergens, hij staat er gewoon verkeerd.
+\makeatletter
+\newcommand\citereport[2]{#1\typeout{CITE #2 = \regulatory@src@last}}
+\makeatother
 
 \begin{document}
     \begin{center}
@@ -70,6 +82,14 @@
     \ifsourceexists{avg}{\typeout{SRC avg bestaat}}{\typeout{SRC avg ontbreekt}}
     \ifsourceexists{onbekend}{\typeout{SRC onbekend bestaat}}{\typeout{SRC onbekend ontbreekt}}
 
+    \citereport{\srcref[artikel=96, lid=2, onderdeel=c]{bw6}}{nl-voluit}
+    \citereport{\srcref*[artikel=96, lid=2, onderdeel=c]{bw6}}{nl-verkort}
+    \citereport{\srcref[artikel=6, lid=1, onderdeel=a]{avg}}{eu-voluit}
+    \citereport{\srcref*[artikel=6, lid=1, onderdeel=a]{avg}}{eu-verkort}
+    \citereport{\srcref{avg}}{bron-voluit}
+    \citereport{\srcref*{avg}}{bron-verkort}
+    \citereport{\srcref[artikel=3.126, lid=1, onderdeel=d, onder=2]{wetib}}{vierde-niveau}
+
     \article{Bronnen}\label{art:bronnen}
     \begin{paras}
         \item \label{lid:regeling} \srcfield{bw6}{citeertitel} (\srcfield{bw6}{afkorting}),
@@ -77,5 +97,15 @@
         \item \label{lid:euhandeling} \srcfield{avg}{soort}~\srcfield{avg}{nummer},
             \srcfield{avg}{roepnaam} (\srcfield{avg}{afkorting}).
         \item \label{lid:eigen} \srcfield{uavg}{citeertitel} (\srcfield{uavg}{afkorting}).
+    \end{paras}
+
+    \article{Verwijzingen}\label{art:verwijzingen}
+    \begin{paras}
+        \item \label{lid:voluit} Zoals bepaald in
+            \srcref[artikel=96, lid=2, onderdeel=c]{bw6}.
+        \item \label{lid:verkort} Zoals bepaald in
+            \srcref*[artikel=96, lid=2, onderdeel=c]{bw6}.
+        \item \label{lid:eu} Zoals bepaald in
+            \srcref[artikel=6, lid=1, onderdeel=a]{avg}.
     \end{paras}
 \end{document}

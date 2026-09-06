@@ -86,6 +86,7 @@
 \ExplSyntaxOn
 \prop_new:N \g__regulatory_src_required_prop
 \prop_new:N \g__regulatory_src_type_prop
+\prop_new:N \g__regulatory_src_register_prop
 \seq_new:N \g__regulatory_src_keys_seq
 
 \ior_new:N \g__regulatory_src_ior
@@ -103,18 +104,23 @@
 %    \end{macrocode}
 %
 % \begin{macro}{\newsourcetype}
-% Declares an entry type and the fields an entry of it cannot do without. The required fields are what the
-% wording needs in every register: a Dutch regulation is named by its citeertitel, an act of the Union by
-% what kind of act it is and by its number.
+% Declares an entry type, the fields an entry of it cannot do without, and the register its citations are
+% worded in. The required fields are what the wording needs in every register: a Dutch regulation is named
+% by its citeertitel, an act of the Union by what kind of act it is and by its number.
+%
+% The register belongs to the type and not to the document, because it is the legal order of the instrument
+% that decides how a citation of it reads. A Dutch contract that cites the \textsc{gdpr} words that
+% citation the way the regulation itself does. An entry may override it with a \texttt{register} field.
 %    \begin{macrocode}
-\NewDocumentCommand \newsourcetype { m m }
+\NewDocumentCommand \newsourcetype { m m m }
   {
     \prop_gput:Nnn \g__regulatory_src_required_prop { #1 } { #2 }
+    \prop_gput:Nnn \g__regulatory_src_register_prop { #1 } { #3 }
   }
 \ExplSyntaxOff
 
-\newsourcetype{regeling}{citeertitel}
-\newsourcetype{euhandeling}{soort,nummer}
+\newsourcetype{regeling}{citeertitel}{nl}
+\newsourcetype{euhandeling}{soort,nummer}{nl_eu}
 %    \end{macrocode}
 % \end{macro}
 %
@@ -315,6 +321,21 @@
 % \end{macro}
 % \end{macro}
 %
+% \begin{macro}{\srcregister}
+% The register a source is worded in: the one its type declares, unless the entry says otherwise.
+%    \begin{macrocode}
+\cs_new:Npn \srcregister #1
+  {
+    \tl_if_blank:eTF { \srcfield { #1 } { register } }
+      {
+        \prop_item:Ne \g__regulatory_src_register_prop
+          { \prop_item:Nn \g__regulatory_src_type_prop { #1 } }
+      }
+      { \srcfield { #1 } { register } }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
 % \begin{macro}{\ifsourceexists}
 % Whether \meta{key} was declared at all. The key is made into a string before it is looked for: the keys
 % of a file were read as text, and a sequence compares what it holds character by character, category code
@@ -326,6 +347,249 @@
     \seq_if_in:NVTF \g__regulatory_src_keys_seq \l__regulatory_src_query_str
       { #2 } { #3 }
   }
+%    \end{macrocode}
+% \end{macro}
+%
+% \subsubsection{\translation{Registers}{Registers}}
+%
+% A citation is worded in the register of the instrument it points at, and every register has two systems:
+% one written out in full and one shortened. Which of the two applies is a property of the place the
+% citation stands in\,---\,the Leidraad has it in full in the running text and shortened in a footnote, and
+% shortened as well when it stands between brackets in the running text\,---\,so the call decides and the
+% document sets the default.
+%
+% Seven keys are enough to word a citation. Five of them are macros, and each of them is handed the macro
+% to put its result in rather than expanding to it: writing an ordinal in words is work that
+% \package{fmtcount} does with a command that cannot be expanded, and a citation is assembled before it is
+% typeset so that it can be read back.
+%
+% \begin{labeling}{\texttt{separator}}
+%     \item[\texttt{article}] the word before the number of an article.
+%     \item[\texttt{number}] the number itself, which is where the colon notation of the civil code lives.
+%     \item[\texttt{lid}] the paragraph.
+%     \item[\texttt{onderdeel}] the lettered point.
+%     \item[\texttt{onder}] the level below that, which the standards call a subonderdeel.
+%     \item[\texttt{separator}] what stands between the parts: a comma in full, a space when shortened.
+%     \item[\texttt{van}] what stands between the last part and the instrument: \enquote{van} when written
+%         out in full, nothing when shortened.
+%     \item[\texttt{source}] the instrument itself, named from the fields of its entry.
+% \end{labeling}
+%    \begin{macrocode}
+\ExplSyntaxOff
+\newcommand\regulatory@src@ordinal[1]{\ordinalstringnum{#1}}
+
+\newcommand\newsourceregister[3]{%
+    \pgfqkeys{/regsrc/#1/voluit}{#2}%
+    \pgfqkeys{/regsrc/#1/verkort}{#3}%
+}
+
+\newcommand\regsrc@get[3]{\pgfkeysvalueof{/regsrc/#1/#2/#3}}
+\newcommand\regsrc@set[4]{\pgfkeysgetvalue{/regsrc/#1/#2/#3}{#4}}
+%    \end{macrocode}
+%
+% The register of the Dutch legislator, which is also the one a Dutch author writes in. In full it is the
+% form the Aanwijzingen voor de regelgeving prescribe for regulations themselves\,---\,a model rather than
+% a rule for a document that is not a regulation, since those instructions bind ministries and not
+% contracts. Shortened it is the form of the Leidraad: no commas, the designation before the number, and
+% the colon notation for the civil code.
+%    \begin{macrocode}
+\newsourceregister{nl}{
+    article/.initial=artikel,
+    number/.initial=\regulatory@src@number@plain,
+    lid/.initial=\regulatory@src@lid@ordinal,
+    onderdeel/.initial=\regulatory@src@onderdeel@plain,
+    onder/.initial=\regulatory@src@onder@degree,
+    separator/.initial={,~},
+    van/.initial={van~},
+    source/.initial=\regulatory@src@source@full@store
+}{
+    article/.initial=art.,
+    number/.initial=\regulatory@src@number@colon,
+    lid/.initial=\regulatory@src@lid@cardinal,
+    onderdeel/.initial=\regulatory@src@onderdeel@onder,
+    onder/.initial=\regulatory@src@onder@degree,
+    separator/.initial={~},
+    van/.initial={},
+    source/.initial=\regulatory@src@source@short@store
+}
+%    \end{macrocode}
+%
+% The register an act of the Union is cited in, which is the one such an act uses for itself: the paragraph
+% is a cardinal even in the full form, and the lettered point is a \emph{punt} with the bracket it closes
+% with. Counted in the Dutch text of the General Data Protection Regulation: \texttt{punt~a)} thirty-six
+% times, \texttt{onderdeel~a)} and \texttt{sub~a)} not once.
+%    \begin{macrocode}
+\newsourceregister{nl_eu}{
+    article/.initial=artikel,
+    number/.initial=\regulatory@src@number@plain,
+    lid/.initial=\regulatory@src@lid@cardinal,
+    onderdeel/.initial=\regulatory@src@onderdeel@punt,
+    onder/.initial=\regulatory@src@onder@degree,
+    separator/.initial={,~},
+    van/.initial={van~},
+    source/.initial=\regulatory@src@source@full@store
+}{
+    article/.initial=art.,
+    number/.initial=\regulatory@src@number@plain,
+    lid/.initial=\regulatory@src@lid@cardinal,
+    onderdeel/.initial=\regulatory@src@onderdeel@punt,
+    onder/.initial=\regulatory@src@onder@degree,
+    separator/.initial={~},
+    van/.initial={},
+    source/.initial=\regulatory@src@source@short@store
+}
+%    \end{macrocode}
+%
+% The pieces the registers above are built from. A number carries the book of the civil code in the
+% shortened form and leaves it to the name of the instrument in the full one, which is what
+% \enquote{artikel 96 \dots{} van Boek 6 van het Burgerlijk Wetboek} against \enquote{art. 6:96 BW} comes
+% down to.
+%    \begin{macrocode}
+\newcommand\regulatory@src@number@plain[3]{\def#1{#3}}
+\newcommand\regulatory@src@number@colon[3]{%
+    \ifthenelse{\equal{#2}{}}{\def#1{#3}}{\def#1{#2:#3}}%
+}
+\newcommand\regulatory@src@lid@ordinal[2]{%
+    \storeordinalstringnum{regsrc}{#2}%
+    \expandafter\let\expandafter\regulatory@src@ord\csname @fcs@regsrc\endcsname
+    \protected@edef#1{\regulatory@src@ord\space lid}%
+}
+\newcommand\regulatory@src@lid@cardinal[2]{\def#1{lid~#2}}
+\newcommand\regulatory@src@onderdeel@plain[2]{\def#1{onderdeel~#2}}
+\newcommand\regulatory@src@onderdeel@onder[2]{\def#1{onder~#2}}
+\newcommand\regulatory@src@onderdeel@punt[2]{\def#1{punt~#2)}}
+\newcommand\regulatory@src@onder@degree[2]{\def#1{onder~#2\textdegree}}
+%    \end{macrocode}
+%
+% The instrument itself. In full it is named by what it is called, preceded by the article its name takes,
+% and the book of a civil code is named here rather than in the number. Shortened it is the abbreviation,
+% and a source without one falls back on its name, since a citation that names nothing is worse than a long
+% one.
+%    \begin{macrocode}
+\newcommand\regulatory@src@source@full@store[2]{%
+    \protected@edef#1{\regulatory@src@source@full{#2}}%
+}
+\newcommand\regulatory@src@source@short@store[2]{%
+    \protected@edef#1{\regulatory@src@source@short{#2}}%
+}
+
+\ExplSyntaxOn
+\cs_new:Npn \regulatory@src@lidwoord #1
+  {
+    \tl_if_blank:eTF { \srcfield { #1 } { lidwoord } }
+      { de } { \srcfield { #1 } { lidwoord } }
+  }
+\cs_new:Npn \regulatory@src@naam #1
+  {
+    \tl_if_blank:eTF { \srcfield { #1 } { roepnaam } }
+      { \srcfield { #1 } { citeertitel } } { \srcfield { #1 } { roepnaam } }
+  }
+\cs_new:Npn \regulatory@src@source@full #1
+  {
+    \tl_if_blank:eF { \srcfield { #1 } { boek } }
+      { Boek~ \srcfield { #1 } { boek } \c_space_tl van~ }
+    \regulatory@src@lidwoord { #1 } ~ \regulatory@src@naam { #1 }
+  }
+\cs_new:Npn \regulatory@src@source@short #1
+  {
+    \tl_if_blank:eTF { \srcfield { #1 } { afkorting } }
+      { \regulatory@src@naam { #1 } } { \srcfield { #1 } { afkorting } }
+  }
+\ExplSyntaxOff
+\ExplSyntaxOn
+%    \end{macrocode}
+%
+% \subsubsection{\translation{Citing a source}{Een bron aanhalen}}
+%
+% \begin{macro}{\srcref}
+% Cites \meta{key}, either as a whole or down to one of its provisions. The optional argument holds the
+% provision\,---\,\texttt{artikel}, \texttt{lid}, \texttt{onderdeel} and \texttt{onder}\,---\,and stands
+% before the key, as it does in \cmd{\cite}, so that a bracket in the sentence after the citation is not
+% mistaken for it.
+%
+% The star asks for the system that is not the default of the document, which is what a citation between
+% brackets or in a footnote wants. It may also be named outright with \texttt{system}. The default of the
+% document is the \option{bronstijl} option, and it is \texttt{voluit}, since that is what the running text
+% of a document is.
+%
+% What it comes to is built up in \cmd{\regulatory@src@last} before it is typeset, so that the wording of a
+% citation can be read back rather than only looked at. That is what the test suite asserts on: a citation
+% in the wrong register fails nowhere, it simply stands there wrong.
+%    \begin{macrocode}
+\ExplSyntaxOff
+\newcommand\regulatory@src@system{\regulatory@bronstijl}
+
+\define@key{regsrcref}{artikel}{\def\regulatory@src@artikel{#1}}
+\define@key{regsrcref}{lid}{\def\regulatory@src@lid{#1}}
+\define@key{regsrcref}{onderdeel}{\def\regulatory@src@onderdeel{#1}}
+\define@key{regsrcref}{onder}{\def\regulatory@src@onder{#1}}
+\define@key{regsrcref}{system}{\def\regulatory@src@thissystem{#1}}
+
+\newcommand\regulatory@src@last{}
+\newcommand\regulatory@src@part[1]{%
+    \ifx\regulatory@src@parts\@empty\else
+        \protected@xdef\regulatory@src@last{\regulatory@src@last\regulatory@src@sep}%
+    \fi
+    \protected@xdef\regulatory@src@last{\regulatory@src@last#1}%
+    \let\regulatory@src@parts\relax
+}
+
+\NewDocumentCommand \srcref { s O{} m }{%
+    \begingroup
+        \def\regulatory@src@artikel{}%
+        \def\regulatory@src@lid{}%
+        \def\regulatory@src@onderdeel{}%
+        \def\regulatory@src@onder{}%
+        \IfBooleanTF{#1}{%
+            \ifthenelse{\equal{\regulatory@bronstijl}{voluit}}{%
+                \def\regulatory@src@thissystem{verkort}%
+            }{%
+                \def\regulatory@src@thissystem{voluit}%
+            }%
+        }{%
+            \edef\regulatory@src@thissystem{\regulatory@bronstijl}%
+        }%
+        \setkeys{regsrcref}{#2}%
+        \edef\regulatory@src@reg{\srcregister{#3}}%
+        \regsrc@set{\regulatory@src@reg}{\regulatory@src@thissystem}{separator}%
+            {\regulatory@src@sep}%
+        \let\regulatory@src@parts\@empty
+        \gdef\regulatory@src@last{}%
+        \ifx\regulatory@src@artikel\@empty\else
+            \regsrc@set{\regulatory@src@reg}{\regulatory@src@thissystem}{number}{\@@fmt}%
+            \@@fmt\regulatory@src@piece{\srcfield{#3}{boek}}{\regulatory@src@artikel}%
+            \protected@edef\regulatory@src@piece{%
+                \regsrc@get{\regulatory@src@reg}{\regulatory@src@thissystem}{article}%
+                \space\regulatory@src@piece}%
+            \expandafter\regulatory@src@part\expandafter{\regulatory@src@piece}%
+        \fi
+        \ifx\regulatory@src@lid\@empty\else
+            \regsrc@set{\regulatory@src@reg}{\regulatory@src@thissystem}{lid}{\@@fmt}%
+            \@@fmt\regulatory@src@piece{\regulatory@src@lid}%
+            \expandafter\regulatory@src@part\expandafter{\regulatory@src@piece}%
+        \fi
+        \ifx\regulatory@src@onderdeel\@empty\else
+            \regsrc@set{\regulatory@src@reg}{\regulatory@src@thissystem}{onderdeel}{\@@fmt}%
+            \@@fmt\regulatory@src@piece{\regulatory@src@onderdeel}%
+            \expandafter\regulatory@src@part\expandafter{\regulatory@src@piece}%
+        \fi
+        \ifx\regulatory@src@onder\@empty\else
+            \regsrc@set{\regulatory@src@reg}{\regulatory@src@thissystem}{onder}{\@@fmt}%
+            \@@fmt\regulatory@src@piece{\regulatory@src@onder}%
+            \expandafter\regulatory@src@part\expandafter{\regulatory@src@piece}%
+        \fi
+        \regsrc@set{\regulatory@src@reg}{\regulatory@src@thissystem}{source}{\@@fmt}%
+        \@@fmt\regulatory@src@piece{#3}%
+        \ifx\regulatory@src@parts\@empty\else
+            \protected@edef\regulatory@src@piece{%
+                \regsrc@get{\regulatory@src@reg}{\regulatory@src@thissystem}{van}%
+                \regulatory@src@piece}%
+        \fi
+        \expandafter\regulatory@src@part\expandafter{\regulatory@src@piece}%
+    \endgroup
+    \regulatory@src@last
+}
+\ExplSyntaxOn
 %    \end{macrocode}
 % \end{macro}
 %
