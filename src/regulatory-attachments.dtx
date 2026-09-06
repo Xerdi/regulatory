@@ -271,13 +271,44 @@
 % \subsubsection{\translation{Mentioning the source}{Bronvermelding}}
 %
 % \begin{macro}{\documentlabel}
-% How a reference mentions the document it belongs to, which defaults to the subject of the artifact.
+% How a reference mentions the document it belongs to, which defaults to the subject of the artifact with
+% a connective before it: \enquote{of the Example}, \enquote{van de Voorbeeldakte}.
+%
+% That default only works in a language that leaves a noun alone. German does not, and it is the case that
+% settles the design. Its connective is a genitive that reshapes the word it governs: measured in the
+% German text of the General Data Protection Regulation, \enquote{der Verordnung} sixteen times and
+% \enquote{der Richtlinie} twenty-nine, but \enquote{des Vertrags} and \enquote{des Beschlusses}\,---\,not
+% \emph{des Vertrag}. So the ending belongs to the noun and not to the connective, and no rule over a
+% connective and a subject in the nominative can produce the phrase. Handing the artifact a determiner
+% would not do it either; the determiner is the half that is easy.
+%
+% What is left is to state the phrase, which \texttt{ref label} does and always did. A language that
+% cannot compose one therefore declares its connective empty, and a reference that then has no
+% \texttt{ref label} to fall back on says so once per artifact rather than quietly wording it in another
+% language.
 %    \begin{macrocode}
 \newcommand\documentlabel[1]{%
     \def\@@label{\@aget{#1}{ref label}}%
     \ifthenelse{\equal{\@@label}{}}{%
-        \GetTranslation{of the} \artifactsubject{#1}%
+        \edef\@@of{\GetTranslation{of the}}%
+        \ifx\@@of\@empty
+            \artifact@warnuncomposable{#1}%
+            \artifactsubject{#1}%
+        \else
+            \@@of\space\artifactsubject{#1}%
+        \fi
     }{\@@label}%
+}
+
+\newcommand\artifact@warnuncomposable[1]{%
+    \pgfkeysifdefined{/artifact/#1/uncomposable}{}{%
+        \pgfkeys{/artifact/#1/uncomposable/.initial=true}%
+        \PackageWarning{regulatory}{%
+            A reference to `#1' is worded in \languagename\space by naming its\MessageBreak
+            subject alone: that language inflects the noun a connective\MessageBreak
+            governs, so this bundle cannot build the phrase. Give the\MessageBreak
+            artifact a `ref label' with the phrase in it. Reported}%
+    }%
 }
 %    \end{macrocode}
 % \end{macro}

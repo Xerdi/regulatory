@@ -25,9 +25,13 @@
 %
 % Half a language, for the same reason as \zcref{sec:germandef}: the designations and the citation
 % register were measured in the French text of the General Data Protection Regulation, and the wording of
-% an internal reference was not. \enquote{Of the} is not one word here either\,---\,\enquote{de la
-% directive} against \enquote{du règlement}, counted sixteen against seven in that one text\,---\,so it is
-% left to whoever can decide it.
+% an internal reference was not.
+%
+% The connective is declared empty here as well, though for a milder reason than the German one. French
+% does not reshape the noun, but it fuses the preposition with the article and picks by
+% gender\,---\,\enquote{de la directive} against \enquote{du règlement}, counted sixteen against seven in
+% that one text\,---\,so a single default is wrong more often than it is right. A document that refers to
+% another one gives it a \texttt{ref label}, which is what the German case forces anyway.
 %    \begin{macrocode}
 \ProvidesRegulatoryLanguage{french}
     [2026/09/06 0.0.5 French definitions for regulatory]
@@ -46,6 +50,7 @@
 \DeclareTranslation{french}{Points}{Points}
 \DeclareTranslation{french}{to}{à}
 \DeclareTranslation{french}{Definitions}{Définitions}
+\DeclareTranslation{french}{of the}{}
 %    \end{macrocode}
 %
 % \subsubsection{\translation{French citation register}{Frans citeerregister}}\label{sec:srcfr}

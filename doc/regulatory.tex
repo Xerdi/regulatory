@@ -1751,13 +1751,13 @@ De volgende begrippen worden in deze overeenkomst gebruikt.
 
 \subsection{\translation{The test documents}{De testdocumenten}}\label{sec:testdocs}
 \translation{%
-    Five documents are typeset, of which two exist in both languages, so a suite makes seven of
+    Six documents are typeset, of which two exist in both languages, so a suite makes eight of
     them. Every one of them is a driver that sets the language, declares the artifacts and loads
     the definitions, and that leaves the body to a file of its own, so that both language
     versions share one text:%
 }{%
-    Er worden vijf documenten gezet, waarvan twee in beide talen bestaan, zodat een suite er
-    zeven maakt. Ieder daarvan is een driver die de taal instelt, de artefacten declareert en de
+    Er worden zes documenten gezet, waarvan twee in beide talen bestaan, zodat een suite er
+    acht maakt. Ieder daarvan is een driver die de taal instelt, de artefacten declareert en de
     definities inlaadt, en die de inhoud overlaat aan een eigen bestand, zodat beide taalversies
     één tekst delen:%
 }
@@ -1805,6 +1805,17 @@ De volgende begrippen worden in deze overeenkomst gebruikt.
         welke \file{sources.bib} inlaadt en aanhaalt wat daarin staat, in ieder register van
         \zcref{sec:sources}. Het declareert daarnaast twee bronnen in het document zelf, zodat
         beide routes de lezer in gedekt zijn.%
+    }
+    \item[de-example.tex] \translation{%
+        the one document that is meant to \emph{warn}. It refers to two other documents in German,
+        one of which says how it is to be named and one of which does not, and German cannot word
+        that from a subject on its own. It is therefore kept out of the assertion that allows the
+        package no warning at all, and read by an assertion of its own.%
+    }{%
+        het enige document dat bedoeld is om te \emph{waarschuwen}. Het verwijst in het Duits naar
+        twee andere documenten, waarvan er één zegt hoe hij genoemd moet worden en de ander niet, en
+        het Duits kan dat niet uit een onderwerp alleen verwoorden. Het valt daarom buiten de
+        controle die het pakket geen enkele waarschuwing toestaat, en heeft een eigen controle.%
     }
 \end{labeling}
 
@@ -1899,22 +1910,35 @@ De volgende begrippen worden in deze overeenkomst gebruikt.
 
 \subsection{\translation{What the suite reads back}{Wat de suite naleest}}\label{sec:checks}
 \translation{%
-    Every engine suite ends in six sets of assertions, each of which prints what it counted and
+    Every engine suite ends in seven sets of assertions, each of which prints what it counted and
     stops the build when it is wrong. They are written the other way round from a test that
     checks a result: each of them exists because something once failed without failing, and its
     job is to make that same silence audible next time. Every one of them has been broken on
     purpose to see it bite\,---\,an assertion that has never failed has not established
     anything yet.%
 }{%
-    Iedere engine-suite eindigt in zes reeksen controles, die elk opschrijven wat ze geteld
+    Iedere engine-suite eindigt in zeven reeksen controles, die elk opschrijven wat ze geteld
     hebben en de bouw stoppen zodra het niet klopt. Ze zijn andersom geschreven dan een test die
     een uitkomst nakijkt: ieder van hen bestaat omdat er ooit iets faalde zonder te falen, en
-    zijn taak is om diezelfde stilte de volgende keer hoorbaar te maken. Alle zes zijn expres
+    zijn taak is om diezelfde stilte de volgende keer hoorbaar te maken. Alle zeven zijn expres
     gebroken om te zien dat ze bijten\,---\,een controle die nooit gefaald heeft, heeft nog
     niets vastgesteld.%
 }
 \begin{labeling}{\texttt{source-checks}}
     \addtokomafont{labelinglabel}{\ttfamily}
+    \item[lang-checks] \translation{%
+        requires exactly one warning over the two documents \file{de-example} names, and refers to
+        one of them twice. That single number carries three claims at once: the one without a
+        wording of its own says so, the one with a wording does not, and the one that does say so
+        says it once however often it is named. A warning that fires per reference would drown its
+        own log.%
+    }{%
+        eist precies één waarschuwing over de twee documenten die \file{de-example} noemt, en
+        verwijst naar één daarvan twee keer. Dat ene getal draagt drie beweringen tegelijk: degene
+        zonder eigen verwoording zegt dat, degene met een verwoording niet, en wie het zegt zegt het
+        één keer hoe vaak hij ook genoemd wordt. Een waarschuwing per verwijzing zou zijn eigen log
+        verzuipen.%
+    }
     \item[ref-checks] \translation{%
         counts the references that resolved to nothing and the labels that were defined twice,
         over every document rather than only the one being worked on: a label with a space in it

@@ -50,11 +50,17 @@ COMPILER ?= $(ENGINE) --interaction=nonstopmode --shell-escape $(CNF_LINE)
 BIBEXAMPLES = example1-nl example2-nl example1-en example2-en
 BIBFILES = example1.bib example2.bib
 PLAINEXAMPLES = md-example sign-example source-example
+# The one document that is meant to warn. German inflects the noun a connective
+# governs, so a reference to another document cannot be worded from its subject;
+# the package says so once per artifact. It is kept out of log-checks for that
+# reason and asserted by lang-checks instead, which is the only place the warning
+# is proved to still fire.
+WARNEXAMPLES = de-example
 # Two documents that are meant to fail: a bib with a required field missing, and
 # one with a line the reader does not accept. They are not examples, they are the
 # other half of the reader's guarantee.
 BADEXAMPLES = badsource badsyntax
-EXAMPLES = $(BIBEXAMPLES) $(PLAINEXAMPLES)
+EXAMPLES = $(BIBEXAMPLES) $(PLAINEXAMPLES) $(WARNEXAMPLES)
 
 # make4ht ships with TeX Live, so the HTML test stays within what `test' promises:
 # a TeX installation and nothing else.
@@ -83,6 +89,7 @@ endif
 
 .PHONY: all test $(addprefix suite-,$(ENGINES) html conformance) \
         test-engines test-html html-checks md-checks ref-checks sign-checks log-checks \
+        lang-checks \
         source-checks \
         conformance conformance-run \
         conformance-check conformance-check-run conformance-stale \
@@ -107,7 +114,7 @@ suite-conformance: conformance
 # which is why every path above is absolute. The directory is named after the
 # engine, and so is the engine it builds with: `make build-pdflatex' is pdflatex.
 build-%:
-	$(call run_in,$*,all ref-checks log-checks md-checks sign-checks source-checks ENGINE=$*)
+	$(call run_in,$*,all ref-checks log-checks md-checks sign-checks source-checks lang-checks ENGINE=$*)
 
 .DELETE_ON_ERROR:
 
@@ -140,7 +147,7 @@ $(addsuffix .pdf,$(BIBEXAMPLES)): %.pdf: %.tex | %.glstex
 	$(COMPILER) $*
 	$(COMPILER) $*
 
-$(addsuffix .pdf,$(PLAINEXAMPLES)): %.pdf: %.tex | %.aux
+$(addsuffix .pdf,$(PLAINEXAMPLES) $(WARNEXAMPLES)): %.pdf: %.tex | %.aux
 	$(COMPILER) $*
 	$(COMPILER) $*
 
@@ -152,6 +159,8 @@ example1-nl.aux: | example2-nl.glstex
 example1-en.aux: | example2-en.glstex
 
 md-example.pdf: | example1-nl.pdf example2-nl.pdf
+
+de-example.aux: | example1-nl.glstex example2-nl.glstex
 
 # A reference that resolved to nothing prints two question marks and warns; the run
 # succeeds either way, so the warning is what is read here. Over every example, not
@@ -174,7 +183,7 @@ ref-checks: $(addsuffix .pdf,$(EXAMPLES))
 # Those warnings exist to be read by someone, and a suite that lets them pass is a
 # suite that reads nothing.
 log-checks: $(addsuffix .pdf,$(EXAMPLES))
-	@warned=$$(cat $(addsuffix .log,$(EXAMPLES)) \
+	@warned=$$(cat $(addsuffix .log,$(BIBEXAMPLES) $(PLAINEXAMPLES)) \
 	     | grep -c 'Package regulatory\(-[a-z]*\)\? Warning' || true); \
 	 echo "log: $$warned package warnings"; \
 	 if [ "$$warned" -gt 0 ]; then \
@@ -245,6 +254,24 @@ source-checks: source-example.pdf
 	     rejected=$$((rejected + 1)); \
 	 done; \
 	 echo "source: $$read_back fields read back, $$rejected bad files rejected"
+
+# The German document is the other half of the language layer's guarantee. A
+# language that cannot compose the phrase says so; one that can, composes it. Both
+# are read back here, and the count matters as much as the wording: the warning is
+# once per artifact and not once per reference, or a document that names the same
+# one twenty times would drown its own log.
+# The document names two artifacts and refers to one of them twice. Exactly one
+# warning is therefore the whole assertion: the artifact without a `ref label'
+# warns, the one with it does not, and the one that warns does so once however
+# often it is named. A reference cannot be read back the way a citation can --
+# \Aref is not expandable, so there is nothing to \typeout -- so what is asserted
+# here is the decision and not the wording.
+lang-checks: de-example.pdf
+	@warned=$$(grep -c 'cannot build the phrase' de-example.log || true); \
+	 echo "lang: $$warned uncomposable warnings over two artifacts"; \
+	 if [ "$$warned" -ne 1 ]; then \
+	     echo "lang: expected one warning per artifact, got $$warned" >&2; exit 1; \
+	 fi
 
 # A signature field is a PDF annotation over a drawn box. The box is drawn by TeX
 # and shows up whatever happens; the annotation is what makes it a field, and its

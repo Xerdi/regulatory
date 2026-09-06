@@ -44,6 +44,8 @@
 \DeclareTranslation{dutch}{Points}{Onderdelen}
 \DeclareTranslation{dutch}{to}{tot}
 \DeclareTranslation{dutch}{Definitions}{Definities}
+% Composes, unlike German: a Dutch noun keeps its shape after `van'. It does assume a de-word, so an
+% artifact whose subject is a het-word gives a `ref label' of its own.
 \DeclareTranslation{dutch}{of the}{van de}
 %    \end{macrocode}
 % Where English writes `Article 2(2), point (b)', Dutch writes `artikel 2, tweede lid, onderdeel b'. So a

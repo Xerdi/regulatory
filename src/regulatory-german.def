@@ -26,14 +26,17 @@
 % This file is half a language. What is here was measured in the German text of the General Data
 % Protection Regulation: the words a provision is called by, and the register an act of the Union is cited
 % in. What is not here is how German words an \emph{internal} reference\,---\,the \cmd{\rref@setup} of
-% \zcref{sec:lang}\,---\,and the genitive it uses for \enquote{of the}, which is not one word:
-% \enquote{der Verordnung} against \enquote{des Beschlusses}, decided by the instrument and not by the
-% language. A single default there would be wrong more often than right, which is the same reason the
-% determiner of a citation is looked up by kind.
+% \zcref{sec:lang}\,---\,which was not measured and is left to whoever can check it. A German document
+% therefore gets German designations in the English arrangement, which is visible and wrong rather than
+% invisible and wrong.
 %
-% So a German document gets German designations in the English arrangement, and says \enquote{of the}
-% where it should say a genitive. That is visible, which is the point: whoever can check the German form
-% can write it here, and until then this bundle does not claim to know it.
+% The connective before the name of a document is a different matter, and German is the language that
+% decides it for all of them. It is a genitive, and the genitive reshapes the word it governs: counted in
+% the same text, \enquote{der Verordnung} sixteen times and \enquote{der Richtlinie} twenty-nine, but
+% \enquote{des Vertrags} and \enquote{des Beschlusses}\,---\,never \emph{des Vertrag}. The ending is on the
+% noun, so knowing the article would not be enough, and no rule over a connective and a subject in the
+% nominative can produce the phrase. The connective is therefore declared empty here, which makes
+% \cmd{\documentlabel} ask for a \texttt{ref label} instead of wording it wrongly in silence.
 %    \begin{macrocode}
 \ProvidesRegulatoryLanguage{german}
     [2026/09/06 0.0.5 German definitions for regulatory]
@@ -52,6 +55,7 @@
 \DeclareTranslation{german}{Points}{Buchstaben}
 \DeclareTranslation{german}{to}{bis}
 \DeclareTranslation{german}{Definitions}{Begriffsbestimmungen}
+\DeclareTranslation{german}{of the}{}
 %    \end{macrocode}
 %
 % \subsubsection{\translation{German citation register}{Duits citeerregister}}\label{sec:srcde}
