@@ -87,6 +87,8 @@
 \prop_new:N \g__regulatory_src_required_prop
 \prop_new:N \g__regulatory_src_type_prop
 \prop_new:N \g__regulatory_src_register_prop
+\prop_new:N \g__regulatory_src_typealias_prop
+\prop_new:N \g__regulatory_src_fieldalias_prop
 \seq_new:N \g__regulatory_src_keys_seq
 
 \ior_new:N \g__regulatory_src_ior
@@ -117,10 +119,49 @@
     \prop_gput:Nnn \g__regulatory_src_required_prop { #1 } { #2 }
     \prop_gput:Nnn \g__regulatory_src_register_prop { #1 } { #3 }
   }
+
+\NewDocumentCommand \newsourcetypealias { m m }
+  { \prop_gput:Nnn \g__regulatory_src_typealias_prop { #1 } { #2 } }
+
+\NewDocumentCommand \newsourcefieldalias { m m }
+  { \prop_gput:Nnn \g__regulatory_src_fieldalias_prop { #1 } { #2 } }
+
+\cs_new:Npn \__regulatory_src_alias:Nn #1#2
+  {
+    \tl_if_blank:eTF { \prop_item:Nn #1 { #2 } }
+      { #2 } { \prop_item:Nn #1 { #2 } }
+  }
+\cs_generate_variant:Nn \__regulatory_src_alias:Nn { Ne }
+
+\cs_new:Npn \regulatory@src@type@of #1
+  { \__regulatory_src_alias:Ne \g__regulatory_src_typealias_prop { #1 } }
+\cs_new:Npn \regulatory@src@field@of #1
+  { \__regulatory_src_alias:Ne \g__regulatory_src_fieldalias_prop { #1 } }
 \ExplSyntaxOff
 
-\newsourcetype{regeling}{citeertitel}{nl}
-\newsourcetype{euhandeling}{soort,nummer}{nl_eu}
+\newsourcetype{regulation}{citetitle}{nl}
+\newsourcetype{euact}{kind,number}{nl_eu}
+%    \end{macrocode}
+%
+% The names above are English, as the rest of this bundle is, and every one of them answers to a Dutch name
+% as well. A bib file is written by the person who keeps the records, and that person writes
+% \texttt{citetitle} because that is what the field is called in the law that defines it. Neither name is
+% a translation of the other in the reader: the Dutch one resolves to the English one before anything is
+% stored, so a file may use either and a document may read back either.
+%    \begin{macrocode}
+\newsourcetypealias{regeling}{regulation}
+\newsourcetypealias{euhandeling}{euact}
+
+\newsourcefieldalias{citeertitel}{citetitle}
+\newsourcefieldalias{afkorting}{abbreviation}
+\newsourcefieldalias{boek}{book}
+\newsourcefieldalias{geldig}{valid}
+\newsourcefieldalias{soort}{kind}
+\newsourcefieldalias{nummer}{number}
+\newsourcefieldalias{roepnaam}{shortname}
+\newsourcefieldalias{titel}{title}
+\newsourcefieldalias{pb}{oj}
+\newsourcefieldalias{lidwoord}{determiner}
 %    \end{macrocode}
 % \end{macro}
 %
@@ -153,7 +194,7 @@
 %    \begin{macrocode}
 \cs_new_protected:Npn \__regulatory_src_begin:nn #1#2
   {
-    \str_set:Nn \l__regulatory_src_type_str { #1 }
+    \str_set:Nx \l__regulatory_src_type_str { \regulatory@src@type@of { #1 } }
     \str_set:Nn \l__regulatory_src_key_str { #2 }
     \prop_if_in:NVF \g__regulatory_src_required_prop \l__regulatory_src_type_str
       {
@@ -185,7 +226,8 @@
           {
             \prop_gput:cnn
               { g__regulatory_src_e_ \l__regulatory_src_key_str _prop }
-              { \str_lowercase:n { #1 } } { \exp_not:n { #2 } }
+              { \regulatory@src@field@of { \str_lowercase:n { #1 } } }
+              { \exp_not:n { #2 } }
           }
       }
       { \msg_error:nnn { regulatory-sources } { stray-field } { #1 } }
@@ -309,10 +351,12 @@
 % which is safe precisely because a source cannot be declared without the fields its type requires: what
 % is absent here is optional by construction.
 %    \begin{macrocode}
+\cs_new:Npn \__regulatory_src_read:nn #1#2
+  { \prop_item:cn { g__regulatory_src_e_ #1 _prop } { #2 } }
+\cs_generate_variant:Nn \__regulatory_src_read:nn { ee }
+
 \cs_new:Npn \srcfield #1#2
-  {
-    \prop_item:cn { g__regulatory_src_e_ #1 _prop } { #2 }
-  }
+  { \__regulatory_src_read:ee { #1 } { \regulatory@src@field@of { #2 } } }
 \cs_new:Npn \srctype #1
   {
     \prop_item:Nn \g__regulatory_src_type_prop { #1 }
@@ -370,6 +414,8 @@
 %     \item[\texttt{onderdeel}] the lettered point.
 %     \item[\texttt{onder}] the level below that, which the standards call a subonderdeel.
 %     \item[\texttt{separator}] what stands between the parts: a comma in full, a space when shortened.
+%     \item[\texttt{determiner}] the article a name takes when the entry does not say, which is a
+%         genitive in the registers of the Union: \enquote{der Verordnung}, \enquote{du règlement}.
 %     \item[\texttt{van}] what stands between the last part and the instrument: \enquote{van} when written
 %         out in full, nothing when shortened.
 %     \item[\texttt{source}] the instrument itself, named from the fields of its entry.
@@ -400,6 +446,7 @@
     onderdeel/.initial=\regulatory@src@onderdeel@plain,
     onder/.initial=\regulatory@src@onder@degree,
     separator/.initial={,~},
+    determiner/.initial=de,
     van/.initial={van~},
     source/.initial=\regulatory@src@source@full@store
 }{
@@ -409,6 +456,7 @@
     onderdeel/.initial=\regulatory@src@onderdeel@onder,
     onder/.initial=\regulatory@src@onder@degree,
     separator/.initial={~},
+    determiner/.initial=de,
     van/.initial={},
     source/.initial=\regulatory@src@source@short@store
 }
@@ -426,6 +474,7 @@
     onderdeel/.initial=\regulatory@src@onderdeel@punt,
     onder/.initial=\regulatory@src@onder@degree,
     separator/.initial={,~},
+    determiner/.initial=de,
     van/.initial={van~},
     source/.initial=\regulatory@src@source@full@store
 }{
@@ -435,9 +484,84 @@
     onderdeel/.initial=\regulatory@src@onderdeel@punt,
     onder/.initial=\regulatory@src@onder@degree,
     separator/.initial={~},
+    determiner/.initial=de,
     van/.initial={},
     source/.initial=\regulatory@src@source@short@store
 }
+%    \end{macrocode}
+%
+% The same register in German and in French, each measured in the text of that regulation in that
+% language. They differ from the Dutch one and from each other on exactly the points that matter: German
+% writes no commas between the parts and calls the lettered point a \emph{Buchstabe}, French writes the
+% commas and the closing bracket like Dutch but calls it a \emph{point} and the paragraph a
+% \emph{paragraphe}. Counted in the General Data Protection Regulation: \texttt{Absatz~1 Buchstabe~a}
+% thirty-one times and \texttt{Artikel~6 Absatz~1 Buchstabe~a} twenty-three; \texttt{paragraphe~1,
+% point~a)} thirty-three times and the full chain twenty-seven. Both have the plural this bundle already
+% writes: \texttt{Buchstaben c und e} and \texttt{points c) et e)}, six times each.
+%
+% The shortened system of these two abbreviates the name of the instrument and nothing else. The Dutch one
+% shortens its words because the Leidraad says which shortenings to use; for these two there is no such
+% source, and the regulation itself never abbreviates: measured over its own text, \texttt{Art.},
+% \texttt{Abs.} and \texttt{Buchst.} occur no times at all against \texttt{Artikel} three hundred and
+% eighty-nine, and \texttt{art.} and \texttt{par.} none against \texttt{article} two hundred and
+% ninety-seven. Writing \texttt{Abs.~1} would be a form this bundle invented, and it is not this bundle's
+% to invent.
+%
+% There is no national German or French register here, and that is deliberate. German federal law does not
+% write \enquote{Artikel} at all but \texttt{\S~5 Abs.~2 Nr.~3 BGB}, which is another construction and not
+% a translation of this one, and French has its own again. Each would need the local counterparts of the
+% Aanwijzingen and the Leidraad, and for neither is there anyone here who could check the result. A half
+% right register for a legal order we cannot check is worse than none, because whoever finds it in the list
+% assumes it is right.
+%    \begin{macrocode}
+\newsourceregister{de_eu}{
+    article/.initial=Artikel,
+    number/.initial=\regulatory@src@number@plain,
+    lid/.initial=\regulatory@src@lid@absatz,
+    onderdeel/.initial=\regulatory@src@onderdeel@buchstabe,
+    onder/.initial=\regulatory@src@onder@unmeasured,
+    separator/.initial={~},
+    determiner/.initial=der,
+    van/.initial={},
+    source/.initial=\regulatory@src@source@full@store
+}{
+    article/.initial=Artikel,
+    number/.initial=\regulatory@src@number@plain,
+    lid/.initial=\regulatory@src@lid@absatz,
+    onderdeel/.initial=\regulatory@src@onderdeel@buchstabe,
+    onder/.initial=\regulatory@src@onder@unmeasured,
+    separator/.initial={~},
+    determiner/.initial=der,
+    van/.initial={},
+    source/.initial=\regulatory@src@source@short@store
+}
+
+\newsourceregister{fr_eu}{
+    article/.initial=article,
+    number/.initial=\regulatory@src@number@plain,
+    lid/.initial=\regulatory@src@lid@paragraphe,
+    onderdeel/.initial=\regulatory@src@onderdeel@point,
+    onder/.initial=\regulatory@src@onder@unmeasured,
+    separator/.initial={,~},
+    determiner/.initial=du,
+    van/.initial={},
+    source/.initial=\regulatory@src@source@full@store
+}{
+    article/.initial=article,
+    number/.initial=\regulatory@src@number@plain,
+    lid/.initial=\regulatory@src@lid@paragraphe,
+    onderdeel/.initial=\regulatory@src@onderdeel@point,
+    onder/.initial=\regulatory@src@onder@unmeasured,
+    separator/.initial={,~},
+    determiner/.initial=du,
+    van/.initial={},
+    source/.initial=\regulatory@src@source@short@store
+}
+
+\newcommand\regulatory@src@lid@absatz[2]{\def#1{Absatz~#2}}
+\newcommand\regulatory@src@lid@paragraphe[2]{\def#1{paragraphe~#2}}
+\newcommand\regulatory@src@onderdeel@buchstabe[2]{\def#1{Buchstabe~#2}}
+\newcommand\regulatory@src@onderdeel@point[2]{\def#1{point~#2)}}
 %    \end{macrocode}
 %
 % The pieces the registers above are built from. A number carries the book of the civil code in the
@@ -459,6 +583,12 @@
 \newcommand\regulatory@src@onderdeel@onder[2]{\def#1{onder~#2}}
 \newcommand\regulatory@src@onderdeel@punt[2]{\def#1{punt~#2)}}
 \newcommand\regulatory@src@onder@degree[2]{\def#1{onder~#2\textdegree}}
+\newcommand\regulatory@src@onder@unmeasured[2]{%
+    \PackageWarning{regulatory-sources}{%
+        This register has no measured form for the level below a point,\MessageBreak
+        so the number is written on its own. Reported}%
+    \def#1{#2}%
+}
 %    \end{macrocode}
 %
 % The instrument itself. In full it is named by what it is called, preceded by the article its name takes,
@@ -476,24 +606,24 @@
 \ExplSyntaxOn
 \cs_new:Npn \regulatory@src@lidwoord #1
   {
-    \tl_if_blank:eTF { \srcfield { #1 } { lidwoord } }
-      { de } { \srcfield { #1 } { lidwoord } }
+    \tl_if_blank:eTF { \srcfield { #1 } { determiner } }
+      { \regulatory@src@defdet } { \srcfield { #1 } { determiner } }
   }
 \cs_new:Npn \regulatory@src@naam #1
   {
-    \tl_if_blank:eTF { \srcfield { #1 } { roepnaam } }
-      { \srcfield { #1 } { citeertitel } } { \srcfield { #1 } { roepnaam } }
+    \tl_if_blank:eTF { \srcfield { #1 } { shortname } }
+      { \srcfield { #1 } { citetitle } } { \srcfield { #1 } { shortname } }
   }
 \cs_new:Npn \regulatory@src@source@full #1
   {
-    \tl_if_blank:eF { \srcfield { #1 } { boek } }
-      { Boek~ \srcfield { #1 } { boek } \c_space_tl van~ }
+    \tl_if_blank:eF { \srcfield { #1 } { book } }
+      { Boek~ \srcfield { #1 } { book } \c_space_tl van~ }
     \regulatory@src@lidwoord { #1 } ~ \regulatory@src@naam { #1 }
   }
 \cs_new:Npn \regulatory@src@source@short #1
   {
-    \tl_if_blank:eTF { \srcfield { #1 } { afkorting } }
-      { \regulatory@src@naam { #1 } } { \srcfield { #1 } { afkorting } }
+    \tl_if_blank:eTF { \srcfield { #1 } { abbreviation } }
+      { \regulatory@src@naam { #1 } } { \srcfield { #1 } { abbreviation } }
   }
 \ExplSyntaxOff
 \ExplSyntaxOn
@@ -553,11 +683,13 @@
         \edef\regulatory@src@reg{\srcregister{#3}}%
         \regsrc@set{\regulatory@src@reg}{\regulatory@src@thissystem}{separator}%
             {\regulatory@src@sep}%
+        \edef\regulatory@src@defdet{%
+            \regsrc@get{\regulatory@src@reg}{\regulatory@src@thissystem}{determiner}}%
         \let\regulatory@src@parts\@empty
         \gdef\regulatory@src@last{}%
         \ifx\regulatory@src@artikel\@empty\else
             \regsrc@set{\regulatory@src@reg}{\regulatory@src@thissystem}{number}{\@@fmt}%
-            \@@fmt\regulatory@src@piece{\srcfield{#3}{boek}}{\regulatory@src@artikel}%
+            \@@fmt\regulatory@src@piece{\srcfield{#3}{book}}{\regulatory@src@artikel}%
             \protected@edef\regulatory@src@piece{%
                 \regsrc@get{\regulatory@src@reg}{\regulatory@src@thissystem}{article}%
                 \space\regulatory@src@piece}%

@@ -188,11 +188,11 @@ log-checks: $(addsuffix .pdf,$(EXAMPLES))
 # a field that silently did not arrive is a citation that comes out empty -- and
 # the two files that are wrong on purpose have to make the run fail. A reader that
 # skips what it cannot read is worse than no reader.
-SOURCE_EXPECT = 'SRC bw6 type = regeling' \
+SOURCE_EXPECT = 'SRC bw6 type = regulation' \
                 'SRC bw6 citeertitel = Burgerlijk Wetboek' \
                 'SRC bw6 boek = 6' \
                 'SRC bw6 bwbid = BWBR0005289' \
-                'SRC avg type = euhandeling' \
+                'SRC avg type = euact' \
                 'SRC avg roepnaam = Algemene verordening gegevensbescherming' \
                 'SRC avg pb = PbEU 2016, L 119/1' \
                 'SRC uavg citeertitel = Uitvoeringswet Algemene verordening gegevensbescherming' \
@@ -204,7 +204,11 @@ SOURCE_EXPECT = 'SRC bw6 type = regeling' \
                 'CITE eu-voluit = artikel 6,~lid~1,~punt~a),~van~de Algemene verordening gegevensbescherming' \
                 'CITE eu-verkort = art. 6~lid~1~punt~a)~AVG' \
                 'CITE bron-voluit = de Algemene verordening gegevensbescherming' \
-                'CITE bron-verkort = AVG'
+                'CITE bron-verkort = AVG' \
+                'CITE de-voluit = Artikel 6~Absatz~1~Buchstabe~a~der Datenschutz-Grundverordnung' \
+                'CITE de-verkort = Artikel 6~Absatz~1~Buchstabe~a~DSGVO' \
+                'CITE fr-voluit = article 6,~paragraphe~1,~point~a),~du règlement général sur la protection des données' \
+                'CITE fr-verkort = article 6,~paragraphe~1,~point~a),~RGPD'
 
 source-checks: source-example.pdf
 	@missing=0; read_back=0; \

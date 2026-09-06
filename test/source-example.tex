@@ -44,6 +44,20 @@
     afkorting = UAVG,
     lidwoord = de%
 }
+% Dezelfde verordening zoals een Duits en een Frans document haar aanhalen: het
+% register hoort bij de bron, dus de bron draagt haar naam in de taal waarin ze
+% aangehaald wordt. Deze twee gebruiken de Engelse veldnamen, de rest de
+% Nederlandse; beide horen te werken.
+\newsource{avgde}{euact}{%
+    kind = Verordnung, number = {(EU) 2016/679},
+    shortname = Datenschutz-Grundverordnung, abbreviation = DSGVO,
+    register = de_eu%
+}
+\newsource{avgfr}{euact}{%
+    kind = Règlement, number = {(UE) 2016/679},
+    shortname = {règlement général sur la protection des données},
+    abbreviation = RGPD, register = fr_eu%
+}
 \newsource{wetib}{regeling}{%
     citeertitel = Wet inkomstenbelasting 2001,
     afkorting = Wet IB 2001,
@@ -89,6 +103,10 @@
     \citereport{\srcref{avg}}{bron-voluit}
     \citereport{\srcref*{avg}}{bron-verkort}
     \citereport{\srcref[artikel=3.126, lid=1, onderdeel=d, onder=2]{wetib}}{vierde-niveau}
+    \citereport{\srcref[artikel=6, lid=1, onderdeel=a]{avgde}}{de-voluit}
+    \citereport{\srcref*[artikel=6, lid=1, onderdeel=a]{avgde}}{de-verkort}
+    \citereport{\srcref[artikel=6, lid=1, onderdeel=a]{avgfr}}{fr-voluit}
+    \citereport{\srcref*[artikel=6, lid=1, onderdeel=a]{avgfr}}{fr-verkort}
 
     \article{Bronnen}\label{art:bronnen}
     \begin{paras}

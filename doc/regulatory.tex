@@ -1157,12 +1157,12 @@ en / and \aref{ex1-sub:lorem,ex1-sub:lorem2,ex1-sub:lorem3,ex1-sub:lorem4}.
     van die vier is stopt de run, met het bestand en het regelnummer erbij.%
 }
 \begin{lstlisting}[style=tex]
-@regeling{bw6,
-  citeertitel = {Burgerlijk Wetboek},
-  afkorting   = {BW},
-  boek        = {6},
-  bwbid       = {BWBR0005289},
-  geldig      = {2024-01-01},
+@regulation{bw6,
+  citetitle   = {Burgerlijk Wetboek},
+  abbreviation = {BW},
+  book         = {6},
+  bwbid        = {BWBR0005289},
+  valid        = {2024-01-01},
 }
 \end{lstlisting}
 
@@ -1177,16 +1177,36 @@ en / and \aref{ex1-sub:lorem,ex1-sub:lorem2,ex1-sub:lorem3,ex1-sub:lorem4}.
 }\\
 
 \noindent
-\DescribeMacro{\newsourcetype\\\marg{type}\\\marg{required fields}}
+\DescribeMacro{\newsourcetypealias\\\marg{alias}\\\marg{type}}
+\DescribeMacro{\newsourcefieldalias\\\marg{alias}\\\marg{field}}
 \translation{%
-    Declares a type and the fields an entry of it cannot do without. Two are declared already:
-    \texttt{regeling}, which needs a \texttt{citeertitel}, and \texttt{euhandeling}, which needs a
-    \texttt{soort} and a \texttt{nummer}. A source that misses one of them stops the run, which is what
+    The types and fields are named in English, as the rest of this bundle is, and every one of them
+    answers to a Dutch name as well: \texttt{regeling} and \texttt{euhandeling} for the types, and
+    \texttt{citeertitel}, \texttt{afkorting}, \texttt{boek}, \texttt{geldig}, \texttt{soort},
+    \texttt{nummer}, \texttt{roepnaam}, \texttt{titel}, \texttt{pb} and \texttt{lidwoord} for the fields.
+    A file may use either, and so may a document reading one back: the Dutch name resolves to the English
+    one before anything is stored. Another language is a line each.%
+}{%
+    De types en velden hebben Engelse namen, zoals de rest van deze bundel, en luisteren allemaal ook naar
+    een Nederlandse: \texttt{regeling} en \texttt{euhandeling} voor de types, en \texttt{citeertitel},
+    \texttt{afkorting}, \texttt{boek}, \texttt{geldig}, \texttt{soort}, \texttt{nummer},
+    \texttt{roepnaam}, \texttt{titel}, \texttt{pb} en \texttt{lidwoord} voor de velden. Een bestand mag
+    beide gebruiken, en een document dat ze terugleest ook: de Nederlandse naam wordt naar de Engelse
+    herleid voordat er iets opgeslagen wordt. Nog een taal is een regel per naam.%
+}\\
+
+\noindent
+\DescribeMacro{\newsourcetype\\\marg{type}\\\marg{required fields}\\\marg{register}}
+\translation{%
+    Declares a type, the fields an entry of it cannot do without, and the register its citations are
+    worded in. Two are declared already: \texttt{regulation}, which needs a \texttt{citetitle}, and
+    \texttt{euact}, which needs a \texttt{kind} and a \texttt{number}. A source that misses one of them stops the run, which is what
     lets everything downstream read a field without asking whether it is there.%
 }{%
-    Declareert een type en de velden waar een entry van dat type niet zonder kan. Er zijn er twee
-    gedeclareerd: \texttt{regeling}, dat een \texttt{citeertitel} nodig heeft, en \texttt{euhandeling},
-    dat een \texttt{soort} en een \texttt{nummer} nodig heeft. Een bron die er één mist stopt de run, en
+    Declareert een type, de velden waar een entry van dat type niet zonder kan, en het register waarin zijn
+    verwijzingen verwoord worden. Er zijn er twee gedeclareerd: \texttt{regulation}, dat een
+    \texttt{citetitle} nodig heeft, en \texttt{euact}, dat een \texttt{kind} en een \texttt{number} nodig
+    heeft. Een bron die er één mist stopt de run, en
     dat is precies wat alles verderop toestaat een veld te lezen zonder te vragen of het er is.%
 }\\
 
@@ -1261,13 +1281,37 @@ en / and \aref{ex1-sub:lorem,ex1-sub:lorem2,ex1-sub:lorem3,ex1-sub:lorem4}.
 \noindent
 \DescribeMacro{\newsourceregister\\\marg{name}\\\marg{full}\\\marg{short}}
 \translation{%
-    Declares a register: seven keys for the full form and seven for the shortened one. Two are declared
-    already, \texttt{nl} and \texttt{nl\_eu}. A register is not a language: the same document may cite in
-    both, and it does so the moment it cites a Dutch statute next to a regulation of the Union.%
+    Declares a register: eight keys for the full form and eight for the shortened one. Four are declared
+    already: \texttt{nl} for a Dutch regulation, and \texttt{nl\_eu}, \texttt{de\_eu} and \texttt{fr\_eu}
+    for an act of the Union cited in Dutch, German or French. A register is not a language: the same
+    document may cite in more than one, and it does so the moment it cites a Dutch statute next to a
+    regulation of the Union.
+
+    The three of the Union were each measured in the text of the same regulation in that language, and
+    they differ where it matters: German writes no commas and calls the lettered point a
+    \emph{Buchstabe}, French writes the commas and the closing bracket but calls it a \emph{point}. Their
+    shortened form abbreviates the name of the instrument and nothing else, since that regulation never
+    abbreviates a word of its own: \texttt{Abs.} and \texttt{par.} do not occur in it once.
+
+    There is no national German or French register, and that is on purpose: German federal law writes
+    \texttt{\S~5 Abs.~2 Nr.~3 BGB}, which is another construction and not a translation of this one, and
+    there is nobody here who could check the result.%
 }{%
-    Declareert een register: zeven sleutels voor de voluit-vorm en zeven voor de verkorte. Er zijn er twee
-    gedeclareerd, \texttt{nl} en \texttt{nl\_eu}. Een register is geen taal: hetzelfde document kan in
-    beide aanhalen, en doet dat zodra het naast een Nederlandse wet een verordening van de Unie noemt.%
+    Declareert een register: acht sleutels voor de voluit-vorm en acht voor de verkorte. Er zijn er vier
+    gedeclareerd: \texttt{nl} voor een Nederlandse regeling, en \texttt{nl\_eu}, \texttt{de\_eu} en
+    \texttt{fr\_eu} voor een handeling van de Unie die in het Nederlands, Duits of Frans wordt aangehaald.
+    Een register is geen taal: hetzelfde document kan in meer dan één aanhalen, en doet dat zodra het
+    naast een Nederlandse wet een verordening van de Unie noemt.
+
+    De drie van de Unie zijn elk gemeten in de tekst van dezelfde verordening in die taal, en ze
+    verschillen waar het uitmaakt: het Duits schrijft geen komma's en noemt het geletterde onderdeel een
+    \emph{Buchstabe}, het Frans schrijft de komma's en het sluithaakje maar noemt het een \emph{point}.
+    Hun verkorte vorm kort de naam van het instrument af en verder niets, want die verordening kort geen
+    enkel woord van zichzelf af: \texttt{Abs.} en \texttt{par.} komen er geen enkele keer in voor.
+
+    Er is geen nationaal Duits of Frans register, en dat is met opzet: het Duitse federale recht schrijft
+    \texttt{\S~5 Abs.~2 Nr.~3 BGB}, een ander bouwsel en geen vertaling van dit, en er is hier niemand die
+    de uitkomst kan toetsen.%
 }
 \clearpage
 
