@@ -1,0 +1,113 @@
+% \iffalse meta-comment
+%
+%% regulatory-french.def
+%% Copyright 2024-2026 E. Nijenhuis
+%
+% This work may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License, either version 1.3c
+% of this license or (at your option) any later version.
+% The latest version of this license is in
+% http://www.latex-project.org/lppl.txt
+% and version 1.3c or later is part of all distributions of LaTeX
+% version 2005/12/01 or later.
+%
+% This work has the LPPL maintenance status ‘maintained’.
+%
+% The Current Maintainer of this work is E. Nijenhuis.
+%
+% This work consists of the files listed in the meta-comment of
+% regulatory-struct.dtx.
+%
+% \fi
+%
+% \subsection{\translation{French definitions}{Franse definities}}\label{sec:frenchdef}
+% \setcounter{CodelineNo}{0}
+%
+% Half a language, for the same reason as \zcref{sec:germandef}: the designations and the citation
+% register were measured in the French text of the General Data Protection Regulation, and the wording of
+% an internal reference was not. \enquote{Of the} is not one word here either\,---\,\enquote{de la
+% directive} against \enquote{du règlement}, counted sixteen against seven in that one text\,---\,so it is
+% left to whoever can decide it.
+%    \begin{macrocode}
+\ProvidesRegulatoryLanguage{french}
+    [2026/09/06 0.0.5 French definitions for regulatory]
+
+\DeclareTranslation{french}{article}{article}
+\DeclareTranslation{french}{Article}{Article}
+\DeclareTranslation{french}{articles}{articles}
+\DeclareTranslation{french}{Articles}{Articles}
+\DeclareTranslation{french}{paragraph}{paragraphe}
+\DeclareTranslation{french}{Paragraph}{Paragraphe}
+\DeclareTranslation{french}{paragraphs}{paragraphes}
+\DeclareTranslation{french}{Paragraphs}{Paragraphes}
+\DeclareTranslation{french}{point}{point}
+\DeclareTranslation{french}{Point}{Point}
+\DeclareTranslation{french}{points}{points}
+\DeclareTranslation{french}{Points}{Points}
+\DeclareTranslation{french}{to}{à}
+\DeclareTranslation{french}{Definitions}{Définitions}
+%    \end{macrocode}
+%
+% \subsubsection{\translation{French citation register}{Frans citeerregister}}\label{sec:srcfr}
+%
+% How an act of the Union is cited in French, measured in the French text of the same regulation:
+% \texttt{article 6, paragraphe 1, point a)}, with the commas the German register leaves out and the
+% closing bracket the Dutch one also writes.
+%
+% There is no register for French national law here, for the same reason there is none for German.
+%    \begin{macrocode}
+\regulatory@ifmodule{sources}{%
+\newsourceregister{french_eu}{
+    article/.initial=article,
+    articles/.initial=articles,
+    number/.initial=\regulatory@src@number@plain,
+    lid/.initial=\regulatory@src@before,
+    lidone/.initial=paragraphe,
+    lidmany/.initial=paragraphes,
+    lidnum/.initial=\regulatory@src@num@plain,
+    onderdeel/.initial=\regulatory@src@before,
+    onderdeelone/.initial=point,
+    onderdeelmany/.initial=points,
+    onderdeelnum/.initial=\regulatory@src@num@paren,
+    onder/.initial=\regulatory@src@before,
+    onderone/.initial=point,
+    ondermany/.initial=points,
+    ondernum/.initial=\regulatory@src@num@unmeasured,
+    and/.initial={~et~},
+    to/.initial={~à~},
+    separator/.initial={,~},
+    determiner/.initial=du,
+    van/.initial={},
+    source/.initial=\regulatory@src@source@full@store
+}{
+    article/.initial=article,
+    articles/.initial=articles,
+    number/.initial=\regulatory@src@number@plain,
+    lid/.initial=\regulatory@src@before,
+    lidone/.initial=paragraphe,
+    lidmany/.initial=paragraphes,
+    lidnum/.initial=\regulatory@src@num@plain,
+    onderdeel/.initial=\regulatory@src@before,
+    onderdeelone/.initial=point,
+    onderdeelmany/.initial=points,
+    onderdeelnum/.initial=\regulatory@src@num@paren,
+    onder/.initial=\regulatory@src@before,
+    onderone/.initial=point,
+    ondermany/.initial=points,
+    ondernum/.initial=\regulatory@src@num@unmeasured,
+    and/.initial={~et~},
+    to/.initial={~à~},
+    separator/.initial={,~},
+    determiner/.initial=du,
+    van/.initial={},
+    source/.initial=\regulatory@src@source@short@store
+}
+
+\newsourcedeterminer{french_eu}{règlement}{du}
+\newsourcedeterminer{french_eu}{traité}{du}
+\newsourcedeterminer{french_eu}{directive}{de~la}
+\newsourcedeterminer{french_eu}{décision}{de~la}
+\newsourcedeterminer{french_eu}{recommandation}{de~la}
+}{}
+%    \end{macrocode}
+%

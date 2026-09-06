@@ -51,12 +51,25 @@
 \newsource{avgde}{euact}{%
     kind = Verordnung, number = {(EU) 2016/679},
     shortname = Datenschutz-Grundverordnung, abbreviation = DSGVO,
-    register = de_eu%
+    register = german_eu%
 }
 \newsource{avgfr}{euact}{%
     kind = Règlement, number = {(UE) 2016/679},
     shortname = {règlement général sur la protection des données},
-    abbreviation = RGPD, register = fr_eu%
+    abbreviation = RGPD, register = french_eu%
+}
+% En zoals een Engels document haar aanhaalt, wat het enige register is dat de
+% delen andersom zet: het diepste niveau eerst.
+\newsource{avgen}{euact}{%
+    kind = Regulation, number = {(EU) 2016/679},
+    shortname = General Data Protection Regulation, abbreviation = GDPR,
+    determiner = the, register = english_eu%
+}
+% Een verdrag krijgt in het Engels wel een lidwoord en een verordening niet, en
+% dat volgt uit de soort en niet uit het register.
+\newsource{vweu}{regulation}{%
+    citetitle = Treaty on the Functioning of the European Union,
+    kind = Treaty, abbreviation = TFEU, register = english_eu%
 }
 \newsource{wetib}{regeling}{%
     citeertitel = Wet inkomstenbelasting 2001,
@@ -107,6 +120,26 @@
     \citereport{\srcref*[artikel=6, lid=1, onderdeel=a]{avgde}}{de-verkort}
     \citereport{\srcref[artikel=6, lid=1, onderdeel=a]{avgfr}}{fr-voluit}
     \citereport{\srcref*[artikel=6, lid=1, onderdeel=a]{avgfr}}{fr-verkort}
+    % Opsommingen en reeksen: de auteur schrijft wat hij bedoelt, het register
+    % bepaalt hoe het luidt.
+    \citereport{\srcref[artikel=3.126, lid=1, onderdeel={c,d}]{wetib}}{lijst-nl}
+    \citereport{\srcref[artikel={162--164}]{bw6}}{bereik-nl}
+    \citereport{\srcref*[artikel={162--164}]{bw6}}{bereik-verkort}
+    \citereport{\srcref[artikel=6, lid=1, onderdeel={c,e}]{avg}}{lijst-eu}
+    \citereport{\srcref[artikel=6, lid=1, onderdeel={c,e}]{avgde}}{lijst-de}
+    \citereport{\srcref[artikel=6, lid=1, onderdeel={a--c}]{avgde}}{bereik-de}
+    \citereport{\srcref[artikel=6, lid={1,2,4}]{avgfr}}{lijst-fr}
+    % Het Engels zet de delen andersom en schrijft het lid in het artikel.
+    \citereport{\srcref[artikel=6, lid=1, onderdeel=a]{avgen}}{en-voluit}
+    \citereport{\srcref*[artikel=6, lid=1, onderdeel=a]{avgen}}{en-verkort}
+    \citereport{\srcref[artikel=6]{avgen}}{en-artikel}
+    \citereport{\srcref[lid=1, onderdeel=e]{avgen}}{en-lid-los}
+    \citereport{\srcref[artikel=58, lid=1, onderdeel={e,f}]{avgen}}{en-lijst}
+    \citereport{\srcref[artikel={12--15}]{avgen}}{en-bereik}
+    \citereport{\srcref[artikel=58, lid=2, onderdeel={a--c}]{avgen}}{en-bereik-punten}
+    \citereport{\srcref[lid={1--3}]{avgen}}{en-bereik-leden}
+    \citereport{\srcref[artikel=6, lid={1,2,3}]{avgen}}{en-leden}
+    \citereport{\srcref[artikel=6]{vweu}}{en-verdrag}
 
     \article{Bronnen}\label{art:bronnen}
     \begin{paras}

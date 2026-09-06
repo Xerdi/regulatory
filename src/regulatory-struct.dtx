@@ -22,6 +22,7 @@
 % regulatory-sources.dtx,
 % regulatory-html.dtx,
 % regulatory-english.def, regulatory-dutch.def,
+% regulatory-german.def, regulatory-french.def,
 % regulatory-syntax.lua,
 % regulatory.tex, regulatory-preamble.tex,
 % regulatory-nl.tex, regulatory-en.tex,
@@ -447,12 +448,18 @@
 % Loads the definition file of \meta{language}, unless it is already loaded. A language without a definition
 % file is silently accepted, since \cmd{\regulatory@load@languages} offers every language known to
 % \package{babel}, most of which this bundle does not support. Definition files are read at the end of the
-% preamble, where the at sign is no letter, so its category code is set and restored around them.
+% preamble, where the at sign is no letter, so its category code is set and restored around them. The
+% tilde as well: \LaTeX{} makes it an ordinary space while it reads a package file, and a language file is
+% largely a set of decisions about spacing. That is not a detail\,---\,measured, a tilde that quietly
+% became a space took every non-breaking space in a citation register with it.
 %    \begin{macrocode}
 \newcommand\RegulatoryLoadLanguage[1]{%
     \@ifundefined{ver@regulatory-#1.def}{%
-        \edef\regulatory@restoreat{\catcode`\noexpand\@=\the\catcode`\@\relax}%
+        \edef\regulatory@restoreat{%
+            \catcode`\noexpand\@=\the\catcode`\@\relax
+            \catcode`\noexpand\~=\the\catcode`\~\relax}%
         \makeatletter
+        \catcode`\~=13\relax
         \InputIfFileExists{regulatory-#1.def}{%
             \PackageInfo{regulatory}{Loaded language definitions for `#1'}%
         }{%
@@ -469,6 +476,14 @@
 % document itself are only known once \package{babel} or \package{polyglossia} is loaded, which is why this
 % runs at the very end of the preamble. Documents using another language selection mechanism can call
 % \cmd{\RegulatoryLoadLanguage} in their preamble instead.
+%
+% Every language this bundle ships is read whatever the document says, and not only the ones it speaks.
+% A language file holds two things: how that language words a reference, and how a legal order writing in
+% it words a citation. The second is a property of the source and not of the document\,---\,a Dutch
+% contract cites a German regulation in German\,---\,so a register that were only read when the document
+% spoke its language would be missing exactly where it is needed. Reading a language a document does not
+% speak costs nothing that shows: everything in such a file is keyed by the name of its language, so it
+% defines what nobody asks for.
 %
 % Three places are asked, because no single one of them is right. \cmd{\bbl@loaded} is the list
 % \package{babel} keeps, and it is empty under the \texttt{ini} based loading that \texttt{provide=*}
@@ -493,10 +508,13 @@
     \clist_gremove_duplicates:N \g_regulatory_languages_clist
   }
 
+\clist_const:Nn \c_regulatory_shipped_clist { english , dutch , german , french }
+
 \cs_new_protected:Npn \regulatory@load@languages
   {
     \regulatory@collect@languages
-    \RegulatoryLoadLanguage { english }
+    \clist_map_inline:Nn \c_regulatory_shipped_clist
+      { \RegulatoryLoadLanguage { ##1 } }
     \clist_map_inline:Nn \g_regulatory_languages_clist
       { \RegulatoryLoadLanguage { ##1 } }
   }

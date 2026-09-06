@@ -75,3 +75,120 @@
 }{}
 %    \end{macrocode}
 %
+% \subsubsection{\translation{Dutch citation registers}{Nederlandse citeerregisters}}\label{sec:srcnl}
+%
+% How a source is cited in Dutch, which is the same knowledge as the wording above and measured in the same
+% texts, so it stands in the same file. Two registers, because Dutch serves two legal orders.
+% \texttt{dutch} is how a Dutch instrument is cited: in full the form the Aanwijzingen voor de regelgeving
+% lay down for regulations themselves, and shortened the form of the Leidraad voor juridische auteurs.
+% \texttt{dutch\_eu} is how an act of the Union is cited in Dutch, which is a register of its own and not a
+% variant of the first: the regulation writes \texttt{lid 1, punt a)} where the national register writes
+% \texttt{eerste lid, onderdeel a}.
+%
+%    \begin{macrocode}
+\regulatory@ifmodule{sources}{%
+\newsourceregister{dutch}{
+    article/.initial=artikel,
+    articles/.initial=artikelen,
+    number/.initial=\regulatory@src@number@plain,
+    lid/.initial=\regulatory@src@after,
+    lidone/.initial=lid,
+    lidmany/.initial=lid,
+    lidnum/.initial=\regulatory@src@num@ordinal,
+    onderdeel/.initial=\regulatory@src@before,
+    onderdeelone/.initial=onderdeel,
+    onderdeelmany/.initial=onderdelen,
+    onderdeelnum/.initial=\regulatory@src@num@plain,
+    onder/.initial=\regulatory@src@before,
+    onderone/.initial=onder,
+    ondermany/.initial=onder,
+    ondernum/.initial=\regulatory@src@num@degree,
+    and/.initial={~en~},
+    to/.initial={~tot~en~met~},
+    separator/.initial={,~},
+    determiner/.initial=de,
+    van/.initial={van~},
+    source/.initial=\regulatory@src@source@full@store
+}{
+    article/.initial=art.,
+    articles/.initial=art.,
+    number/.initial=\regulatory@src@number@colon,
+    lid/.initial=\regulatory@src@before,
+    lidone/.initial=lid,
+    lidmany/.initial=lid,
+    lidnum/.initial=\regulatory@src@num@plain,
+    onderdeel/.initial=\regulatory@src@before,
+    onderdeelone/.initial=onder,
+    onderdeelmany/.initial=onder,
+    onderdeelnum/.initial=\regulatory@src@num@plain,
+    onder/.initial=\regulatory@src@before,
+    onderone/.initial=onder,
+    ondermany/.initial=onder,
+    ondernum/.initial=\regulatory@src@num@degree,
+    and/.initial={~en~},
+    to/.initial={-},
+    separator/.initial={~},
+    determiner/.initial=de,
+    van/.initial={},
+    source/.initial=\regulatory@src@source@short@store
+}
+
+\newsourceregister{dutch_eu}{
+    article/.initial=artikel,
+    articles/.initial=artikelen,
+    number/.initial=\regulatory@src@number@plain,
+    lid/.initial=\regulatory@src@before,
+    lidone/.initial=lid,
+    lidmany/.initial=leden,
+    lidnum/.initial=\regulatory@src@num@plain,
+    onderdeel/.initial=\regulatory@src@before,
+    onderdeelone/.initial=punt,
+    onderdeelmany/.initial=punten,
+    onderdeelnum/.initial=\regulatory@src@num@paren,
+    onder/.initial=\regulatory@src@before,
+    onderone/.initial=onder,
+    ondermany/.initial=onder,
+    ondernum/.initial=\regulatory@src@num@unmeasured,
+    and/.initial={~en~},
+    to/.initial={~tot~en~met~},
+    separator/.initial={,~},
+    determiner/.initial=de,
+    van/.initial={van~},
+    source/.initial=\regulatory@src@source@full@store
+}{
+    article/.initial=art.,
+    articles/.initial=art.,
+    number/.initial=\regulatory@src@number@plain,
+    lid/.initial=\regulatory@src@before,
+    lidone/.initial=lid,
+    lidmany/.initial=leden,
+    lidnum/.initial=\regulatory@src@num@plain,
+    onderdeel/.initial=\regulatory@src@before,
+    onderdeelone/.initial=punt,
+    onderdeelmany/.initial=punten,
+    onderdeelnum/.initial=\regulatory@src@num@paren,
+    onder/.initial=\regulatory@src@before,
+    onderone/.initial=onder,
+    ondermany/.initial=onder,
+    ondernum/.initial=\regulatory@src@num@unmeasured,
+    and/.initial={~en~},
+    to/.initial={~tot~en~met~},
+    separator/.initial={~},
+    determiner/.initial=de,
+    van/.initial={},
+    source/.initial=\regulatory@src@source@short@store
+}
+
+\newsourcedeterminer{dutch}{verordening}{de}
+\newsourcedeterminer{dutch}{richtlijn}{de}
+\newsourcedeterminer{dutch}{wet}{de}
+\newsourcedeterminer{dutch}{wetboek}{het}
+\newsourcedeterminer{dutch}{besluit}{het}
+\newsourcedeterminer{dutch}{verdrag}{het}
+\newsourcedeterminer{dutch_eu}{verordening}{de}
+\newsourcedeterminer{dutch_eu}{richtlijn}{de}
+\newsourcedeterminer{dutch_eu}{besluit}{het}
+\newsourcedeterminer{dutch_eu}{verdrag}{het}
+}{}
+%    \end{macrocode}
+%

@@ -77,3 +77,99 @@
 }{}
 %    \end{macrocode}
 %
+% \subsubsection{\translation{English citation register}{Engels citeerregister}}\label{sec:srcen}
+%
+% How an act of the Union is cited in English, and the one register of the five that is arranged the other
+% way round. Measured in the English text of the General Data Protection Regulation, the same document the
+% other registers were measured in: \enquote{point (a) of Article 6(1)} twenty-eight times, against nothing
+% at all for \enquote{Article 6(1)(a)} and nothing for \enquote{Article 6(1), point (a)}, which are the two
+% arrangements the continental registers use. The deepest level comes first, each is joined to the next
+% with \enquote{of}, and the paragraph is written into the article between brackets rather than named\,---\,
+% except where it stands without one, \enquote{point (a) of paragraph 1}, five times, which is why the
+% paragraph keeps a word of its own as well. More than one paragraph on the same article keeps the brackets
+% around each of them, \enquote{Article 6(1), (2) and (3)}, and by itself does not: \enquote{paragraphs 1
+% and 2}, twenty-one times.
+%
+% A run is joined with \enquote{to} at every level\,---\,\enquote{Articles 12 to 15} fifteen times,
+% \enquote{points (a) to (c)} twice, \enquote{paragraphs 1 to 3} once\,---\,and a list with \enquote{and}:
+% \enquote{Articles 15 and 16}, \enquote{paragraphs 1, 2 and 3}. The designation stands before the run and
+% takes its plural, as it does before a list. The instrument hangs on the end with the same \enquote{of}
+% that joins the levels, so this register needs no separate word for it.
+%
+% The non-breaking space between a designation and its number is a decision and not a measurement here: the
+% English text writes it both ways, a hundred and sixty-seven against two hundred and twenty-seven. It is
+% written non-breaking, as in the other registers, since nothing in the source speaks against it.
+%
+% There is no measured shortened form. The English text of a regulation has no footnotes to shorten a
+% citation in, and this bundle does not invent one: the shortened system is the same arrangement with the
+% name of the instrument abbreviated, which is what \texttt{german\_eu} and \texttt{french\_eu} do for the
+% same reason.
+%
+% English gives a regulation no article and a treaty one: \enquote{of Regulation (EU) 2016/679} against
+% \enquote{of the Treaty}, both measured in the same text. So the default of the register is nothing, and
+% the two kinds that do take one say so.
+%
+%    \begin{macrocode}
+\regulatory@ifmodule{sources}{%
+\newsourceregister{english_eu}{
+    article/.initial=Article,
+    articles/.initial=Articles,
+    number/.initial=\regulatory@src@number@plain,
+    lid/.initial=\regulatory@src@before,
+    lidone/.initial=paragraph,
+    lidmany/.initial=paragraphs,
+    lidnum/.initial=\regulatory@src@num@plain,
+    attachnum/.initial=\regulatory@src@num@parens,
+    attach/.initial=\regulatory@src@attach@plain,
+    onderdeel/.initial=\regulatory@src@before,
+    onderdeelone/.initial=point,
+    onderdeelmany/.initial=points,
+    onderdeelnum/.initial=\regulatory@src@num@parens,
+    onder/.initial=\regulatory@src@before,
+    onderone/.initial=point,
+    ondermany/.initial=points,
+    ondernum/.initial=\regulatory@src@num@unmeasured,
+    and/.initial={~and~},
+    to/.initial={~to~},
+    separator/.initial={\space of\space},
+    assemble/.initial=\regulatory@src@assemble@backward,
+    determiner/.initial={},
+    van/.initial={},
+    source/.initial=\regulatory@src@source@full@store
+}{
+    article/.initial=Article,
+    articles/.initial=Articles,
+    number/.initial=\regulatory@src@number@plain,
+    lid/.initial=\regulatory@src@before,
+    lidone/.initial=paragraph,
+    lidmany/.initial=paragraphs,
+    lidnum/.initial=\regulatory@src@num@plain,
+    attachnum/.initial=\regulatory@src@num@parens,
+    attach/.initial=\regulatory@src@attach@plain,
+    onderdeel/.initial=\regulatory@src@before,
+    onderdeelone/.initial=point,
+    onderdeelmany/.initial=points,
+    onderdeelnum/.initial=\regulatory@src@num@parens,
+    onder/.initial=\regulatory@src@before,
+    onderone/.initial=point,
+    ondermany/.initial=points,
+    ondernum/.initial=\regulatory@src@num@unmeasured,
+    and/.initial={~and~},
+    to/.initial={~to~},
+    separator/.initial={\space of\space},
+    assemble/.initial=\regulatory@src@assemble@backward,
+    determiner/.initial={},
+    van/.initial={},
+    source/.initial=\regulatory@src@source@short@store
+}
+%    \end{macrocode}
+%
+% English gives a regulation no article and a treaty one: \enquote{of Regulation (EU) 2016/679} against
+% \enquote{of the Treaty}, both measured in the same text. So the default of the register is nothing, and
+% the two kinds that do take one say so.
+%    \begin{macrocode}
+\newsourcedeterminer{english_eu}{treaty}{the}
+\newsourcedeterminer{english_eu}{charter}{the}
+}{}
+%    \end{macrocode}
+%

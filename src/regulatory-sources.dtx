@@ -139,8 +139,8 @@
   { \__regulatory_src_alias:Ne \g__regulatory_src_fieldalias_prop { #1 } }
 \ExplSyntaxOff
 
-\newsourcetype{regulation}{citetitle}{nl}
-\newsourcetype{euact}{kind,number}{nl_eu}
+\newsourcetype{regulation}{citetitle}{dutch}
+\newsourcetype{euact}{kind,number}{dutch_eu}
 %    \end{macrocode}
 %
 % The names above are English, as the rest of this bundle is, and every one of them answers to a Dutch name
@@ -419,6 +419,14 @@
 %         \enquote{du règlement}.
 %     \item[\texttt{van}] what stands between the last part and the instrument: \enquote{van} when written
 %         out in full, nothing when shortened.
+%     \item[\texttt{assemble}] how the parts are arranged: from the outside in, which is what a register
+%         that leaves this out gets, or the other way round, which is what English does.
+%     \item[\texttt{attachnum}] the shape the number of a paragraph takes when it hangs on its article
+%         rather than standing on its own. Brackets in English, and around each of them where there is more
+%         than one: \enquote{Article 6(1), (2) and (3)}, measured, against \enquote{paragraphs 1 and 2}
+%         where the same paragraphs stand by themselves.
+%     \item[\texttt{attach}] how that number is bound to the article, which in English is simply against
+%         it. Only a register arranged the other way round needs either of these two.
 %     \item[\texttt{source}] the instrument itself, named from the fields of its entry.
 % \end{labeling}
 %    \begin{macrocode}
@@ -440,123 +448,32 @@
 % contracts. Shortened it is the form of the Leidraad: no commas, the designation before the number, and
 % the colon notation for the civil code.
 %    \begin{macrocode}
-\newsourceregister{nl}{
-    article/.initial=artikel,
-    number/.initial=\regulatory@src@number@plain,
-    lid/.initial=\regulatory@src@lid@ordinal,
-    onderdeel/.initial=\regulatory@src@onderdeel@plain,
-    onder/.initial=\regulatory@src@onder@degree,
-    separator/.initial={,~},
-    determiner/.initial=de,
-    van/.initial={van~},
-    source/.initial=\regulatory@src@source@full@store
-}{
-    article/.initial=art.,
-    number/.initial=\regulatory@src@number@colon,
-    lid/.initial=\regulatory@src@lid@cardinal,
-    onderdeel/.initial=\regulatory@src@onderdeel@onder,
-    onder/.initial=\regulatory@src@onder@degree,
-    separator/.initial={~},
-    determiner/.initial=de,
-    van/.initial={},
-    source/.initial=\regulatory@src@source@short@store
-}
-%    \end{macrocode}
-%
-% The register an act of the Union is cited in, which is the one such an act uses for itself: the paragraph
-% is a cardinal even in the full form, and the lettered point is a \emph{punt} with the bracket it closes
-% with. Counted in the Dutch text of the General Data Protection Regulation: \texttt{punt~a)} thirty-six
-% times, \texttt{onderdeel~a)} and \texttt{sub~a)} not once.
-%    \begin{macrocode}
-\newsourceregister{nl_eu}{
-    article/.initial=artikel,
-    number/.initial=\regulatory@src@number@plain,
-    lid/.initial=\regulatory@src@lid@cardinal,
-    onderdeel/.initial=\regulatory@src@onderdeel@punt,
-    onder/.initial=\regulatory@src@onder@degree,
-    separator/.initial={,~},
-    determiner/.initial=de,
-    van/.initial={van~},
-    source/.initial=\regulatory@src@source@full@store
-}{
-    article/.initial=art.,
-    number/.initial=\regulatory@src@number@plain,
-    lid/.initial=\regulatory@src@lid@cardinal,
-    onderdeel/.initial=\regulatory@src@onderdeel@punt,
-    onder/.initial=\regulatory@src@onder@degree,
-    separator/.initial={~},
-    determiner/.initial=de,
-    van/.initial={},
-    source/.initial=\regulatory@src@source@short@store
-}
-%    \end{macrocode}
-%
-% The same register in German and in French, each measured in the text of that regulation in that
-% language. They differ from the Dutch one and from each other on exactly the points that matter: German
-% writes no commas between the parts and calls the lettered point a \emph{Buchstabe}, French writes the
-% commas and the closing bracket like Dutch but calls it a \emph{point} and the paragraph a
-% \emph{paragraphe}. Counted in the General Data Protection Regulation: \texttt{Absatz~1 Buchstabe~a}
-% thirty-one times and \texttt{Artikel~6 Absatz~1 Buchstabe~a} twenty-three; \texttt{paragraphe~1,
-% point~a)} thirty-three times and the full chain twenty-seven. Both have the plural this bundle already
-% writes: \texttt{Buchstaben c und e} and \texttt{points c) et e)}, six times each.
-%
-% The shortened system of these two abbreviates the name of the instrument and nothing else. The Dutch one
-% shortens its words because the Leidraad says which shortenings to use; for these two there is no such
-% source, and the regulation itself never abbreviates: measured over its own text, \texttt{Art.},
-% \texttt{Abs.} and \texttt{Buchst.} occur no times at all against \texttt{Artikel} three hundred and
-% eighty-nine, and \texttt{art.} and \texttt{par.} none against \texttt{article} two hundred and
-% ninety-seven. Writing \texttt{Abs.~1} would be a form this bundle invented, and it is not this bundle's
-% to invent.
-%
-% There is no national German or French register here, and that is deliberate. German federal law does not
-% write \enquote{Artikel} at all but \texttt{\S~5 Abs.~2 Nr.~3 BGB}, which is another construction and not
-% a translation of this one, and French has its own again. Each would need the local counterparts of the
-% Aanwijzingen and the Leidraad, and for neither is there anyone here who could check the result. A half
-% right register for a legal order we cannot check is worse than none, because whoever finds it in the list
-% assumes it is right.
-%    \begin{macrocode}
-\newsourceregister{de_eu}{
-    article/.initial=Artikel,
-    number/.initial=\regulatory@src@number@plain,
-    lid/.initial=\regulatory@src@lid@absatz,
-    onderdeel/.initial=\regulatory@src@onderdeel@buchstabe,
-    onder/.initial=\regulatory@src@onder@unmeasured,
-    separator/.initial={~},
-    determiner/.initial=der,
-    van/.initial={},
-    source/.initial=\regulatory@src@source@full@store
-}{
-    article/.initial=Artikel,
-    number/.initial=\regulatory@src@number@plain,
-    lid/.initial=\regulatory@src@lid@absatz,
-    onderdeel/.initial=\regulatory@src@onderdeel@buchstabe,
-    onder/.initial=\regulatory@src@onder@unmeasured,
-    separator/.initial={~},
-    determiner/.initial=der,
-    van/.initial={},
-    source/.initial=\regulatory@src@source@short@store
-}
 
-\newsourceregister{fr_eu}{
-    article/.initial=article,
-    number/.initial=\regulatory@src@number@plain,
-    lid/.initial=\regulatory@src@lid@paragraphe,
-    onderdeel/.initial=\regulatory@src@onderdeel@point,
-    onder/.initial=\regulatory@src@onder@unmeasured,
-    separator/.initial={,~},
-    determiner/.initial=du,
-    van/.initial={},
-    source/.initial=\regulatory@src@source@full@store
-}{
-    article/.initial=article,
-    number/.initial=\regulatory@src@number@plain,
-    lid/.initial=\regulatory@src@lid@paragraphe,
-    onderdeel/.initial=\regulatory@src@onderdeel@point,
-    onder/.initial=\regulatory@src@onder@unmeasured,
-    separator/.initial={,~},
-    determiner/.initial=du,
-    van/.initial={},
-    source/.initial=\regulatory@src@source@short@store
+
+
+% Where the designation stands: before its numbers in nearly every register, after
+% them where a paragraph is written as an ordinal.
+\newcommand\regulatory@src@before[3]{\def#1{#3~#2}}
+\newcommand\regulatory@src@after[3]{\def#1{#2\space#3}}
+
+% One number, in the shape its level takes.
+\newcommand\regulatory@src@num@plain[2]{\def#1{#2}}
+\newcommand\regulatory@src@num@paren[2]{\def#1{#2)}}
+\newcommand\regulatory@src@num@degree[2]{\def#1{#2\textdegree}}
+\newcommand\regulatory@src@num@parens[2]{\def#1{(#2)}}
+
+% A paragraph written into the article it belongs to, which is the English form.
+\newcommand\regulatory@src@attach@plain[3]{\def#1{#2#3}}
+\newcommand\regulatory@src@num@ordinal[2]{%
+    \storeordinalstringnum{regsrc}{#2}%
+    \expandafter\let\expandafter\regulatory@src@ord\csname @fcs@regsrc\endcsname
+    \let#1\regulatory@src@ord
+}
+\newcommand\regulatory@src@num@unmeasured[2]{%
+    \PackageWarning{regulatory-sources}{%
+        This register has no measured form for the level below a point,\MessageBreak
+        so the number is written on its own. Reported}%
+    \def#1{#2}%
 }
 
 \newcommand\regulatory@src@lid@absatz[2]{\def#1{Absatz~#2}}
@@ -593,29 +510,6 @@
 % \texttt{lid 6}, and never as an ordinal: \emph{zesde lid} does not occur in it once. What binds
 % \emph{zesde} to \emph{lid} in the national register is therefore not measured, and this bundle does not
 % decide it.
-%    \begin{macrocode}
-\newcommand\regulatory@src@lid@ordinal[2]{%
-    \storeordinalstringnum{regsrc}{#2}%
-    \expandafter\let\expandafter\regulatory@src@ord\csname @fcs@regsrc\endcsname
-    \protected@edef#1{\regulatory@src@ord\space lid}%
-}
-\newcommand\regulatory@src@lid@cardinal[2]{\def#1{lid~#2}}
-\newcommand\regulatory@src@onderdeel@plain[2]{\def#1{onderdeel~#2}}
-\newcommand\regulatory@src@onderdeel@onder[2]{\def#1{onder~#2}}
-\newcommand\regulatory@src@onderdeel@punt[2]{\def#1{punt~#2)}}
-\newcommand\regulatory@src@onder@degree[2]{\def#1{onder~#2\textdegree}}
-\newcommand\regulatory@src@onder@unmeasured[2]{%
-    \PackageWarning{regulatory-sources}{%
-        This register has no measured form for the level below a point,\MessageBreak
-        so the number is written on its own. Reported}%
-    \def#1{#2}%
-}
-%    \end{macrocode}
-%
-% The instrument itself. In full it is named by what it is called, preceded by the article its name takes,
-% and the book of a civil code is named here rather than in the number. Shortened it is the abbreviation,
-% and a source without one falls back on its name, since a citation that names nothing is worse than a long
-% one.
 %    \begin{macrocode}
 \newcommand\regulatory@src@source@full@store[2]{%
     \protected@edef#1{\regulatory@src@source@full{#2}}%
@@ -665,26 +559,6 @@
 
 \cs_new:Npn \regulatory@src@lidwoord #1 { \regulatory@src@thisdet }
 \ExplSyntaxOff
-\newsourcedeterminer{nl}{verordening}{de}
-\newsourcedeterminer{nl}{richtlijn}{de}
-\newsourcedeterminer{nl}{wet}{de}
-\newsourcedeterminer{nl}{wetboek}{het}
-\newsourcedeterminer{nl}{besluit}{het}
-\newsourcedeterminer{nl}{verdrag}{het}
-\newsourcedeterminer{nl_eu}{verordening}{de}
-\newsourcedeterminer{nl_eu}{richtlijn}{de}
-\newsourcedeterminer{nl_eu}{besluit}{het}
-\newsourcedeterminer{nl_eu}{verdrag}{het}
-\newsourcedeterminer{de_eu}{verordnung}{der}
-\newsourcedeterminer{de_eu}{richtlinie}{der}
-\newsourcedeterminer{de_eu}{empfehlung}{der}
-\newsourcedeterminer{de_eu}{beschluss}{des}
-\newsourcedeterminer{de_eu}{vertrag}{des}
-\newsourcedeterminer{fr_eu}{règlement}{du}
-\newsourcedeterminer{fr_eu}{traité}{du}
-\newsourcedeterminer{fr_eu}{directive}{de~la}
-\newsourcedeterminer{fr_eu}{décision}{de~la}
-\newsourcedeterminer{fr_eu}{recommandation}{de~la}
 \ExplSyntaxOn
 
 \cs_new:Npn \regulatory@src@naam #1
@@ -696,7 +570,9 @@
   {
     \tl_if_blank:eF { \srcfield { #1 } { book } }
       { Boek~ \srcfield { #1 } { book } \c_space_tl van~ }
-    \regulatory@src@lidwoord { #1 } ~ \regulatory@src@naam { #1 }
+    \tl_if_blank:eF { \regulatory@src@lidwoord { #1 } }
+      { \regulatory@src@lidwoord { #1 } ~ }
+    \regulatory@src@naam { #1 }
   }
 \cs_new:Npn \regulatory@src@source@short #1
   {
@@ -705,6 +581,92 @@
   }
 \ExplSyntaxOff
 \ExplSyntaxOn
+%    \end{macrocode}
+%
+% \subsubsection{\translation{Where a register lives}{Waar een register staat}}
+%
+% Not here. A register is written in the language definition file of its language,
+% \file{regulatory-\meta{language}.def}, next to the words that language calls a provision by. Those two
+% are one measurement: what says that German writes \enquote{Artikel 6 Absatz 1 Buchstabe a} in a citation
+% is the same reading of the same text that says it calls a paragraph an \emph{Absatz}. Keeping them apart
+% would mean one measurement landing in two files, where it can drift.
+%
+% It also spares whoever writes one a second set of names. The language is \texttt{dutch} to
+% \package{babel} and the register is \texttt{dutch} here, and \texttt{dutch\_eu} is that same language
+% writing in the legal order of the Union.
+%
+% Those files are read for every language this bundle ships, whatever language the document is in, because
+% a register belongs to the source and not to the document: a Dutch contract cites a German regulation in
+% German. \zcref{sec:lang} has the loading rule.
+%
+% \subsubsection{\translation{Naming more than one}{Meer dan één noemen}}
+%
+% A citation may name a list of provisions or a run of them, which the source writes as
+% \enquote{artikelen 101 en 102} and \enquote{artikelen 12 tot en met 15}. Both are written by the author
+% rather than worked out here: \texttt{onderdeel=\{c,d\}} is a list and \texttt{onderdeel=\{a--c\}} is a
+% run, and the register decides how either reads.
+%
+% The far end of a range does not always read like the near one: the civil code is cited as
+% \enquote{art. 6:162-164}, where the book is named once and the second number stands on its own. A run
+% therefore formats its two ends separately, and every other level hands the same format twice.
+%
+% Three things are counted apart because the register words them apart: the numbers, which each go through
+% the format of their level; the words that join them; and the designation, which takes its plural as soon
+% as there is more than one. Measured in the same regulation, with the non-breaking space where the source
+% puts it: \enquote{artikelen~101 en~102}, \enquote{artikelen~12 tot en met~15}, \enquote{punten~c) en~e)},
+% \enquote{Buchstaben~c und e}, \enquote{Absätze~1, 2 und~3}, \enquote{paragraphes~1 et 4}.
+%    \begin{macrocode}
+\ExplSyntaxOn
+\seq_new:N \l__regulatory_src_items_seq
+\tl_new:N \l__regulatory_src_joined_tl
+\int_new:N \l__regulatory_src_count_int
+
+\cs_new_protected:Npn \regulatory@src@join #1#2#3#4#5#6
+  {
+    \tl_clear:N \l__regulatory_src_joined_tl
+    \tl_if_in:nnTF { #2 } { -- }
+      { \__regulatory_src_range:nnnn { #2 } { #3 } { #6 } { #5 } }
+      { \__regulatory_src_list:nnn { #2 } { #3 } { #4 } }
+    \tl_set_eq:NN #1 \l__regulatory_src_joined_tl
+  }
+
+\cs_new_protected:Npn \__regulatory_src_range:nnnn #1#2#3#4
+  {
+    \seq_set_split:Nnn \l__regulatory_src_items_seq { -- } { #1 }
+    \int_set:Nn \l__regulatory_src_count_int { 2 }
+    \seq_pop_left:NN \l__regulatory_src_items_seq \l_tmpa_tl
+    \exp_args:NNV #2 \l__regulatory_src_piece_tl \l_tmpa_tl
+    \tl_put_right:NV \l__regulatory_src_joined_tl \l__regulatory_src_piece_tl
+    \tl_put_right:Nn \l__regulatory_src_joined_tl { #4 }
+    \seq_pop_left:NN \l__regulatory_src_items_seq \l_tmpa_tl
+    \exp_args:NNV #3 \l__regulatory_src_piece_tl \l_tmpa_tl
+    \tl_put_right:NV \l__regulatory_src_joined_tl \l__regulatory_src_piece_tl
+  }
+
+\cs_new_protected:Npn \__regulatory_src_list:nnn #1#2#3
+  {
+    \seq_set_split:Nnn \l__regulatory_src_items_seq { , } { #1 }
+    \seq_set_map_x:NNn \l__regulatory_src_items_seq \l__regulatory_src_items_seq
+      { \tl_trim_spaces:n { ##1 } }
+    \int_set:Nn \l__regulatory_src_count_int
+      { \seq_count:N \l__regulatory_src_items_seq }
+    \int_step_inline:nnn { 1 } { \l__regulatory_src_count_int }
+      {
+        \int_compare:nNnT { ##1 } > { 1 }
+          {
+            \int_compare:nNnTF { ##1 } = { \l__regulatory_src_count_int }
+              { \tl_put_right:Nn \l__regulatory_src_joined_tl { #3 } }
+              { \tl_put_right:Nn \l__regulatory_src_joined_tl { ,~ } }
+          }
+        \tl_set:Nx \l_tmpa_tl { \seq_item:Nn \l__regulatory_src_items_seq { ##1 } }
+        \exp_args:NNV #2 \l__regulatory_src_piece_tl \l_tmpa_tl
+        \tl_put_right:NV \l__regulatory_src_joined_tl \l__regulatory_src_piece_tl
+      }
+  }
+
+\tl_new:N \l__regulatory_src_piece_tl
+\cs_new:Npn \regulatory@src@items { \int_use:N \l__regulatory_src_count_int }
+\ExplSyntaxOff
 %    \end{macrocode}
 %
 % \subsubsection{\translation{Citing a source}{Een bron aanhalen}}
@@ -733,6 +695,17 @@
 \define@key{regsrcref}{onder}{\def\regulatory@src@onder{#1}}
 \define@key{regsrcref}{system}{\def\regulatory@src@thissystem{#1}}
 
+\newcommand\regulatory@src@thislabel{}
+\newcommand\regulatory@src@label[2]{%
+    \ifnum\regulatory@src@items>1
+        \edef\regulatory@src@thislabel{%
+            \regsrc@get{\regulatory@src@reg}{\regulatory@src@thissystem}{#2}}%
+    \else
+        \edef\regulatory@src@thislabel{%
+            \regsrc@get{\regulatory@src@reg}{\regulatory@src@thissystem}{#1}}%
+    \fi
+}
+
 \newcommand\regulatory@src@last{}
 \newcommand\regulatory@src@part[1]{%
     \ifx\regulatory@src@parts\@empty\else
@@ -740,6 +713,71 @@
     \fi
     \protected@xdef\regulatory@src@last{\regulatory@src@last#1}%
     \let\regulatory@src@parts\relax
+}
+%    \end{macrocode}
+%
+% Every level puts what it comes to in a macro of its own, worked out to the last token there and then,
+% rather than straight into the citation. Worked out, because the designation of a level lives in one macro
+% that every level writes to in turn, and a part that kept the macro rather than its text would read the
+% word of whatever level came after it. Its own macro, because
+% where the parts stand with respect to one another is a decision of the register and not of this module.
+% Nearly every register names them from the outside in\,---\,the article, then the paragraph, then the
+% point\,---\,and joins them with its separator. English does the reverse, and measured in the English text
+% of the same regulation it is not close: \enquote{point (a) of Article 6(1)} twenty-eight times against
+% nothing at all for either of the two arrangements the other registers use. So the deepest level comes
+% first, each level is joined to the next with \enquote{of}, and the paragraph is not named but written
+% into the article between brackets.
+%
+% Two arrangements are therefore offered and the \texttt{assemble} key of a register picks one. A register
+% that says nothing is arranged from the outside in, which is what all four of the others do.
+%    \begin{macrocode}
+\newcommand\regulatory@src@p@artikel{}
+\newcommand\regulatory@src@p@lid{}
+\newcommand\regulatory@src@p@lidnum{}
+\newcommand\regulatory@src@p@onderdeel{}
+\newcommand\regulatory@src@p@onder{}
+\newcommand\regulatory@src@p@source{}
+
+\newcommand\regulatory@src@add[1]{%
+    \ifx#1\@empty\else\expandafter\regulatory@src@part\expandafter{#1}\fi
+}
+
+\newcommand\regulatory@src@assemble@forward{%
+    \regulatory@src@add\regulatory@src@p@artikel
+    \regulatory@src@add\regulatory@src@p@lid
+    \regulatory@src@add\regulatory@src@p@onderdeel
+    \regulatory@src@add\regulatory@src@p@onder
+    \ifx\regulatory@src@parts\@empty\else
+        \protected@edef\regulatory@src@p@source{%
+            \regulatory@src@van\regulatory@src@p@source}%
+    \fi
+    \regulatory@src@add\regulatory@src@p@source
+}
+%    \end{macrocode}
+%
+% The other way round, with one thing more to do than turning the order about: a paragraph that hangs on an
+% article is written \texttt{(1)} and takes no word, while one that stands on its own keeps its word,
+% \enquote{point (a) of paragraph 1}. Both occur in the same regulation, so the register hands over the
+% shape of the attached one in \texttt{attach} and the level keeps its own wording for the other case.
+%    \begin{macrocode}
+\newcommand\regulatory@src@assemble@backward{%
+    \ifx\regulatory@src@p@artikel\@empty\else
+        \ifx\regulatory@src@p@lidnum\@empty\else
+            \ifx\regulatory@src@attach\relax\else
+                \protected@edef\@@attachnow{%
+                    \noexpand\regulatory@src@attach
+                        \noexpand\regulatory@src@p@artikel
+                        {\regulatory@src@p@artikel}{\regulatory@src@p@lidnum}}%
+                \@@attachnow
+                \let\regulatory@src@p@lid\@empty
+            \fi
+        \fi
+    \fi
+    \regulatory@src@add\regulatory@src@p@onder
+    \regulatory@src@add\regulatory@src@p@onderdeel
+    \regulatory@src@add\regulatory@src@p@lid
+    \regulatory@src@add\regulatory@src@p@artikel
+    \regulatory@src@add\regulatory@src@p@source
 }
 
 \NewDocumentCommand \srcref { s O{} m }{%
@@ -766,37 +804,79 @@
         \regulatory@src@setdet{#3}%
         \let\regulatory@src@parts\@empty
         \gdef\regulatory@src@last{}%
+        \let\regulatory@src@p@artikel\@empty
+        \let\regulatory@src@p@lid\@empty
+        \let\regulatory@src@p@lidnum\@empty
+        \let\regulatory@src@p@onderdeel\@empty
+        \let\regulatory@src@p@onder\@empty
+        \regsrc@set{\regulatory@src@reg}{\regulatory@src@thissystem}{and}%
+            {\regulatory@src@and}%
+        \regsrc@set{\regulatory@src@reg}{\regulatory@src@thissystem}{to}%
+            {\regulatory@src@to}%
+        \regsrc@set{\regulatory@src@reg}{\regulatory@src@thissystem}{van}%
+            {\regulatory@src@van}%
+        \regsrc@set{\regulatory@src@reg}{\regulatory@src@thissystem}{attach}%
+            {\regulatory@src@attach}%
         \ifx\regulatory@src@artikel\@empty\else
             \regsrc@set{\regulatory@src@reg}{\regulatory@src@thissystem}{number}{\@@fmt}%
-            \@@fmt\regulatory@src@piece{\srcfield{#3}{book}}{\regulatory@src@artikel}%
-            \protected@edef\regulatory@src@piece{%
-                \regsrc@get{\regulatory@src@reg}{\regulatory@src@thissystem}{article}%
-                ~\regulatory@src@piece}%
-            \expandafter\regulatory@src@part\expandafter{\regulatory@src@piece}%
+            \def\@@numfmt##1##2{\@@fmt##1{\srcfield{#3}{book}}{##2}}%
+            \def\@@numrest##1##2{\@@fmt##1{}{##2}}%
+            \expandafter\regulatory@src@join\expandafter\regulatory@src@piece
+                \expandafter{\regulatory@src@artikel}{\@@numfmt}%
+                {\regulatory@src@and}{\regulatory@src@to}{\@@numrest}%
+            \regulatory@src@label{article}{articles}%
+            \protected@edef\regulatory@src@p@artikel{%
+                \regulatory@src@thislabel~\regulatory@src@piece}%
         \fi
         \ifx\regulatory@src@lid\@empty\else
-            \regsrc@set{\regulatory@src@reg}{\regulatory@src@thissystem}{lid}{\@@fmt}%
-            \@@fmt\regulatory@src@piece{\regulatory@src@lid}%
-            \expandafter\regulatory@src@part\expandafter{\regulatory@src@piece}%
+            \regsrc@set{\regulatory@src@reg}{\regulatory@src@thissystem}{lidnum}{\@@fmt}%
+            \expandafter\regulatory@src@join\expandafter\regulatory@src@piece
+                \expandafter{\regulatory@src@lid}{\@@fmt}%
+                {\regulatory@src@and}{\regulatory@src@to}{\@@fmt}%
+            \regulatory@src@label{lidone}{lidmany}%
+            \regsrc@set{\regulatory@src@reg}{\regulatory@src@thissystem}{lid}{\@@compose}%
+            \expandafter\@@compose\expandafter\regulatory@src@p@lid
+                \expandafter{\regulatory@src@piece}{\regulatory@src@thislabel}%
+            \protected@edef\regulatory@src@p@lid{\regulatory@src@p@lid}%
+            \regsrc@set{\regulatory@src@reg}{\regulatory@src@thissystem}{attachnum}{\@@afmt}%
+            \ifx\@@afmt\relax
+                \let\regulatory@src@p@lidnum\regulatory@src@piece
+            \else
+                \expandafter\regulatory@src@join\expandafter\regulatory@src@p@lidnum
+                    \expandafter{\regulatory@src@lid}{\@@afmt}%
+                    {\regulatory@src@and}{\regulatory@src@to}{\@@afmt}%
+            \fi
         \fi
         \ifx\regulatory@src@onderdeel\@empty\else
-            \regsrc@set{\regulatory@src@reg}{\regulatory@src@thissystem}{onderdeel}{\@@fmt}%
-            \@@fmt\regulatory@src@piece{\regulatory@src@onderdeel}%
-            \expandafter\regulatory@src@part\expandafter{\regulatory@src@piece}%
+            \regsrc@set{\regulatory@src@reg}{\regulatory@src@thissystem}{onderdeelnum}{\@@fmt}%
+            \expandafter\regulatory@src@join\expandafter\regulatory@src@piece
+                \expandafter{\regulatory@src@onderdeel}{\@@fmt}%
+                {\regulatory@src@and}{\regulatory@src@to}{\@@fmt}%
+            \regulatory@src@label{onderdeelone}{onderdeelmany}%
+            \regsrc@set{\regulatory@src@reg}{\regulatory@src@thissystem}{onderdeel}{\@@compose}%
+            \expandafter\@@compose\expandafter\regulatory@src@p@onderdeel
+                \expandafter{\regulatory@src@piece}{\regulatory@src@thislabel}%
+            \protected@edef\regulatory@src@p@onderdeel{\regulatory@src@p@onderdeel}%
         \fi
         \ifx\regulatory@src@onder\@empty\else
-            \regsrc@set{\regulatory@src@reg}{\regulatory@src@thissystem}{onder}{\@@fmt}%
-            \@@fmt\regulatory@src@piece{\regulatory@src@onder}%
-            \expandafter\regulatory@src@part\expandafter{\regulatory@src@piece}%
+            \regsrc@set{\regulatory@src@reg}{\regulatory@src@thissystem}{ondernum}{\@@fmt}%
+            \expandafter\regulatory@src@join\expandafter\regulatory@src@piece
+                \expandafter{\regulatory@src@onder}{\@@fmt}%
+                {\regulatory@src@and}{\regulatory@src@to}{\@@fmt}%
+            \regulatory@src@label{onderone}{ondermany}%
+            \regsrc@set{\regulatory@src@reg}{\regulatory@src@thissystem}{onder}{\@@compose}%
+            \expandafter\@@compose\expandafter\regulatory@src@p@onder
+                \expandafter{\regulatory@src@piece}{\regulatory@src@thislabel}%
+            \protected@edef\regulatory@src@p@onder{\regulatory@src@p@onder}%
         \fi
         \regsrc@set{\regulatory@src@reg}{\regulatory@src@thissystem}{source}{\@@fmt}%
-        \@@fmt\regulatory@src@piece{#3}%
-        \ifx\regulatory@src@parts\@empty\else
-            \protected@edef\regulatory@src@piece{%
-                \regsrc@get{\regulatory@src@reg}{\regulatory@src@thissystem}{van}%
-                \regulatory@src@piece}%
+        \@@fmt\regulatory@src@p@source{#3}%
+        \regsrc@set{\regulatory@src@reg}{\regulatory@src@thissystem}{assemble}%
+            {\regulatory@src@assembler}%
+        \ifx\regulatory@src@assembler\relax
+            \let\regulatory@src@assembler\regulatory@src@assemble@forward
         \fi
-        \expandafter\regulatory@src@part\expandafter{\regulatory@src@piece}%
+        \regulatory@src@assembler
     \endgroup
     \regulatory@src@last
 }

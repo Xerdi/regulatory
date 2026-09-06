@@ -1028,6 +1028,12 @@ en / and \aref{ex1-sub:lorem,ex1-sub:lorem2,ex1-sub:lorem3,ex1-sub:lorem4}.
 \begin{lstlisting}[style=tex]
 \srcref[artikel=96, lid=2, onderdeel=c]{bw6}
     artikel 96, tweede lid, onderdeel c, van Boek 6 van het Burgerlijk Wetboek
+\srcref[artikel=3.126, lid=1, onderdeel={c,d}]{wetib}
+    artikel 3.126, eerste lid, onderdelen c en d, van de Wet IB 2001
+\srcref[artikel={162--164}]{bw6}
+    artikelen 162 tot en met 164, van Boek 6 van het Burgerlijk Wetboek
+\srcref*[artikel={162--164}]{bw6}
+    art. 6:162-164 BW
 \srcref*[artikel=96, lid=2, onderdeel=c]{bw6}
     art. 6:96 lid 2 onder c BW
 \srcref[artikel=6, lid=1, onderdeel=a]{avg}
@@ -1088,8 +1094,9 @@ en / and \aref{ex1-sub:lorem,ex1-sub:lorem2,ex1-sub:lorem3,ex1-sub:lorem4}.
 \DescribeMacro{\newsourceregister\\\marg{name}\\\marg{full}\\\marg{short}}
 \translation{%
     Declares a register: eight keys for the full form and eight for the shortened one. Four are declared
-    already: \texttt{nl} for a Dutch regulation, and \texttt{nl\_eu}, \texttt{de\_eu} and \texttt{fr\_eu}
-    for an act of the Union cited in Dutch, German or French. A register is not a language: the same
+    already: \texttt{dutch} for a Dutch regulation, and \texttt{dutch\_eu}, \texttt{german\_eu},
+    \texttt{french\_eu} and \texttt{english\_eu} for an act of the Union cited in Dutch, German, French or
+    English. A register is not a language: the same
     document may cite in more than one, and it does so the moment it cites a Dutch statute next to a
     regulation of the Union.
 
@@ -1111,9 +1118,12 @@ en / and \aref{ex1-sub:lorem,ex1-sub:lorem2,ex1-sub:lorem3,ex1-sub:lorem4}.
     number in both. Where the national register puts the number first, \emph{zesde lid}, there is no
     measurement of what binds it, and an ordinary space is what this bundle writes there.
 
-    A citation names one provision. An enumeration of them\,---\,\enquote{onderdelen c en d},
-    \enquote{Buchstaben a bis c}\,---\,is the next thing this module needs, and the conjunctions it asks
-    for are not the ones of \zcref{sec:ref}: they belong to the register of the instrument.
+    A citation may name more than one provision. A comma makes a list and \texttt{--} makes a run, and the
+    register decides how either reads: it holds the words that join them and the plural of the designation.
+    Both were measured in the same regulation, in each of its languages\,---\,\enquote{artikelen 101 en
+    102}, \enquote{artikelen 12 tot en met 15}, \enquote{punten c) en e)}, \enquote{Buchstaben c und e},
+    \enquote{paragraphes 1, 2 et 4}\,---\,and the far end of a run is written apart from the near one,
+    since the civil code is cited as \enquote{art. 6:162-164} with its book named once.
 
     There is no national German or French register, and that is on purpose: German federal law writes
     \texttt{\S~5 Abs.~2 Nr.~3 BGB}, which is another construction and not a translation of this one, and
@@ -1143,13 +1153,30 @@ en / and \aref{ex1-sub:lorem,ex1-sub:lorem2,ex1-sub:lorem3,ex1-sub:lorem4}.
     benaming in beide registers vóór het nummer. Waar het nationale register het nummer vooropzet,
     \emph{zesde lid}, is niet gemeten wat de twee bindt, en schrijft deze bundel daar een gewone spatie.
 
-    Een verwijzing noemt één bepaling. Een opsomming ervan\,---\,\enquote{onderdelen c en d},
-    \enquote{Buchstaben a bis c}\,---\,is het volgende dat deze module nodig heeft, en de voegwoorden
-    daarvoor zijn niet die van \zcref{sec:ref}: ze horen bij het register van het instrument.
+    Een verwijzing mag meer dan één bepaling noemen. Een komma maakt er een opsomming van en \texttt{--}
+    een reeks, en het register bepaalt hoe beide luiden: het draagt de voegwoorden en het meervoud van de
+    benaming. Allebei zijn ze gemeten in dezelfde verordening, in elk van haar talen\,---\,\enquote{artikelen
+    101 en 102}, \enquote{artikelen 12 tot en met 15}, \enquote{punten c) en e)}, \enquote{Buchstaben c und
+    e}, \enquote{paragraphes 1, 2 et 4}\,---\,en het verre eind van een reeks wordt anders geschreven dan
+    het nabije, want het wetboek wordt aangehaald als \enquote{art. 6:162-164}, met zijn boek één keer
+    genoemd.
 
     Er is geen nationaal Duits of Frans register, en dat is met opzet: het Duitse federale recht schrijft
     \texttt{\S~5 Abs.~2 Nr.~3 BGB}, een ander bouwsel en geen vertaling van dit, en er is hier niemand die
     de uitkomst kan toetsen.%
+}
+\translation{%
+    The registers themselves are not in the implementation but in the language definition file of their
+    language, printed in \zcref{sec:lang}. That is one measurement in one place: what says that German
+    writes \enquote{Artikel 6 Absatz 1 Buchstabe a} in a citation is the same reading of the same text
+    that says it calls a paragraph an \emph{Absatz}. It also spares whoever writes one a second set of
+    names, since the register of Dutch is called \texttt{dutch} and so is the language.%
+}{%
+    De registers zelf staan niet in de implementatie maar in het taaldefinitiebestand van hun taal,
+    afgedrukt in \zcref{sec:lang}. Dat is één meting op één plek: wat zegt dat het Duits
+    \enquote{Artikel 6 Absatz 1 Buchstabe a} schrijft in een aanhaling, is dezelfde lezing van dezelfde
+    tekst die zegt dat het een lid een \emph{Absatz} noemt. Het scheelt bovendien een tweede stelsel van
+    namen: het register van het Nederlands heet \texttt{dutch} en de taal ook.%
 }
 \clearpage
 
@@ -1176,8 +1203,8 @@ en / and \aref{ex1-sub:lorem,ex1-sub:lorem2,ex1-sub:lorem3,ex1-sub:lorem4}.
     A language without a definition file falls back to English.
     Documents that select their language another way can load a definition file explicitly with
     \cmd{\RegulatoryLoadLanguage}\marg{language}.
-    Adding support for a new language comes down to writing such a file; both of them are printed in
-    \zcref{sec:englishdef,sec:dutchdef}.%
+    Adding support for a new language comes down to writing such a file; the four shipped ones are printed in
+    \zcref{sec:englishdef,sec:dutchdef,sec:germandef,sec:frenchdef}.%
 }{%
     Iedere ondersteunde taal heeft een eigen definitiebestand \texttt{regulatory-\meta{taal}.def},
     vergelijkbaar met de \texttt{fc-\meta{taal}.def} bestanden van \package{fmtcount}.
@@ -1187,8 +1214,8 @@ en / and \aref{ex1-sub:lorem,ex1-sub:lorem2,ex1-sub:lorem3,ex1-sub:lorem4}.
     Een taal zonder definitiebestand valt terug op het Engels.
     Documenten die hun taal op een andere manier kiezen kunnen een definitiebestand expliciet laden met
     \cmd{\RegulatoryLoadLanguage}\marg{taal}.
-    Ondersteuning voor een nieuwe taal toevoegen komt neer op het schrijven van zo'n bestand; beide staan
-    afgedrukt in \zcref{sec:englishdef,sec:dutchdef}.%
+    Ondersteuning voor een nieuwe taal toevoegen komt neer op het schrijven van zo'n bestand; de vier meegeleverde staan
+    afgedrukt in \zcref{sec:englishdef,sec:dutchdef,sec:germandef,sec:frenchdef}.%
 }\\
 
 \noindent
@@ -1283,25 +1310,31 @@ en / and \aref{ex1-sub:lorem,ex1-sub:lorem2,ex1-sub:lorem3,ex1-sub:lorem4}.
 }
 
 \translation{%
-    The definition files of both supported languages follow.
+    The definition files of the four languages this bundle ships follow.
     They are the source a translation starts from, so they are printed here rather than among the modules
-    of \zcref{sec:impl}.%
+    of \zcref{sec:impl}.
+    Two of them are half a language: German and French carry the designations and the citation register
+    that were measured, and not the wording of an internal reference, which was not.%
 }{%
     Een document dat een taal kiest waar deze bundel geen definities voor heeft, krijgt dat één keer te
     horen aan het begin van het document, met de taal erbij. Er faalt in dat geval niets: de verwijzingen
     worden in het Engels verwoord, en dat is ook de enige manier waarop het opvalt\,---\,in een document
     dat in een andere taal geschreven is leest dat gemakkelijk voorbij.
 
-    Hieronder volgen de definitiebestanden van beide ondersteunde talen.
+    Hieronder volgen de definitiebestanden van de vier meegeleverde talen.
     Ze vormen de bron waar een vertaling mee begint, dus staan ze hier en niet tussen de modules van
     \zcref{sec:impl}.
-    De toelichting erin is, net als de broncode, in het Engels gesteld.%
+    De toelichting erin is, net als de broncode, in het Engels gesteld.
+    Twee ervan zijn half: het Duits en het Frans dragen de benamingen en het citeerregister die gemeten
+    zijn, en niet de verwoording van een interne verwijzing, die dat niet is.%
 }
 
 % The language definition files are sources of their own, so that translators do
 % not have to work in a dtx file.
 \DocInput{regulatory-english.def}
 \DocInput{regulatory-dutch.def}
+\DocInput{regulatory-german.def}
+\DocInput{regulatory-french.def}
 \clearpage
 
 \section{Markdown}\label{sec:md}
@@ -1659,7 +1692,7 @@ De volgende begrippen worden in deze overeenkomst gebruikt.
     questions.
     \texttt{make test} typesets every example with every engine this package supports, which is
     \texttt{lualatex} and \texttt{pdflatex}, and needs nothing beyond a \TeX{} installation.
-    \texttt{make conformance} typesets the same examples once per PDF standard and has veraPDF
+    \texttt{make conformance} typesets the same documents once per PDF standard and has veraPDF
     judge the result, which needs Docker; its outcome is kept in the repository as
     \zcref{sec:conformance}, since the validator is not available everywhere this package is
     built. That one is left out of \texttt{make test} for the same reason, and joins it with
@@ -1669,7 +1702,7 @@ De volgende begrippen worden in deze overeenkomst gebruikt.
     vragen.
     \texttt{make test} zet ieder voorbeeld met iedere engine die dit pakket ondersteunt, te weten
     \texttt{lualatex} en \texttt{pdflatex}, en vraagt niets meer dan een \TeX{} installatie.
-    \texttt{make conformance} zet diezelfde voorbeelden één keer per PDF-standaard en laat veraPDF
+    \texttt{make conformance} zet diezelfde documenten één keer per PDF-standaard en laat veraPDF
     er een oordeel over vellen, waarvoor Docker nodig is; de uitkomst daarvan wordt bewaard in
     het pakket zelf als \zcref{sec:conformance}, aangezien de validator niet overal beschikbaar
     is waar dit pakket gebouwd wordt. Om diezelfde reden zit die niet in \texttt{make test}, en
@@ -1702,17 +1735,31 @@ De volgende begrippen worden in deze overeenkomst gebruikt.
     bestand moet er echt staan.%
 }
 
-\subsection{\translation{The example documents}{De voorbeelddocumenten}}\label{sec:testdocs}
 \translation{%
-    Three documents are typeset, of which two exist in both languages.
-    Every one of them is a driver that sets the language, declares the artifacts and loads the
-    definitions, and that leaves the body to a file of its own, so that both language versions
-    share one text:%
+    That a document comes out is the smaller half of what a run establishes. Nearly everything
+    this package gets wrong comes out as a document all the same\,---\,a citation worded in the
+    wrong register, a definition that quietly did not arrive, a label that resolved to nothing.
+    Every suite therefore ends in a set of assertions that read the run back, described in
+    \zcref{sec:checks}, and two of the documents are there to fail.%
 }{%
-    Er worden drie documenten gezet, waarvan twee in beide talen bestaan.
-    Ieder daarvan is een driver die de taal instelt, de artefacten declareert en de definities
-    inlaadt, en die de inhoud overlaat aan een eigen bestand, zodat beide taalversies één tekst
-    delen:%
+    Dat er een document uitkomt is de kleinste helft van wat een run vaststelt. Vrijwel alles
+    wat dit pakket verkeerd kan doen komt er evengoed als document uit\,---\,een verwijzing die
+    in het verkeerde register geschreven is, een definitie die stilzwijgend niet aankwam, een
+    label dat nergens heen wees. Iedere suite eindigt daarom in een reeks controles die de run
+    naleest, beschreven in \zcref{sec:checks}, en twee van de documenten staan er om te falen.%
+}
+
+\subsection{\translation{The test documents}{De testdocumenten}}\label{sec:testdocs}
+\translation{%
+    Five documents are typeset, of which two exist in both languages, so a suite makes seven of
+    them. Every one of them is a driver that sets the language, declares the artifacts and loads
+    the definitions, and that leaves the body to a file of its own, so that both language
+    versions share one text:%
+}{%
+    Er worden vijf documenten gezet, waarvan twee in beide talen bestaan, zodat een suite er
+    zeven maakt. Ieder daarvan is een driver die de taal instelt, de artefacten declareert en de
+    definities inlaadt, en die de inhoud overlaat aan een eigen bestand, zodat beide taalversies
+    één tekst delen:%
 }
 \begin{labeling}{\file{example1-nl.tex}}
     \addtokomafont{labelinglabel}{\ttfamily}
@@ -1741,12 +1788,46 @@ De volgende begrippen worden in deze overeenkomst gebruikt.
         welke in plaats daarvan \file{example.md} leest met \cmd{\markdownInput}, en de
         definities van \file{example1.bib} inlaadt. Deze bestaat alleen in het Nederlands.%
     }
+    \item[sign-example.tex] \translation{%
+        which places the signature fields of \zcref{sec:sign} and has no definitions at all. It
+        is written uncompressed, so that the annotation over a field can be read back out of the
+        PDF file without a PDF tool.%
+    }{%
+        welke de handtekeningvelden van \zcref{sec:sign} plaatst en helemaal geen definities
+        heeft. Het wordt ongecomprimeerd geschreven, zodat de annotatie over een veld zonder
+        PDF-gereedschap uit het PDF-bestand terug te lezen is.%
+    }
+    \item[source-example.tex] \translation{%
+        which loads \file{sources.bib} and cites what is in it in every register of
+        \zcref{sec:sources}. It declares two sources in the document itself as well, so that
+        both routes into the reader are covered.%
+    }{%
+        welke \file{sources.bib} inlaadt en aanhaalt wat daarin staat, in ieder register van
+        \zcref{sec:sources}. Het declareert daarnaast twee bronnen in het document zelf, zodat
+        beide routes de lezer in gedekt zijn.%
+    }
 \end{labeling}
 
 \noindent
 \translation{%
-    What makes them a test rather than three separate documents is the way they point at each
-    other, which is what \zcref{sec:extern} is about.
+    Two more are typeset that have to fail: \file{badsource.tex} loads a bib file with a required
+    field missing, and \file{badsyntax.tex} one with a line the reader does not accept. They are
+    not examples of anything. A reader that skips what it cannot read leaves a citation empty in
+    a document that is otherwise fine, so the guarantee it gives is only worth what its refusal
+    is worth, and that is what these two measure.%
+}{%
+    Er worden er nog twee gezet die juist moeten falen: \file{badsource.tex} laadt een bib-bestand
+    waarin een verplicht veld ontbreekt, en \file{badsyntax.tex} één met een regel die de lezer
+    niet aanvaardt. Het zijn geen voorbeelden van iets. Een lezer die overslaat wat hij niet lezen
+    kan, laat een aanhaling leeg in een document dat er verder goed uitziet, dus de garantie die
+    hij geeft is alleen zoveel waard als zijn weigering\,---\,en dat is wat deze twee meten.%
+}
+
+\noindent
+\translation{%
+    What makes the first three a test rather than three separate documents is the way they point
+    at each other, which is what \zcref{sec:extern} is about. The other two stand on their own
+    and are drawn nowhere below.
     \file{example1-nl} names \file{example2-nl} with \cmd{\refdocument}, so it can refer to its
     articles without attaching it.
     \file{example2-nl} names \file{example1-nl} with \cmd{\masterdocument} instead, which
@@ -1757,8 +1838,9 @@ De volgende begrippen worden in deze overeenkomst gebruikt.
     \file{example1-nl} finally attaches a file that is not a PDF at all with
     \cmd{\attachdocument}, which is the case the PDF standards disagree about most:%
 }{%
-    Wat ze tot een test maakt in plaats van drie losse documenten is de manier waarop ze naar
-    elkaar wijzen, waar \zcref{sec:extern} over gaat.
+    Wat de eerste drie tot een test maakt in plaats van drie losse documenten is de manier waarop
+    ze naar elkaar wijzen, waar \zcref{sec:extern} over gaat. De andere twee staan op zichzelf en
+    zijn hieronder niet getekend.
     \file{example1-nl} noemt \file{example2-nl} met \cmd{\refdocument}, zodat het naar diens
     artikelen kan verwijzen zonder het bij te voegen.
     \file{example2-nl} noemt \file{example1-nl} juist met \cmd{\masterdocument}, wat daarnaast
@@ -1815,11 +1897,90 @@ De volgende begrippen worden in deze overeenkomst gebruikt.
     niet getekend is.%
 }
 
+\subsection{\translation{What the suite reads back}{Wat de suite naleest}}\label{sec:checks}
+\translation{%
+    Every engine suite ends in six sets of assertions, each of which prints what it counted and
+    stops the build when it is wrong. They are written the other way round from a test that
+    checks a result: each of them exists because something once failed without failing, and its
+    job is to make that same silence audible next time. Every one of them has been broken on
+    purpose to see it bite\,---\,an assertion that has never failed has not established
+    anything yet.%
+}{%
+    Iedere engine-suite eindigt in zes reeksen controles, die elk opschrijven wat ze geteld
+    hebben en de bouw stoppen zodra het niet klopt. Ze zijn andersom geschreven dan een test die
+    een uitkomst nakijkt: ieder van hen bestaat omdat er ooit iets faalde zonder te falen, en
+    zijn taak is om diezelfde stilte de volgende keer hoorbaar te maken. Alle zes zijn expres
+    gebroken om te zien dat ze bijten\,---\,een controle die nooit gefaald heeft, heeft nog
+    niets vastgesteld.%
+}
+\begin{labeling}{\texttt{source-checks}}
+    \addtokomafont{labelinglabel}{\ttfamily}
+    \item[ref-checks] \translation{%
+        counts the references that resolved to nothing and the labels that were defined twice,
+        over every document rather than only the one being worked on: a label with a space in it
+        led nowhere while every document then in the suite used labels without one.%
+    }{%
+        telt de verwijzingen die nergens heen wezen en de labels die twee keer gedefinieerd
+        werden, over ieder document en niet alleen over dat waaraan gewerkt wordt: een label met
+        een spatie erin wees nergens heen terwijl ieder document dat toen in de suite zat labels
+        zonder spatie gebruikte.%
+    }
+    \item[log-checks] \translation{%
+        allows the package no warning at all. What this bundle says about a document it has no
+        reason to complain about is a defect, and a warning nobody reads is a warning that was
+        not written.%
+    }{%
+        staat het pakket geen enkele waarschuwing toe. Wat dit pakket zegt over een document
+        waarover het niets te klagen heeft is een defect, en een waarschuwing die niemand leest
+        is een waarschuwing die niet geschreven is.%
+    }
+    \item[md-checks] \translation{%
+        reads the intermediate file the Markdown conversion writes and requires that no raw
+        \TeX{} survived in it, and that the syntax extension of \zcref{sec:syntax} was found. A
+        missing extension leaves an identifier standing as text, which reads as a typing error
+        and not as a broken build.%
+    }{%
+        leest het tussenbestand dat de Markdown-omzetting schrijft en eist dat er geen rauwe
+        \TeX{} in overleefde, en dat de syntaxuitbreiding van \zcref{sec:syntax} gevonden is. Een
+        ontbrekende uitbreiding laat een identifier als tekst staan, wat leest als een typefout
+        en niet als een kapotte bouw.%
+    }
+    \item[sign-checks] \translation{%
+        counts the signature annotations in the PDF file itself. The box under a field is drawn
+        by \TeX{} and shows up whatever happens; what makes it a field is invisible on paper and
+        only shows when somebody tries to sign.%
+    }{%
+        telt de handtekeningannotaties in het PDF-bestand zelf. Het kader onder een veld wordt
+        door \TeX{} getekend en komt er hoe dan ook uit; wat het tot een veld maakt is op papier
+        onzichtbaar en blijkt pas wanneer iemand probeert te tekenen.%
+    }
+    \item[source-checks] \translation{%
+        reads back what the reader of bib files read, field by field, and the wording of
+        thirty-eight citations word for word. A citation in the wrong register fails nowhere; it
+        simply stands there wrong. The same target then typesets the two documents that have to
+        fail and stops if either of them succeeded.%
+    }{%
+        leest terug wat de lezer van bib-bestanden gelezen heeft, veld voor veld, en de
+        formulering van achtendertig aanhalingen woord voor woord. Een aanhaling in het verkeerde
+        register faalt nergens; hij staat er gewoon verkeerd. Datzelfde doel zet daarna de twee
+        documenten die moeten falen en stopt zodra een van beide toch slaagde.%
+    }
+    \item[html-checks] \translation{%
+        counts what has to survive the conversion of \zcref{sec:html}: sections, headings,
+        paragraph items, definitions of both routes and the two list styles. Those disappear
+        without an error, since a lost configuration produces plain text and not a failure.%
+    }{%
+        telt wat de omzetting van \zcref{sec:html} moet overleven: secties, koppen, leden,
+        definities uit beide routes en de twee lijststijlen. Die verdwijnen zonder foutmelding,
+        want een verloren configuratie levert platte tekst op en geen fout.%
+    }
+\end{labeling}
+
 \subsection{\translation{PDF conformance}{PDF-conformiteit}}\label{sec:conformance}
 \translation{%
     A regulatory document tends to be archived, so it is worth knowing which PDF standards it
     can carry.
-    The examples above are typeset once more for every case below, with nothing changed but a
+    The documents above are typeset once more for every case below, with nothing changed but a
     \cmd{\DocumentMetadata} declared in front of the document on the commandline, and veraPDF
     decides.
     The \texttt{expected} column is what this package claims: \texttt{pass} has to validate,
@@ -1829,7 +1990,7 @@ De volgende begrippen worden in deze overeenkomst gebruikt.
 }{%
     Een regulatoir document wordt doorgaans gearchiveerd, dus is het de moeite waard te weten
     welke PDF-standaarden het kan dragen.
-    De voorbeelden hierboven worden voor ieder geval hieronder nog een keer gezet, waarbij er
+    De documenten hierboven worden voor ieder geval hieronder nog een keer gezet, waarbij er
     niets verandert behalve een \cmd{\DocumentMetadata} die op de commandline vóór het document
     gedeclareerd wordt, en veraPDF velt het oordeel.
     De kolom \texttt{expected} is wat dit pakket claimt: \texttt{pass} moet valideren,
@@ -1859,7 +2020,12 @@ De volgende begrippen worden in deze overeenkomst gebruikt.
     \textbf{PDF/A-2a} and \textbf{PDF/A-4} are out of reach for a \emph{tagged} document:
     tagging hangs a pair of HTML files on the catalog as associated files, and both standards
     require every embedded file to be a PDF/A itself. A tagged document can be PDF/A-3 or
-    PDF/A-4f, both of which allow any file type.%
+    PDF/A-4f, both of which allow any file type.
+
+    That difference is measured rather than read out of a standard: the same document with the
+    same attachment appears twice in the table, failing PDF/A-2b on rule 6.8-5 and passing
+    PDF/A-4f. Anything that is not a PDF therefore decides the profile, and it is worth knowing
+    which one before a document is issued rather than after.%
 }{%
     Twee claims die een document geschreven met dit pakket niet kan maken.
     \textbf{PDF/A-1} verbiedt ingesloten bestanden categorisch, dus ieder document dat iets
@@ -1867,7 +2033,12 @@ De volgende begrippen worden in deze overeenkomst gebruikt.
     \textbf{PDF/A-2a} en \textbf{PDF/A-4} vallen af voor een \emph{getagd} document: taggen hangt
     een tweetal HTML-bestanden als associated files aan de catalog, en beide standaarden eisen
     dat ieder ingesloten bestand zelf een PDF/A is. Een getagd document kan wel PDF/A-3 of
-    PDF/A-4f zijn, welke beide ieder bestandstype toelaten.%
+    PDF/A-4f zijn, welke beide ieder bestandstype toelaten.
+
+    Dat verschil is gemeten en niet uit een standaard gelezen: hetzelfde document met dezelfde
+    bijlage staat twee keer in de tabel, waar het PDF/A-2b faalt op regel 6.8-5 en PDF/A-4f
+    haalt. Alles wat geen PDF is bepaalt dus het profiel, en dat is de moeite waard te weten
+    vóórdat een document uitgegeven wordt in plaats van erna.%
 }\\
 
 \noindent
@@ -1899,7 +2070,7 @@ De volgende begrippen worden in deze overeenkomst gebruikt.
 }
 \clearpage
 
-\subsection{\translation{Examples}{Voorbeelden}}\label{sec:example}
+\subsection{\translation{The test files}{De testbestanden}}\label{sec:example}
 \lstset{numbers=left,frame=single}
 \lstinputlisting[style=tex,numbers=left,caption={example1.tex},label={code:example1}]{example1.tex}
 \exampleresult{example1-\translation{en}{nl}}
@@ -1917,7 +2088,16 @@ De volgende begrippen worden in deze overeenkomst gebruikt.
 \exampleresult{example1-\translation{en}{nl}}
 
 \lstinputlisting[style=bib,numbers=left,caption={example2.bib}]{example2.bib}
-\exampleresult{example2-\translation{en}{nl}}
+\exampleresult{example2-\translation{en}{nl}}\clearpage
+
+\lstinputlisting[style=tex,numbers=left,caption={sign-example.tex},label={code:sign-example}]{sign-example.tex}
+\exampleresult{sign-example}\clearpage
+
+\lstinputlisting[style=tex,numbers=left,caption={source-example.tex},label={code:source-example}]{source-example.tex}
+\exampleresult{source-example}
+
+\lstinputlisting[style=bib,numbers=left,caption={sources.bib}]{sources.bib}
+\exampleresult{source-example}
 \clearpage
 
 \section{\translation{Implementation}{Implementatie}}\label{sec:impl}

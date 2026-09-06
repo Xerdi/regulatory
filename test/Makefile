@@ -208,7 +208,24 @@ SOURCE_EXPECT = 'SRC bw6 type = regulation' \
                 'CITE de-voluit = Artikel~6~Absatz~1~Buchstabe~a~der Datenschutz-Grundverordnung' \
                 'CITE de-verkort = Artikel~6~Absatz~1~Buchstabe~a~DSGVO' \
                 'CITE fr-voluit = article~6,~paragraphe~1,~point~a),~du règlement général sur la protection des données' \
-                'CITE fr-verkort = article~6,~paragraphe~1,~point~a),~RGPD'
+                'CITE fr-verkort = article~6,~paragraphe~1,~point~a),~RGPD' \
+                'CITE lijst-nl = artikel~3.126,~eerste lid,~onderdelen~c~en~d,~van~de Wet inkomstenbelasting 2001' \
+                'CITE bereik-nl = artikelen~162~tot~en~met~164,~van~Boek 6 van het Burgerlijk Wetboek' \
+                'CITE bereik-verkort = art.~6:162-164~BW' \
+                'CITE lijst-eu = artikel~6,~lid~1,~punten~c)~en~e),~van~de Algemene verordening gegevensbescherming' \
+                'CITE lijst-de = Artikel~6~Absatz~1~Buchstaben~c~und~e~der Datenschutz-Grundverordnung' \
+                'CITE bereik-de = Artikel~6~Absatz~1~Buchstaben~a~bis~c~der Datenschutz-Grundverordnung' \
+                'CITE lijst-fr = article~6,~paragraphes~1, 2~et~4,~du règlement général sur la protection des données' \
+                'CITE en-voluit = point~(a) of Article~6(1) of the General Data Protection Regulation' \
+                'CITE en-verkort = point~(a) of Article~6(1) of GDPR' \
+                'CITE en-artikel = Article~6 of the General Data Protection Regulation' \
+                'CITE en-lid-los = point~(e) of paragraph~1 of the General Data Protection Regulation' \
+                'CITE en-lijst = points~(e)~and~(f) of Article~58(1) of the General Data Protection Regulation' \
+                'CITE en-bereik = Articles~12~to~15 of the General Data Protection Regulation' \
+                'CITE en-bereik-punten = points~(a)~to~(c) of Article~58(2) of the General Data Protection Regulation' \
+                'CITE en-bereik-leden = paragraphs~1~to~3 of the General Data Protection Regulation' \
+                'CITE en-leden = Article~6(1), (2)~and~(3) of the General Data Protection Regulation' \
+                'CITE en-verdrag = Article~6 of the Treaty on the Functioning of the European Union'
 
 source-checks: source-example.pdf
 	@missing=0; read_back=0; \

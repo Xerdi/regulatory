@@ -42,6 +42,11 @@ TAGGED='testphase={phase-III,title}'
 # files, and both A-2 and A-4 require every embedded file to be a PDF/A itself.
 # A tagged document can therefore only be A-4f or A-3, which allow any file type,
 # and never A-2a or A-4.
+#
+# The same document is put through A-2b and A-4f to have the difference between
+# the two on record rather than read out of a standard: a bib file inside the
+# document fails the first on rule 6.8-5 and passes the second, which is what
+# makes A-4f the profile to carry anything that is not a PDF.
 CASES="
 a2b|md-example|pdfstandard=A-2b|2b:pass
 a4|md-example|pdfstandard=A-4|4:pass
@@ -49,6 +54,7 @@ a4f-ua2|example2-nl|pdfstandard=A-4f,pdfstandard=UA-2,$TAGGED|4f:pass,ua2:pass
 a3a-ua1|example2-nl|pdfstandard=A-3a,pdfstandard=UA-1,$TAGGED|3a:pass,ua1:pass
 a3b|example1-nl|pdfstandard=A-3b|3b:xfail
 a2b-embedded-nonpdf|example1-nl|pdfstandard=A-2b|2b:fail
+a4f-embedded-nonpdf|example1-nl|pdfstandard=A-4f|4f:pass
 a2b-signed|sign-example|pdfstandard=A-2b|2b:xfail
 "
 
