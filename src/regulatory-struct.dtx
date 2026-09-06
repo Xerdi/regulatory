@@ -467,20 +467,38 @@
 % document itself are only known once \package{babel} or \package{polyglossia} is loaded, which is why this
 % runs at the very end of the preamble. Documents using another language selection mechanism can call
 % \cmd{\RegulatoryLoadLanguage} in their preamble instead.
+%
+% Three places are asked, because no single one of them is right. \cmd{\bbl@loaded} is the list
+% \package{babel} keeps, and it is empty under the \texttt{ini} based loading that \texttt{provide=*}
+% selects; \cmd{\xpg@loaded} is the same list for \package{polyglossia}; and \cmd{\languagename} is the one
+% language that is current, which is correct in every case but names only one. Measured on the same
+% document with only the \package{babel} line differing: the classic form gave \enquote{Artikel 1, eerste
+% lid} and the \texttt{ini} form gave \enquote{Article 1(1)}, because the list was empty and Dutch was
+% therefore never loaded. Nothing failed, and the reference was simply worded in another language than the
+% document.
 %    \begin{macrocode}
-\newcommand\regulatory@load@languages{%
-    \RegulatoryLoadLanguage{english}%
-    \@ifundefined{bbl@loaded}{}{%
-        \@for\regulatory@lang:=\bbl@loaded\do{%
-            \RegulatoryLoadLanguage{\regulatory@lang}%
-        }%
-    }%
-    \@ifundefined{xpg@loaded}{}{%
-        \@for\regulatory@lang:=\xpg@loaded\do{%
-            \RegulatoryLoadLanguage{\regulatory@lang}%
-        }%
-    }%
-}
+\ExplSyntaxOn
+\clist_new:N \g_regulatory_languages_clist
+
+\cs_new_protected:Npn \regulatory@collect@languages
+  {
+    \clist_gset:Nx \g_regulatory_languages_clist
+      {
+        \cs_if_exist_use:cF { bbl@loaded } { } ,
+        \cs_if_exist_use:cF { xpg@loaded } { } ,
+        \cs_if_exist_use:cF { languagename } { }
+      }
+    \clist_gremove_duplicates:N \g_regulatory_languages_clist
+  }
+
+\cs_new_protected:Npn \regulatory@load@languages
+  {
+    \regulatory@collect@languages
+    \RegulatoryLoadLanguage { english }
+    \clist_map_inline:Nn \g_regulatory_languages_clist
+      { \RegulatoryLoadLanguage { ##1 } }
+  }
+\ExplSyntaxOff
 \AddToHook{begindocument/before}{\regulatory@load@languages}
 %    \end{macrocode}
 % \end{macro}
@@ -496,7 +514,9 @@
 % asked for a language that is only used for a quotation. What it costs is only visible in a reference: the
 % wording falls back on English, so a Dutch document that never declared Dutch reads
 % \enquote{Article 1(1)} in the middle of its own sentences. The languages are listed rather than counted,
-% since the one that is missing is the point.
+% since the one that is missing is the point. They are the same three sources the loader reads, which
+% matters more than it looks: a check that asked \cmd{\bbl@loaded} alone would share the blind spot of the
+% thing it is meant to watch, and stay silent in exactly the case it exists for.
 %
 % Under \package{tex4ht}, the configuration of this bundle is what turns an article into a section with a
 % heading. Without it the conversion still succeeds and produces neither: a heading becomes a paragraph of
@@ -508,17 +528,19 @@
 % A document that is converted as well as typeset declares its \cmd{\DocumentMetadata} conditionally, which
 % is what the examples of this bundle do.
 %    \begin{macrocode}
+\ExplSyntaxOn
+\cs_new:Npn \regulatory@languages { \clist_use:Nn \g_regulatory_languages_clist { , } }
+\ExplSyntaxOff
+
 \newcommand\regulatory@checkenvironment{%
     \def\regulatory@missinglangs{}%
-    \@ifundefined{bbl@loaded}{}{%
-        \@for\regulatory@lang:=\bbl@loaded\do{%
-            \@ifundefined{ver@regulatory-\regulatory@lang.def}{%
-                \edef\regulatory@missinglangs{%
-                    \regulatory@missinglangs
-                    \ifx\regulatory@missinglangs\@empty\else, \fi
-                    \regulatory@lang}%
-            }{}%
-        }%
+    \@for\regulatory@lang:=\regulatory@languages\do{%
+        \@ifundefined{ver@regulatory-\regulatory@lang.def}{%
+            \edef\regulatory@missinglangs{%
+                \regulatory@missinglangs
+                \ifx\regulatory@missinglangs\@empty\else, \fi
+                \regulatory@lang}%
+        }{}%
     }%
     \ifx\regulatory@missinglangs\@empty\else%
         \PackageWarning{regulatory}{%
