@@ -414,8 +414,9 @@
 %     \item[\texttt{onderdeel}] the lettered point.
 %     \item[\texttt{onder}] the level below that, which the standards call a subonderdeel.
 %     \item[\texttt{separator}] what stands between the parts: a comma in full, a space when shortened.
-%     \item[\texttt{determiner}] the article a name takes when the entry does not say, which is a
-%         genitive in the registers of the Union: \enquote{der Verordnung}, \enquote{du règlement}.
+%     \item[\texttt{determiner}] the article a name takes when neither the entry nor the kind of the
+%         instrument says, which is a genitive in the registers of the Union: \enquote{der Verordnung},
+%         \enquote{du règlement}.
 %     \item[\texttt{van}] what stands between the last part and the instrument: \enquote{van} when written
 %         out in full, nothing when shortened.
 %     \item[\texttt{source}] the instrument itself, named from the fields of its entry.
@@ -564,6 +565,18 @@
 \newcommand\regulatory@src@onderdeel@point[2]{\def#1{point~#2)}}
 %    \end{macrocode}
 %
+% Which article a name takes is not a property of the register but of the instrument, and the entry
+% already says which instrument it is. Counted in the same regulation: \enquote{de la directive} sixteen
+% times against \enquote{du règlement} seven, so a single default for French is wrong more often than it
+% is right, and \enquote{du directive} is not a matter of style but of grammar. German is the same story
+% one step further: \enquote{der} carries Verordnung and Richtlinie but not Beschluss or Vertrag, which
+% take \enquote{des}.
+%
+% So the determiner is looked up by the kind of the instrument, and the \texttt{determiner} field of an
+% entry overrides that for the case no table can know.
+%    \begin{macrocode}
+%    \end{macrocode}
+%
 % The pieces the registers above are built from. A number carries the book of the civil code in the
 % shortened form and leaves it to the name of the instrument in the full one, which is what
 % \enquote{artikel 96 \dots{} van Boek 6 van het Burgerlijk Wetboek} against \enquote{art. 6:96 BW} comes
@@ -573,6 +586,14 @@
 \newcommand\regulatory@src@number@colon[3]{%
     \ifthenelse{\equal{#2}{}}{\def#1{#3}}{\def#1{#2:#3}}%
 }
+%    \end{macrocode}
+%
+% The ordinal keeps an ordinary space between the number and the word it belongs to. The regulation binds
+% a label to its number with a space that does not break, but it writes its numbers after the label,
+% \texttt{lid 6}, and never as an ordinal: \emph{zesde lid} does not occur in it once. What binds
+% \emph{zesde} to \emph{lid} in the national register is therefore not measured, and this bundle does not
+% decide it.
+%    \begin{macrocode}
 \newcommand\regulatory@src@lid@ordinal[2]{%
     \storeordinalstringnum{regsrc}{#2}%
     \expandafter\let\expandafter\regulatory@src@ord\csname @fcs@regsrc\endcsname
@@ -604,11 +625,68 @@
 }
 
 \ExplSyntaxOn
-\cs_new:Npn \regulatory@src@lidwoord #1
+\prop_new:N \g__regulatory_src_determiner_prop
+\tl_new:N \l__regulatory_src_det_tl
+\tl_new:N \l__regulatory_src_kind_tl
+\cs_generate_variant:Nn \str_lowercase:n { V }
+
+\NewDocumentCommand \newsourcedeterminer { m m m }
   {
-    \tl_if_blank:eTF { \srcfield { #1 } { determiner } }
-      { \regulatory@src@defdet } { \srcfield { #1 } { determiner } }
+    \tl_set:Nx \l__regulatory_src_kind_tl { #1 / \str_lowercase:n { #2 } }
+    \prop_gput:NVn \g__regulatory_src_determiner_prop \l__regulatory_src_kind_tl { #3 }
   }
+%    \end{macrocode}
+%
+% Worked out before the citation is built rather than while it is: the entry decides first, then the kind
+% of the instrument, then the default of the register. Doing it here rather than in an expandable macro
+% keeps the lookup a plain lookup.
+%    \begin{macrocode}
+\cs_new_protected:Npn \regulatory@src@setdet #1
+  {
+    \tl_set:Nx \l__regulatory_src_det_tl { \srcfield { #1 } { determiner } }
+    \tl_if_blank:VT \l__regulatory_src_det_tl
+      {
+        \tl_set:Nx \l__regulatory_src_kind_tl { \srcfield { #1 } { kind } }
+        \tl_set:Nx \l__regulatory_src_kind_tl
+          {
+            \regulatory@src@reg /
+            \str_lowercase:V \l__regulatory_src_kind_tl
+          }
+        \tl_set:Nx \l__regulatory_src_det_tl
+          {
+            \exp_args:NNV \prop_item:Nn
+              \g__regulatory_src_determiner_prop \l__regulatory_src_kind_tl
+          }
+      }
+    \tl_if_blank:VT \l__regulatory_src_det_tl
+      { \tl_set:Nx \l__regulatory_src_det_tl { \regulatory@src@defdet } }
+    \tl_set_eq:NN \regulatory@src@thisdet \l__regulatory_src_det_tl
+  }
+
+\cs_new:Npn \regulatory@src@lidwoord #1 { \regulatory@src@thisdet }
+\ExplSyntaxOff
+\newsourcedeterminer{nl}{verordening}{de}
+\newsourcedeterminer{nl}{richtlijn}{de}
+\newsourcedeterminer{nl}{wet}{de}
+\newsourcedeterminer{nl}{wetboek}{het}
+\newsourcedeterminer{nl}{besluit}{het}
+\newsourcedeterminer{nl}{verdrag}{het}
+\newsourcedeterminer{nl_eu}{verordening}{de}
+\newsourcedeterminer{nl_eu}{richtlijn}{de}
+\newsourcedeterminer{nl_eu}{besluit}{het}
+\newsourcedeterminer{nl_eu}{verdrag}{het}
+\newsourcedeterminer{de_eu}{verordnung}{der}
+\newsourcedeterminer{de_eu}{richtlinie}{der}
+\newsourcedeterminer{de_eu}{empfehlung}{der}
+\newsourcedeterminer{de_eu}{beschluss}{des}
+\newsourcedeterminer{de_eu}{vertrag}{des}
+\newsourcedeterminer{fr_eu}{règlement}{du}
+\newsourcedeterminer{fr_eu}{traité}{du}
+\newsourcedeterminer{fr_eu}{directive}{de~la}
+\newsourcedeterminer{fr_eu}{décision}{de~la}
+\newsourcedeterminer{fr_eu}{recommandation}{de~la}
+\ExplSyntaxOn
+
 \cs_new:Npn \regulatory@src@naam #1
   {
     \tl_if_blank:eTF { \srcfield { #1 } { shortname } }
@@ -685,6 +763,7 @@
             {\regulatory@src@sep}%
         \edef\regulatory@src@defdet{%
             \regsrc@get{\regulatory@src@reg}{\regulatory@src@thissystem}{determiner}}%
+        \regulatory@src@setdet{#3}%
         \let\regulatory@src@parts\@empty
         \gdef\regulatory@src@last{}%
         \ifx\regulatory@src@artikel\@empty\else
@@ -692,7 +771,7 @@
             \@@fmt\regulatory@src@piece{\srcfield{#3}{book}}{\regulatory@src@artikel}%
             \protected@edef\regulatory@src@piece{%
                 \regsrc@get{\regulatory@src@reg}{\regulatory@src@thissystem}{article}%
-                \space\regulatory@src@piece}%
+                ~\regulatory@src@piece}%
             \expandafter\regulatory@src@part\expandafter{\regulatory@src@piece}%
         \fi
         \ifx\regulatory@src@lid\@empty\else

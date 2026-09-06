@@ -199,16 +199,16 @@ SOURCE_EXPECT = 'SRC bw6 type = regulation' \
                 'SRC bw6 leeg = []' \
                 'SRC avg bestaat' \
                 'SRC onbekend ontbreekt' \
-                'CITE nl-voluit = artikel 96,~tweede lid,~onderdeel~c,~van~Boek 6 van het Burgerlijk Wetboek' \
-                'CITE nl-verkort = art. 6:96~lid~2~onder~c~BW' \
-                'CITE eu-voluit = artikel 6,~lid~1,~punt~a),~van~de Algemene verordening gegevensbescherming' \
-                'CITE eu-verkort = art. 6~lid~1~punt~a)~AVG' \
+                'CITE nl-voluit = artikel~96,~tweede lid,~onderdeel~c,~van~Boek 6 van het Burgerlijk Wetboek' \
+                'CITE nl-verkort = art.~6:96~lid~2~onder~c~BW' \
+                'CITE eu-voluit = artikel~6,~lid~1,~punt~a),~van~de Algemene verordening gegevensbescherming' \
+                'CITE eu-verkort = art.~6~lid~1~punt~a)~AVG' \
                 'CITE bron-voluit = de Algemene verordening gegevensbescherming' \
                 'CITE bron-verkort = AVG' \
-                'CITE de-voluit = Artikel 6~Absatz~1~Buchstabe~a~der Datenschutz-Grundverordnung' \
-                'CITE de-verkort = Artikel 6~Absatz~1~Buchstabe~a~DSGVO' \
-                'CITE fr-voluit = article 6,~paragraphe~1,~point~a),~du règlement général sur la protection des données' \
-                'CITE fr-verkort = article 6,~paragraphe~1,~point~a),~RGPD'
+                'CITE de-voluit = Artikel~6~Absatz~1~Buchstabe~a~der Datenschutz-Grundverordnung' \
+                'CITE de-verkort = Artikel~6~Absatz~1~Buchstabe~a~DSGVO' \
+                'CITE fr-voluit = article~6,~paragraphe~1,~point~a),~du règlement général sur la protection des données' \
+                'CITE fr-verkort = article~6,~paragraphe~1,~point~a),~RGPD'
 
 source-checks: source-example.pdf
 	@missing=0; read_back=0; \
