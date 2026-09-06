@@ -1121,6 +1121,87 @@ en / and \aref{ex1-sub:lorem,ex1-sub:lorem2,ex1-sub:lorem3,ex1-sub:lorem4}.
 }
 \clearpage
 
+\section{\translation{External sources}{Externe bronnen}}\label{sec:sources}
+\translation{%
+    A regulatory document cites instruments that are not this document: a statute, a regulation of the
+    Union. \package{regulatory-sources} holds the ones a document cites, so that the wording of a citation
+    is a property of the document rather than of the sentence it happens to stand in.
+
+    This module reads and holds; the wording of a citation is the next module and is not here yet.%
+}{%
+    Een regulatoir document haalt instrumenten aan die dit document niet zijn: een wet, een verordening
+    van de Unie. \package{regulatory-sources} houdt de bronnen bij die een document aanhaalt, zodat de
+    bewoording van een verwijzing een eigenschap van het document is en niet van de zin waar hij toevallig
+    in staat.
+
+    Deze module leest en bewaart; de bewoording van een verwijzing is de volgende module en zit er nog
+    niet in.%
+}\\
+
+\noindent
+\DescribeMacro{\loadsources\\\marg{file}}
+\translation{%
+    Reads \meta{file}\texttt{.bib}. The reader is this module's own, so that a document needs no second
+    program for a handful of records, and it accepts the shape a \file{bib} file has when a person writes
+    it: an entry opens with \texttt{@}\meta{type}\texttt{\{}\meta{key}\texttt{,} on a line of its own, a
+    field reads \meta{name}~\texttt{= \{}\meta{value}\texttt{\},} on a line of its own, the entry closes
+    with a brace of its own, and a line that is empty or starts with \texttt{\%} is a comment. A line that
+    is none of those stops the run and names the file and the line.%
+}{%
+    Leest \meta{bestand}\texttt{.bib}. De lezer is van deze module zelf, zodat een document voor een
+    handvol records geen tweede programma nodig heeft, en hij accepteert de vorm die een \file{bib}
+    bestand heeft wanneer een mens hem schrijft: een entry opent met
+    \texttt{@}\meta{type}\texttt{\{}\meta{sleutel}\texttt{,} op een eigen regel, een veld luidt
+    \meta{naam}~\texttt{= \{}\meta{waarde}\texttt{\},} op een eigen regel, de entry sluit met een eigen
+    accolade, en een lege regel of een regel die met \texttt{\%} begint is commentaar. Een regel die geen
+    van die vier is stopt de run, met het bestand en het regelnummer erbij.%
+}
+\begin{lstlisting}[style=tex]
+@regeling{bw6,
+  citeertitel = {Burgerlijk Wetboek},
+  afkorting   = {BW},
+  boek        = {6},
+  bwbid       = {BWBR0005289},
+  geldig      = {2024-01-01},
+}
+\end{lstlisting}
+
+\noindent
+\DescribeMacro{\newsource\\\marg{key}\\\marg{type}\\\marg{fields}}
+\translation{%
+    Declares one source in the document itself, which is the route that needs no file at all. It ends in
+    the same store as a line read from a file, so nothing downstream can tell the two apart.%
+}{%
+    Declareert één bron in het document zelf, de route die helemaal geen bestand nodig heeft. Hij komt in
+    dezelfde opslag terecht als een regel uit een bestand, dus verderop is het verschil niet te zien.%
+}\\
+
+\noindent
+\DescribeMacro{\newsourcetype\\\marg{type}\\\marg{required fields}}
+\translation{%
+    Declares a type and the fields an entry of it cannot do without. Two are declared already:
+    \texttt{regeling}, which needs a \texttt{citeertitel}, and \texttt{euhandeling}, which needs a
+    \texttt{soort} and a \texttt{nummer}. A source that misses one of them stops the run, which is what
+    lets everything downstream read a field without asking whether it is there.%
+}{%
+    Declareert een type en de velden waar een entry van dat type niet zonder kan. Er zijn er twee
+    gedeclareerd: \texttt{regeling}, dat een \texttt{citeertitel} nodig heeft, en \texttt{euhandeling},
+    dat een \texttt{soort} en een \texttt{nummer} nodig heeft. Een bron die er één mist stopt de run, en
+    dat is precies wat alles verderop toestaat een veld te lezen zonder te vragen of het er is.%
+}\\
+
+\noindent
+\DescribeMacro{\srcfield\\\marg{key}\\\marg{field}}
+\DescribeMacro{\srctype\\\marg{key}}
+\DescribeMacro{\ifsourceexists\\\marg{key}\\\marg{true}\\\marg{false}}
+\translation{%
+    Read what was declared. A value is data and not \TeX{}: it comes back as it stands in the file.%
+}{%
+    Lezen wat er gedeclareerd is. Een waarde is data en geen \TeX{}: hij komt terug zoals hij in het
+    bestand staat.%
+}
+\clearpage
+
 \section{\translation{Language Support}{Taalondersteuning}}\label{sec:lang}
 \translation{%
     Initially, this package only provided support for Dutch.
@@ -1696,6 +1777,7 @@ en / and \aref{ex1-sub:lorem,ex1-sub:lorem2,ex1-sub:lorem3,ex1-sub:lorem4}.
 \DocInput{regulatory-attachments.dtx}
 \DocInput{regulatory-md.dtx}
 \DocInput{regulatory-sign.dtx}
+\DocInput{regulatory-sources.dtx}
 % The syntax extension is read by markdown rather than by TeX, so it is a Lua
 % source of its own, documented from its own comments with comment2tex.
 \includelua{../src/regulatory-syntax.lua}

@@ -1,0 +1,81 @@
+%% source-example.tex
+%% Copyright 2026 E. Nijenhuis
+%
+% This work may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License, either version 1.3c
+% of this license or (at your option) any later version.
+% The latest version of this license is in
+% http://www.latex-project.org/lppl.txt
+% and version 1.3c or later is part of all distributions of LaTeX
+% version 2005/12/01 or later.
+%
+% This work has the LPPL maintenance status ‘maintained’.
+%
+% The Current Maintainer of this work is E. Nijenhuis.
+%
+% This work consists of the files regulatory.ins,
+% regulatory-struct.dtx, regulatory-ref.dtx,
+% regulatory-defs.dtx, regulatory-attachments.dtx,
+% regulatory-md.dtx,
+% regulatory-html.dtx,
+% regulatory-english.def, regulatory-dutch.def,
+% regulatory-syntax.lua,
+% regulatory.tex, regulatory-preamble.tex,
+% regulatory-nl.tex, regulatory-en.tex,
+% example1.bib, example2.bib,
+% example1-nl.tex, example2-nl.tex,
+% example1-en.tex, example2-en.tex,
+% md-example.tex, example.md,
+% and the derived files regulatory.sty, regulatory-struct.sty,
+% regulatory-defs.sty, regulatory-ref.sty,
+% regulatory-attachments.sty, regulatory-md.sty
+% and regulatory.4ht.
+\IfDocumentMetadataTF{}{\DocumentMetadata{}}
+\documentclass[12pt,dutch]{article}
+\usepackage{babel}
+\usepackage{regulatory}
+
+\newcommand\translation[2]{#2}
+
+\loadsources{sources}
+% De derde route: een bron die in het document zelf staat, zonder bestand.
+\newsource{uavg}{regeling}{%
+    citeertitel = Uitvoeringswet Algemene verordening gegevensbescherming,
+    afkorting = UAVG%
+}
+
+\hypersetup{pdftitle={Voorbeeld Bronnen}}
+
+% Wat de suite leest. Een veld dat verkeerd is ingelezen valt in de PDF niet op,
+% dus wordt het hier genoemd waar een controle erbij kan.
+\newcommand\report[2]{\typeout{SRC #1 #2 = \srcfield{#1}{#2}}}
+
+\begin{document}
+    \begin{center}
+        \Huge Voorbeeld Bronnen
+    \end{center}
+
+    \typeout{SRC bw6 type = \srctype{bw6}}
+    \report{bw6}{citeertitel}
+    \report{bw6}{afkorting}
+    \report{bw6}{boek}
+    \report{bw6}{bwbid}
+    \report{bw6}{geldig}
+    \typeout{SRC avg type = \srctype{avg}}
+    \report{avg}{roepnaam}
+    \report{avg}{afkorting}
+    \report{avg}{pb}
+    \report{uavg}{citeertitel}
+    \typeout{SRC bw6 leeg = [\srcfield{bw6}{ditveldbestaatniet}]}
+    \ifsourceexists{avg}{\typeout{SRC avg bestaat}}{\typeout{SRC avg ontbreekt}}
+    \ifsourceexists{onbekend}{\typeout{SRC onbekend bestaat}}{\typeout{SRC onbekend ontbreekt}}
+
+    \article{Bronnen}\label{art:bronnen}
+    \begin{paras}
+        \item \label{lid:regeling} \srcfield{bw6}{citeertitel} (\srcfield{bw6}{afkorting}),
+            Boek~\srcfield{bw6}{boek}.
+        \item \label{lid:euhandeling} \srcfield{avg}{soort}~\srcfield{avg}{nummer},
+            \srcfield{avg}{roepnaam} (\srcfield{avg}{afkorting}).
+        \item \label{lid:eigen} \srcfield{uavg}{citeertitel} (\srcfield{uavg}{afkorting}).
+    \end{paras}
+\end{document}

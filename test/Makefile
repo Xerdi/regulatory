@@ -46,7 +46,11 @@ COMPILER ?= $(ENGINE) --interaction=nonstopmode --shell-escape $(CNF_LINE)
 # calling bib2gls would be an error rather than a no-op.
 BIBEXAMPLES = example1-nl example2-nl example1-en example2-en
 BIBFILES = example1.bib example2.bib
-PLAINEXAMPLES = md-example sign-example
+PLAINEXAMPLES = md-example sign-example source-example
+# Two documents that are meant to fail: a bib with a required field missing, and
+# one with a line the reader does not accept. They are not examples, they are the
+# other half of the reader's guarantee.
+BADEXAMPLES = badsource badsyntax
 EXAMPLES = $(BIBEXAMPLES) $(PLAINEXAMPLES)
 
 # make4ht ships with TeX Live, so the HTML test stays within what `test' promises:
@@ -76,6 +80,7 @@ endif
 
 .PHONY: all test $(addprefix suite-,$(ENGINES) html conformance) \
         test-engines test-html html-checks md-checks ref-checks sign-checks log-checks \
+        source-checks \
         conformance conformance-run \
         conformance-check conformance-check-run conformance-stale \
         clean-examples clean-all-examples clean clean-all
@@ -99,7 +104,7 @@ suite-conformance: conformance
 # which is why every path above is absolute. The directory is named after the
 # engine, and so is the engine it builds with: `make build-pdflatex' is pdflatex.
 build-%:
-	$(call run_in,$*,all ref-checks log-checks md-checks sign-checks ENGINE=$*)
+	$(call run_in,$*,all ref-checks log-checks md-checks sign-checks source-checks ENGINE=$*)
 
 .DELETE_ON_ERROR:
 
@@ -172,6 +177,42 @@ log-checks: $(addsuffix .pdf,$(EXAMPLES))
 	 if [ "$$warned" -gt 0 ]; then \
 	     echo "log: the package reported something; see the example logs" >&2; exit 1; \
 	 fi
+
+# The reader of bib files is the one place in this bundle where we own a parser,
+# so it is asserted from both sides. What it read is checked field by field --
+# a field that silently did not arrive is a citation that comes out empty -- and
+# the two files that are wrong on purpose have to make the run fail. A reader that
+# skips what it cannot read is worse than no reader.
+SOURCE_EXPECT = 'SRC bw6 type = regeling' \
+                'SRC bw6 citeertitel = Burgerlijk Wetboek' \
+                'SRC bw6 boek = 6' \
+                'SRC bw6 bwbid = BWBR0005289' \
+                'SRC avg type = euhandeling' \
+                'SRC avg roepnaam = Algemene verordening gegevensbescherming' \
+                'SRC avg pb = PbEU 2016, L 119/1' \
+                'SRC uavg citeertitel = Uitvoeringswet Algemene verordening gegevensbescherming' \
+                'SRC bw6 leeg = []' \
+                'SRC avg bestaat' \
+                'SRC onbekend ontbreekt'
+
+source-checks: source-example.pdf
+	@missing=0; read_back=0; \
+	 for want in $(SOURCE_EXPECT); do \
+	     if grep -qF "$$want" source-example.log; then \
+	         read_back=$$((read_back + 1)); \
+	     else \
+	         echo "source: not read back: $$want" >&2; missing=1; \
+	     fi; \
+	 done; \
+	 if [ "$$missing" -gt 0 ]; then exit 1; fi; \
+	 rejected=0; \
+	 for bad in $(BADEXAMPLES); do \
+	     if $(COMPILER) $$bad >/dev/null 2>&1; then \
+	         echo "source: $$bad was accepted, and it should not be" >&2; exit 1; \
+	     fi; \
+	     rejected=$$((rejected + 1)); \
+	 done; \
+	 echo "source: $$read_back fields read back, $$rejected bad files rejected"
 
 # A signature field is a PDF annotation over a drawn box. The box is drawn by TeX
 # and shows up whatever happens; the annotation is what makes it a field, and its
@@ -339,7 +380,7 @@ $(HTML_MD_EXAMPLE).html: $(HTML_MD_EXAMPLE).tex $(PROJECT)/tex/regulatory.4ht \
 # and their results are meant to survive a documentation build so they can be
 # looked at afterwards.
 clean-examples:
-	@cd $(TESTDIR) && for example in $(EXAMPLES); do latexmk -f -c $$example; done
+	@cd $(TESTDIR) && for example in $(EXAMPLES) $(BADEXAMPLES); do latexmk -f -c $$example; done
 	rm -rf $(TESTDIR)/_markdown_*
 	rm -f $(TESTDIR)/*.glstex $(TESTDIR)/*.luabridge.lua $(TESTDIR)/conformance.check.tex
 	rm -f $(TESTDIR)/*.html $(TESTDIR)/*.css $(TESTDIR)/*.4ct $(TESTDIR)/*.4tc
@@ -349,7 +390,7 @@ clean-examples:
 # builds the examples: with the PDF files still standing make considers them up to
 # date and rebuilds nothing, and the manual would read no aux file at all.
 clean-all-examples:
-	@cd $(TESTDIR) && for example in $(EXAMPLES); do latexmk -f -C $$example; done
+	@cd $(TESTDIR) && for example in $(EXAMPLES) $(BADEXAMPLES); do latexmk -f -C $$example; done
 	@$(MAKE) -f $(TESTDIR)/Makefile clean-examples
 
 # Both places: the examples and every build directory under out/.

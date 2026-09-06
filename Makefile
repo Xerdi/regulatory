@@ -7,7 +7,7 @@ INS_SOURCE := src/$(CONTRIBUTION).ins
 GENERATED := tex/regulatory.sty tex/regulatory-struct.sty tex/regulatory-defs.sty \
              tex/regulatory-ref.sty \
              tex/regulatory-attachments.sty tex/regulatory-md.sty \
-             tex/regulatory-sign.sty \
+             tex/regulatory-sign.sty tex/regulatory-sources.sty \
              tex/regulatory.4ht
 
 # The language definition files are written by hand, so they are copied rather

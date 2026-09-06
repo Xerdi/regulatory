@@ -1,0 +1,375 @@
+% \iffalse meta-comment
+%
+%% regulatory-sources.dtx
+%% Copyright 2024-2026 E. Nijenhuis
+%
+% This work may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License, either version 1.3c
+% of this license or (at your option) any later version.
+% The latest version of this license is in
+% http://www.latex-project.org/lppl.txt
+% and version 1.3c or later is part of all distributions of LaTeX
+% version 2005/12/01 or later.
+%
+% This work has the LPPL maintenance status ‘maintained’.
+%
+% The Current Maintainer of this work is E. Nijenhuis.
+%
+% This work consists of the files listed in the meta-comment of
+% regulatory-struct.dtx.
+%
+% \fi
+%
+% \iffalse
+%<*driver>
+\ProvidesFile{regulatory-sources.dtx}
+%</driver>
+%<package>\NeedsTeXFormat{LaTeX2e}
+%<package>\ProvidesPackage{regulatory-sources}
+%<package>    [2026/09/06 0.0.5 Xerdi's Regulatory Package (External sources)]
+%
+%<*driver>
+\documentclass[10pt,english]{ltxdoc}
+%! suppress = InclusionLoop
+\usepackage{regulatory}
+\usepackage{tabularx}
+\usepackage[english,dutch]{babel}
+\input{regulatory-preamble}
+\newcommand\translation[2]{#1}
+\begin{document}
+    \selectlanguage{english}
+    \DocInput{regulatory-sources.dtx}
+\end{document}
+%</driver>
+% \fi
+%
+% \subsection{\texorpdfstring{\package{regulatory-sources}}{regulatory-sources}}
+% \setcounter{CodelineNo}{0}
+%
+% A regulatory document cites instruments that are not this document: a statute, a regulation of the
+% Union. This module holds the ones a document cites, so that the wording of a citation is a property of
+% the document rather than of the sentence it happens to stand in. What it does \emph{not} do is decide the
+% wording; that is the next module. This one reads and holds.
+%
+% \subsubsection{\translation{Prerequisites}{Vereisten}}
+%
+% \iffalse
+%<*package>
+% \fi
+%    \begin{macrocode}
+\RequirePackage{regulatory-struct}
+%    \end{macrocode}
+%
+% \subsubsection{\translation{Sources of a source}{Bronnen van een bron}}
+%
+% Sources are declared in a \file{bib} file, which is the format such records are already kept in, and
+% read by this module rather than by \package{biblatex} or \package{bib2gls}. Neither would be wrong; both
+% would put an external program between a document and a handful of records. The test suite of this bundle
+% promises a \TeX{} installation and nothing else, the conversion to HTML runs the same documents, and a
+% document rarely cites more than a few instruments. So the reading is done here, and the price of that is
+% that this module owns a parser.
+%
+% A parser that is owned has to say what it accepts. This one accepts the shape a \file{bib} file is
+% written in when a person writes it, and nothing further:
+%
+% \begin{labeling}{\quad}
+%     \item[] an entry opens with \texttt{@}\meta{type}\texttt{\{}\meta{key}\texttt{,} on a line of its own;
+%     \item[] a field is \meta{name}~\texttt{= \{}\meta{value}\texttt{\},} on a line of its own;
+%     \item[] the entry closes with \texttt{\}} on a line of its own;
+%     \item[] a line that is empty, or that starts with \texttt{\%}, is a comment.
+% \end{labeling}
+%
+% A line that is none of these is an error naming the file and the line, rather than a line that is
+% skipped. That is the whole reason a parser may be owned at all: the failure of a reader has to be loud,
+% since a record that was not read is a citation that comes out empty and a document that looks finished.
+%    \begin{macrocode}
+\ExplSyntaxOn
+\prop_new:N \g__regulatory_src_required_prop
+\prop_new:N \g__regulatory_src_type_prop
+\seq_new:N \g__regulatory_src_keys_seq
+
+\ior_new:N \g__regulatory_src_ior
+\str_new:N \l__regulatory_src_key_str
+\str_new:N \l__regulatory_src_type_str
+\str_new:N \l__regulatory_src_file_str
+\str_new:N \l__regulatory_src_query_str
+\int_new:N \l__regulatory_src_line_int
+\bool_new:N \l__regulatory_src_open_bool
+\seq_new:N \l__regulatory_src_parts_seq
+\tl_new:N \l__regulatory_src_required_tl
+\clist_new:N \l__regulatory_src_required_clist
+\tl_new:N \l__regulatory_src_one_tl
+\tl_new:N \l__regulatory_src_two_tl
+%    \end{macrocode}
+%
+% \begin{macro}{\newsourcetype}
+% Declares an entry type and the fields an entry of it cannot do without. The required fields are what the
+% wording needs in every register: a Dutch regulation is named by its citeertitel, an act of the Union by
+% what kind of act it is and by its number.
+%    \begin{macrocode}
+\NewDocumentCommand \newsourcetype { m m }
+  {
+    \prop_gput:Nnn \g__regulatory_src_required_prop { #1 } { #2 }
+  }
+\ExplSyntaxOff
+
+\newsourcetype{regeling}{citeertitel}
+\newsourcetype{euhandeling}{soort,nummer}
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\newsource}
+% Declares one source in the document itself, which is the route that needs no file at all. It ends in the
+% same store as a line read from a \file{bib} file, so nothing downstream can tell the two apart.
+%    \begin{macrocode}
+\ExplSyntaxOn
+\NewDocumentCommand \newsource { m m m }
+  {
+    \__regulatory_src_begin:nn { #2 } { #1 }
+    \keyval_parse:nnn
+      { \__regulatory_src_novalue:n } { \__regulatory_src_field:nn } { #3 }
+    \__regulatory_src_end:
+  }
+
+\cs_new_protected:Npn \__regulatory_src_novalue:n #1
+  {
+    \msg_error:nnn { regulatory-sources } { no-value } { #1 }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \subsubsection*{Opening an entry}
+%
+% \verb|\__regulatory_src_begin:nn|
+% Opens an entry of \meta{type} under \meta{key}. An undeclared type and a key that is already taken are
+% both errors: the first is a record nothing can word, the second is a record that would quietly replace
+% one the document already relies on.
+%    \begin{macrocode}
+\cs_new_protected:Npn \__regulatory_src_begin:nn #1#2
+  {
+    \str_set:Nn \l__regulatory_src_type_str { #1 }
+    \str_set:Nn \l__regulatory_src_key_str { #2 }
+    \prop_if_in:NVF \g__regulatory_src_required_prop \l__regulatory_src_type_str
+      {
+        \msg_error:nnxx { regulatory-sources } { unknown-type }
+          { \l__regulatory_src_type_str } { \l__regulatory_src_key_str }
+      }
+    \seq_if_in:NVT \g__regulatory_src_keys_seq \l__regulatory_src_key_str
+      {
+        \msg_error:nnx { regulatory-sources } { duplicate-key }
+          { \l__regulatory_src_key_str }
+      }
+    \prop_new:c { g__regulatory_src_e_ \l__regulatory_src_key_str _prop }
+    \bool_set_true:N \l__regulatory_src_open_bool
+  }
+%    \end{macrocode}
+%
+% \subsubsection*{Storing a field}
+%
+% \verb|\__regulatory_src_field:nn|
+% Stores one field of the entry that is open. The name of the field is lowered and expanded into the key
+% it is stored under, while the value is not expanded at all: a value is data, and a document that writes
+% a macro in a bib file gets that macro back rather than what it produced at reading time.
+%    \begin{macrocode}
+\cs_new_protected:Npn \__regulatory_src_field:nn #1#2
+  {
+    \bool_if:NTF \l__regulatory_src_open_bool
+      {
+        \use:x
+          {
+            \prop_gput:cnn
+              { g__regulatory_src_e_ \l__regulatory_src_key_str _prop }
+              { \str_lowercase:n { #1 } } { \exp_not:n { #2 } }
+          }
+      }
+      { \msg_error:nnn { regulatory-sources } { stray-field } { #1 } }
+  }
+%    \end{macrocode}
+%
+% \subsubsection*{Closing an entry}
+%
+% \verb|\__regulatory_src_end:|
+% Closes the entry and holds it against the fields its type requires. This is the moment the guarantee is
+% made: from here on a source may be read without asking whether it is complete, which is what lets the
+% commands that word a citation be expandable and silent.
+%    \begin{macrocode}
+\cs_new_protected:Npn \__regulatory_src_end:
+  {
+    \prop_get:NVN \g__regulatory_src_required_prop \l__regulatory_src_type_str
+      \l__regulatory_src_required_tl
+    \quark_if_no_value:NF \l__regulatory_src_required_tl
+      {
+        \clist_set:NV \l__regulatory_src_required_clist
+          \l__regulatory_src_required_tl
+        \clist_map_inline:Nn \l__regulatory_src_required_clist
+          {
+            \prop_if_in:cnF
+              { g__regulatory_src_e_ \l__regulatory_src_key_str _prop } { ##1 }
+              {
+                \msg_error:nnxxx { regulatory-sources } { missing-field }
+                  { ##1 } { \l__regulatory_src_key_str }
+                  { \l__regulatory_src_type_str }
+              }
+          }
+      }
+    \prop_gput:NVV \g__regulatory_src_type_prop
+      \l__regulatory_src_key_str \l__regulatory_src_type_str
+    \seq_gput_right:NV \g__regulatory_src_keys_seq \l__regulatory_src_key_str
+    \bool_set_false:N \l__regulatory_src_open_bool
+  }
+%    \end{macrocode}
+%
+% \begin{macro}{\loadsources}
+% Reads \meta{file}\texttt{.bib}. The file is looked up the way \TeX{} looks up a file it is given, so it
+% is found next to the document or anywhere on the input path; a file that is not there is an error and
+% not an empty list of sources.
+%    \begin{macrocode}
+\NewDocumentCommand \loadsources { m }
+  {
+    \file_get_full_name:nNTF { #1 .bib } \l__regulatory_src_file_str
+      { \__regulatory_src_read:V \l__regulatory_src_file_str }
+      { \msg_error:nnn { regulatory-sources } { file-not-found } { #1 .bib } }
+  }
+
+\cs_new_protected:Npn \__regulatory_src_read:n #1
+  {
+    \int_zero:N \l__regulatory_src_line_int
+    \bool_set_false:N \l__regulatory_src_open_bool
+    \ior_open:Nn \g__regulatory_src_ior { #1 }
+    \ior_str_map_inline:Nn \g__regulatory_src_ior
+      { \__regulatory_src_line:nn { #1 } { ##1 } }
+    \ior_close:N \g__regulatory_src_ior
+    \bool_if:NT \l__regulatory_src_open_bool
+      {
+        \msg_error:nnxx { regulatory-sources } { unclosed }
+          { \l__regulatory_src_key_str } { #1 }
+      }
+  }
+\cs_generate_variant:Nn \__regulatory_src_read:n { V }
+%    \end{macrocode}
+% \end{macro}
+%
+% \subsubsection*{Reading one line}
+%
+% \verb|\__regulatory_src_line:nn|
+% One line of the file, tried against the four shapes the subset knows. The order is the order they occur
+% in: a comment or a blank line first, since a file holds more of those than anything else.
+%    \begin{macrocode}
+\regex_const:Nn \c__regulatory_src_blank_regex { \A \s* (\%.*)? \Z }
+\regex_const:Nn \c__regulatory_src_open_regex
+  { \A \s* \@ (\w+) \s* \{ \s* ([^,\s\{\}]+) \s* ,? \s* \Z }
+\regex_const:Nn \c__regulatory_src_field_regex
+  { \A \s* (\w+) \s* = \s* \{ (.*) \} \s* ,? \s* \Z }
+\regex_const:Nn \c__regulatory_src_close_regex { \A \s* \} \s* ,? \s* \Z }
+
+\cs_new_protected:Npn \__regulatory_src_pair:N #1
+  {
+    \tl_set:Nx \l__regulatory_src_one_tl
+      { \seq_item:Nn \l__regulatory_src_parts_seq { 2 } }
+    \tl_set:Nx \l__regulatory_src_two_tl
+      { \seq_item:Nn \l__regulatory_src_parts_seq { 3 } }
+    \exp_args:NVV #1 \l__regulatory_src_one_tl \l__regulatory_src_two_tl
+  }
+
+\cs_new_protected:Npn \__regulatory_src_line:nn #1#2
+  {
+    \int_incr:N \l__regulatory_src_line_int
+    \regex_match:NnTF \c__regulatory_src_blank_regex { #2 }
+      { }
+      {
+        \regex_extract_once:NnNTF \c__regulatory_src_open_regex { #2 }
+          \l__regulatory_src_parts_seq
+          { \__regulatory_src_pair:N \__regulatory_src_begin:nn }
+          {
+            \regex_extract_once:NnNTF \c__regulatory_src_field_regex { #2 }
+              \l__regulatory_src_parts_seq
+              { \__regulatory_src_pair:N \__regulatory_src_field:nn }
+              {
+                \regex_match:NnTF \c__regulatory_src_close_regex { #2 }
+                  { \__regulatory_src_end: }
+                  {
+                    \msg_error:nnxxx { regulatory-sources } { unreadable }
+                      { \int_use:N \l__regulatory_src_line_int } { #1 } { #2 }
+                  }
+              }
+          }
+      }
+  }
+%    \end{macrocode}
+%
+% \begin{macro}{\srcfield}
+% \begin{macro}{\srctype}
+% Reads one field of a source. Both are expandable and both give nothing for a field that is not there,
+% which is safe precisely because a source cannot be declared without the fields its type requires: what
+% is absent here is optional by construction.
+%    \begin{macrocode}
+\cs_new:Npn \srcfield #1#2
+  {
+    \prop_item:cn { g__regulatory_src_e_ #1 _prop } { #2 }
+  }
+\cs_new:Npn \srctype #1
+  {
+    \prop_item:Nn \g__regulatory_src_type_prop { #1 }
+  }
+%    \end{macrocode}
+% \end{macro}
+% \end{macro}
+%
+% \begin{macro}{\ifsourceexists}
+% Whether \meta{key} was declared at all. The key is made into a string before it is looked for: the keys
+% of a file were read as text, and a sequence compares what it holds character by character, category code
+% and all\,---\,so a key typed in the document would never equal the same key read from a file.
+%    \begin{macrocode}
+\NewDocumentCommand \ifsourceexists { m m m }
+  {
+    \str_set:Nn \l__regulatory_src_query_str { #1 }
+    \seq_if_in:NVTF \g__regulatory_src_keys_seq \l__regulatory_src_query_str
+      { #2 } { #3 }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\regulatory@src@messages}
+% What the module says when it stops. Every one of these names the record it was reading, since a bib file
+% that is wrong is wrong in one entry and the rest of it is fine.
+%    \begin{macrocode}
+\msg_new:nnn { regulatory-sources } { unknown-type }
+  {
+    Source~'#2'~is~of~type~'#1',~which~no~one~declared.~Declare~it~with~
+    \iow_char:N\\newsourcetype,~or~use~one~of:~
+    \prop_map_function:NN \g__regulatory_src_required_prop
+      \__regulatory_src_type_name:nn
+  }
+\cs_new:Npn \__regulatory_src_type_name:nn #1#2 { ~#1 }
+
+\msg_new:nnn { regulatory-sources } { missing-field }
+  {
+    Source~'#2'~of~type~'#3'~has~no~'#1'.~A~source~of~that~type~cannot~be~
+    written~out~without~it.
+  }
+\msg_new:nnn { regulatory-sources } { duplicate-key }
+  { Source~'#1'~was~already~declared.~The~second~one~would~replace~it. }
+\msg_new:nnn { regulatory-sources } { stray-field }
+  { Field~'#1'~stands~outside~any~entry. }
+\msg_new:nnn { regulatory-sources } { no-value }
+  { Field~'#1'~was~given~no~value. }
+\msg_new:nnn { regulatory-sources } { file-not-found }
+  { There~is~no~file~'#1'~to~read~sources~from. }
+\msg_new:nnn { regulatory-sources } { unclosed }
+  { Source~'#1'~is~still~open~at~the~end~of~'#2'.~A~closing~brace~is~missing. }
+\msg_new:nnn { regulatory-sources } { unreadable }
+  {
+    Line~#1~of~'#2'~is~none~of~the~four~shapes~this~reader~knows:\\
+    ~~#3\\
+    An~entry~opens~with~an~at~sign,~the~type~and~the~key;~a~field~reads~
+    name~=~value~in~braces;~an~entry~closes~with~a~brace~of~its~own.
+  }
+\ExplSyntaxOff
+%    \end{macrocode}
+% \end{macro}
+% \iffalse
+%</package>
+% \fi
+%
+% \Finale
+%
