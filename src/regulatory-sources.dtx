@@ -410,14 +410,14 @@
 % \begin{labeling}{\texttt{separator}}
 %     \item[\texttt{article}] the word before the number of an article.
 %     \item[\texttt{number}] the number itself, which is where the colon notation of the civil code lives.
-%     \item[\texttt{lid}] the paragraph.
-%     \item[\texttt{onderdeel}] the lettered point.
-%     \item[\texttt{onder}] the level below that, which the standards call a subonderdeel.
+%     \item[\texttt{paragraph}] the paragraph, which Dutch calls a lid.
+%     \item[\texttt{point}] the lettered point, which Dutch calls an onderdeel.
+%     \item[\texttt{subpoint}] the level below that, which the standards call a subonderdeel.
 %     \item[\texttt{separator}] what stands between the parts: a comma in full, a space when shortened.
 %     \item[\texttt{determiner}] the article a name takes when neither the entry nor the kind of the
 %         instrument says, which is a genitive in the registers of the Union: \enquote{der Verordnung},
 %         \enquote{du règlement}.
-%     \item[\texttt{van}] what stands between the last part and the instrument: \enquote{van} when written
+%     \item[\texttt{connective}] what stands between the last part and the instrument: \enquote{connective} when written
 %         out in full, nothing when shortened.
 %     \item[\texttt{assemble}] how the parts are arranged: from the outside in, which is what a register
 %         that leaves this out gets, or the other way round, which is what English does.
@@ -433,13 +433,44 @@
 \ExplSyntaxOff
 \newcommand\regulatory@src@ordinal[1]{\ordinalstringnum{#1}}
 
-\newcommand\newsourceregister[3]{%
-    \pgfqkeys{/regsrc/#1/voluit}{#2}%
-    \pgfqkeys{/regsrc/#1/verkort}{#3}%
-}
+\ExplSyntaxOn
+\prop_new:N \g__regulatory_src_register_store_prop
+\cs_generate_variant:Nn \prop_item:Nn { Ne }
 
-\newcommand\regsrc@get[3]{\pgfkeysvalueof{/regsrc/#1/#2/#3}}
-\newcommand\regsrc@set[4]{\pgfkeysgetvalue{/regsrc/#1/#2/#3}{#4}}
+\cs_new_protected:Npn \__regulatory_src_register_put:nnnn #1#2#3#4
+  { \prop_gput:Nnn \g__regulatory_src_register_store_prop { #1 / #2 / #3 } { #4 } }
+
+\cs_new_protected:Npn \__regulatory_src_register_bare:nnn #1#2#3
+  { \msg_error:nnnnn { regulatory-sources } { register-key-without-value } { #1 } { #2 } { #3 } }
+
+\msg_new:nnn { regulatory-sources } { register-key-without-value }
+  {
+    The~key~`#3'~of~register~`#1'~(#2)~was~given~no~value.~\\
+    Every~key~of~a~register~carries~one:~a~word,~a~number~format~or~an~arrangement.
+  }
+
+\NewDocumentCommand \newsourceregister { m m m }
+  {
+    \keyval_parse:nnn
+      { \__regulatory_src_register_bare:nnn { #1 } { full } }
+      { \__regulatory_src_register_put:nnnn { #1 } { full } }
+      { #2 }
+    \keyval_parse:nnn
+      { \__regulatory_src_register_bare:nnn { #1 } { short } }
+      { \__regulatory_src_register_put:nnnn { #1 } { short } }
+      { #3 }
+  }
+
+\cs_new:Npn \regsrc@get #1#2#3
+  { \prop_item:Ne \g__regulatory_src_register_store_prop { #1 / #2 / #3 } }
+
+\cs_new_protected:Npn \regsrc@set #1#2#3#4
+  {
+    \prop_get:NeNF \g__regulatory_src_register_store_prop { #1 / #2 / #3 } #4
+      { \cs_set_eq:NN #4 \relax }
+  }
+\cs_generate_variant:Nn \prop_get:NnNF { NeNF }
+\ExplSyntaxOff
 %    \end{macrocode}
 %
 % The register of the Dutch legislator, which is also the one a Dutch author writes in. In full it is the
@@ -476,10 +507,10 @@
     \def#1{#2}%
 }
 
-\newcommand\regulatory@src@lid@absatz[2]{\def#1{Absatz~#2}}
-\newcommand\regulatory@src@lid@paragraphe[2]{\def#1{paragraphe~#2}}
-\newcommand\regulatory@src@onderdeel@buchstabe[2]{\def#1{Buchstabe~#2}}
-\newcommand\regulatory@src@onderdeel@point[2]{\def#1{point~#2)}}
+\newcommand\regulatory@src@paragraph@absatz[2]{\def#1{Absatz~#2}}
+\newcommand\regulatory@src@paragraph@paragraphe[2]{\def#1{paragraphe~#2}}
+\newcommand\regulatory@src@point@buchstabe[2]{\def#1{Buchstabe~#2}}
+\newcommand\regulatory@src@point@point[2]{\def#1{point~#2)}}
 %    \end{macrocode}
 %
 % Which article a name takes is not a property of the register but of the instrument, and the entry
@@ -557,7 +588,7 @@
     \tl_set_eq:NN \regulatory@src@thisdet \l__regulatory_src_det_tl
   }
 
-\cs_new:Npn \regulatory@src@lidwoord #1 { \regulatory@src@thisdet }
+\cs_new:Npn \regulatory@src@determiner #1 { \regulatory@src@thisdet }
 \ExplSyntaxOff
 \ExplSyntaxOn
 
@@ -570,8 +601,8 @@
   {
     \tl_if_blank:eF { \srcfield { #1 } { book } }
       { Boek~ \srcfield { #1 } { book } \c_space_tl van~ }
-    \tl_if_blank:eF { \regulatory@src@lidwoord { #1 } }
-      { \regulatory@src@lidwoord { #1 } ~ }
+    \tl_if_blank:eF { \regulatory@src@determiner { #1 } }
+      { \regulatory@src@determiner { #1 } ~ }
     \regulatory@src@naam { #1 }
   }
 \cs_new:Npn \regulatory@src@source@short #1
@@ -603,7 +634,7 @@
 %
 % A citation may name a list of provisions or a run of them, which the source writes as
 % \enquote{artikelen 101 en 102} and \enquote{artikelen 12 tot en met 15}. Both are written by the author
-% rather than worked out here: \texttt{onderdeel=\{c,d\}} is a list and \texttt{onderdeel=\{a--c\}} is a
+% rather than worked out here: \texttt{point=\{c,d\}} is a list and \texttt{point=\{a--c\}} is a
 % run, and the register decides how either reads.
 %
 % The far end of a range does not always read like the near one: the civil code is cited as
@@ -673,13 +704,13 @@
 %
 % \begin{macro}{\srcref}
 % Cites \meta{key}, either as a whole or down to one of its provisions. The optional argument holds the
-% provision\,---\,\texttt{artikel}, \texttt{lid}, \texttt{onderdeel} and \texttt{onder}\,---\,and stands
+% provision\,---\,\texttt{article}, \texttt{paragraph}, \texttt{point} and \texttt{subpoint}\,---\,and stands
 % before the key, as it does in \cmd{\cite}, so that a bracket in the sentence after the citation is not
 % mistaken for it.
 %
 % The star asks for the system that is not the default of the document, which is what a citation between
 % brackets or in a footnote wants. It may also be named outright with \texttt{system}. The default of the
-% document is the \option{bronstijl} option, and it is \texttt{voluit}, since that is what the running text
+% document is the \option{sourcestyle} option, and it is \texttt{full}, since that is what the running text
 % of a document is.
 %
 % What it comes to is built up in \cmd{\regulatory@src@last} before it is typeset, so that the wording of a
@@ -687,13 +718,30 @@
 % in the wrong register fails nowhere, it simply stands there wrong.
 %    \begin{macrocode}
 \ExplSyntaxOff
-\newcommand\regulatory@src@system{\regulatory@bronstijl}
+\newcommand\regulatory@src@system{\regulatory@sourcestyle}
 
-\define@key{regsrcref}{artikel}{\def\regulatory@src@artikel{#1}}
-\define@key{regsrcref}{lid}{\def\regulatory@src@lid{#1}}
-\define@key{regsrcref}{onderdeel}{\def\regulatory@src@onderdeel{#1}}
-\define@key{regsrcref}{onder}{\def\regulatory@src@onder{#1}}
-\define@key{regsrcref}{system}{\def\regulatory@src@thissystem{#1}}
+%    \end{macrocode}
+% The Dutch names are meta keys, and the value of a meta key is braced on the way through: a meta key sets
+% its target by running the key parser again, so \texttt{onderdeel=\{c,d\}} would arrive as two keys, of
+% which the second is a key named \texttt{d} that does not exist. Measured: without the braces the list and
+% range citations lost their second item and \LaTeX{} said only that a key was unknown, naming a letter.
+%    \begin{macrocode}
+\ExplSyntaxOn
+\keys_define:nn { regulatory / srcref }
+  {
+    article   .code:n = \def \regulatory@src@article    { #1 } ,
+    paragraph .code:n = \def \regulatory@src@paragraph  { #1 } ,
+    point     .code:n = \def \regulatory@src@point      { #1 } ,
+    subpoint  .code:n = \def \regulatory@src@subpoint   { #1 } ,
+    system    .code:n = \def \regulatory@src@thissystem { #1 } ,
+    artikel   .meta:n = { article   = {#1} } ,
+    lid       .meta:n = { paragraph = {#1} } ,
+    onderdeel .meta:n = { point     = {#1} } ,
+    onder     .meta:n = { subpoint  = {#1} } ,
+  }
+\cs_new_protected:Npn \regulatory@src@setkeys #1
+  { \keys_set:nn { regulatory / srcref } { #1 } }
+\ExplSyntaxOff
 
 \newcommand\regulatory@src@thislabel{}
 \newcommand\regulatory@src@label[2]{%
@@ -731,11 +779,11 @@
 % Two arrangements are therefore offered and the \texttt{assemble} key of a register picks one. A register
 % that says nothing is arranged from the outside in, which is what all four of the others do.
 %    \begin{macrocode}
-\newcommand\regulatory@src@p@artikel{}
-\newcommand\regulatory@src@p@lid{}
-\newcommand\regulatory@src@p@lidnum{}
-\newcommand\regulatory@src@p@onderdeel{}
-\newcommand\regulatory@src@p@onder{}
+\newcommand\regulatory@src@p@article{}
+\newcommand\regulatory@src@p@paragraph{}
+\newcommand\regulatory@src@p@paragraphnum{}
+\newcommand\regulatory@src@p@point{}
+\newcommand\regulatory@src@p@subpoint{}
 \newcommand\regulatory@src@p@source{}
 
 \newcommand\regulatory@src@add[1]{%
@@ -743,13 +791,13 @@
 }
 
 \newcommand\regulatory@src@assemble@forward{%
-    \regulatory@src@add\regulatory@src@p@artikel
-    \regulatory@src@add\regulatory@src@p@lid
-    \regulatory@src@add\regulatory@src@p@onderdeel
-    \regulatory@src@add\regulatory@src@p@onder
+    \regulatory@src@add\regulatory@src@p@article
+    \regulatory@src@add\regulatory@src@p@paragraph
+    \regulatory@src@add\regulatory@src@p@point
+    \regulatory@src@add\regulatory@src@p@subpoint
     \ifx\regulatory@src@parts\@empty\else
         \protected@edef\regulatory@src@p@source{%
-            \regulatory@src@van\regulatory@src@p@source}%
+            \regulatory@src@connective\regulatory@src@p@source}%
     \fi
     \regulatory@src@add\regulatory@src@p@source
 }
@@ -761,41 +809,41 @@
 % shape of the attached one in \texttt{attach} and the level keeps its own wording for the other case.
 %    \begin{macrocode}
 \newcommand\regulatory@src@assemble@backward{%
-    \ifx\regulatory@src@p@artikel\@empty\else
-        \ifx\regulatory@src@p@lidnum\@empty\else
+    \ifx\regulatory@src@p@article\@empty\else
+        \ifx\regulatory@src@p@paragraphnum\@empty\else
             \ifx\regulatory@src@attach\relax\else
                 \protected@edef\@@attachnow{%
                     \noexpand\regulatory@src@attach
-                        \noexpand\regulatory@src@p@artikel
-                        {\regulatory@src@p@artikel}{\regulatory@src@p@lidnum}}%
+                        \noexpand\regulatory@src@p@article
+                        {\regulatory@src@p@article}{\regulatory@src@p@paragraphnum}}%
                 \@@attachnow
-                \let\regulatory@src@p@lid\@empty
+                \let\regulatory@src@p@paragraph\@empty
             \fi
         \fi
     \fi
-    \regulatory@src@add\regulatory@src@p@onder
-    \regulatory@src@add\regulatory@src@p@onderdeel
-    \regulatory@src@add\regulatory@src@p@lid
-    \regulatory@src@add\regulatory@src@p@artikel
+    \regulatory@src@add\regulatory@src@p@subpoint
+    \regulatory@src@add\regulatory@src@p@point
+    \regulatory@src@add\regulatory@src@p@paragraph
+    \regulatory@src@add\regulatory@src@p@article
     \regulatory@src@add\regulatory@src@p@source
 }
 
 \NewDocumentCommand \srcref { s O{} m }{%
     \begingroup
-        \def\regulatory@src@artikel{}%
-        \def\regulatory@src@lid{}%
-        \def\regulatory@src@onderdeel{}%
-        \def\regulatory@src@onder{}%
+        \def\regulatory@src@article{}%
+        \def\regulatory@src@paragraph{}%
+        \def\regulatory@src@point{}%
+        \def\regulatory@src@subpoint{}%
         \IfBooleanTF{#1}{%
-            \ifthenelse{\equal{\regulatory@bronstijl}{voluit}}{%
-                \def\regulatory@src@thissystem{verkort}%
+            \ifthenelse{\equal{\regulatory@sourcestyle}{full}}{%
+                \def\regulatory@src@thissystem{short}%
             }{%
-                \def\regulatory@src@thissystem{voluit}%
+                \def\regulatory@src@thissystem{full}%
             }%
         }{%
-            \edef\regulatory@src@thissystem{\regulatory@bronstijl}%
+            \edef\regulatory@src@thissystem{\regulatory@sourcestyle}%
         }%
-        \setkeys{regsrcref}{#2}%
+        \regulatory@src@setkeys{#2}%
         \edef\regulatory@src@reg{\srcregister{#3}}%
         \regsrc@set{\regulatory@src@reg}{\regulatory@src@thissystem}{separator}%
             {\regulatory@src@sep}%
@@ -804,70 +852,70 @@
         \regulatory@src@setdet{#3}%
         \let\regulatory@src@parts\@empty
         \gdef\regulatory@src@last{}%
-        \let\regulatory@src@p@artikel\@empty
-        \let\regulatory@src@p@lid\@empty
-        \let\regulatory@src@p@lidnum\@empty
-        \let\regulatory@src@p@onderdeel\@empty
-        \let\regulatory@src@p@onder\@empty
+        \let\regulatory@src@p@article\@empty
+        \let\regulatory@src@p@paragraph\@empty
+        \let\regulatory@src@p@paragraphnum\@empty
+        \let\regulatory@src@p@point\@empty
+        \let\regulatory@src@p@subpoint\@empty
         \regsrc@set{\regulatory@src@reg}{\regulatory@src@thissystem}{and}%
             {\regulatory@src@and}%
         \regsrc@set{\regulatory@src@reg}{\regulatory@src@thissystem}{to}%
             {\regulatory@src@to}%
-        \regsrc@set{\regulatory@src@reg}{\regulatory@src@thissystem}{van}%
-            {\regulatory@src@van}%
+        \regsrc@set{\regulatory@src@reg}{\regulatory@src@thissystem}{connective}%
+            {\regulatory@src@connective}%
         \regsrc@set{\regulatory@src@reg}{\regulatory@src@thissystem}{attach}%
             {\regulatory@src@attach}%
-        \ifx\regulatory@src@artikel\@empty\else
-            \regsrc@set{\regulatory@src@reg}{\regulatory@src@thissystem}{number}{\@@fmt}%
+        \ifx\regulatory@src@article\@empty\else
+            \regsrc@set{\regulatory@src@reg}{\regulatory@src@thissystem}{articlenum}{\@@fmt}%
             \def\@@numfmt##1##2{\@@fmt##1{\srcfield{#3}{book}}{##2}}%
             \def\@@numrest##1##2{\@@fmt##1{}{##2}}%
             \expandafter\regulatory@src@join\expandafter\regulatory@src@piece
-                \expandafter{\regulatory@src@artikel}{\@@numfmt}%
+                \expandafter{\regulatory@src@article}{\@@numfmt}%
                 {\regulatory@src@and}{\regulatory@src@to}{\@@numrest}%
-            \regulatory@src@label{article}{articles}%
-            \protected@edef\regulatory@src@p@artikel{%
+            \regulatory@src@label{articleone}{articlemany}%
+            \protected@edef\regulatory@src@p@article{%
                 \regulatory@src@thislabel~\regulatory@src@piece}%
         \fi
-        \ifx\regulatory@src@lid\@empty\else
-            \regsrc@set{\regulatory@src@reg}{\regulatory@src@thissystem}{lidnum}{\@@fmt}%
+        \ifx\regulatory@src@paragraph\@empty\else
+            \regsrc@set{\regulatory@src@reg}{\regulatory@src@thissystem}{paragraphnum}{\@@fmt}%
             \expandafter\regulatory@src@join\expandafter\regulatory@src@piece
-                \expandafter{\regulatory@src@lid}{\@@fmt}%
+                \expandafter{\regulatory@src@paragraph}{\@@fmt}%
                 {\regulatory@src@and}{\regulatory@src@to}{\@@fmt}%
-            \regulatory@src@label{lidone}{lidmany}%
-            \regsrc@set{\regulatory@src@reg}{\regulatory@src@thissystem}{lid}{\@@compose}%
-            \expandafter\@@compose\expandafter\regulatory@src@p@lid
+            \regulatory@src@label{paragraphone}{paragraphmany}%
+            \regsrc@set{\regulatory@src@reg}{\regulatory@src@thissystem}{paragraph}{\@@compose}%
+            \expandafter\@@compose\expandafter\regulatory@src@p@paragraph
                 \expandafter{\regulatory@src@piece}{\regulatory@src@thislabel}%
-            \protected@edef\regulatory@src@p@lid{\regulatory@src@p@lid}%
+            \protected@edef\regulatory@src@p@paragraph{\regulatory@src@p@paragraph}%
             \regsrc@set{\regulatory@src@reg}{\regulatory@src@thissystem}{attachnum}{\@@afmt}%
             \ifx\@@afmt\relax
-                \let\regulatory@src@p@lidnum\regulatory@src@piece
+                \let\regulatory@src@p@paragraphnum\regulatory@src@piece
             \else
-                \expandafter\regulatory@src@join\expandafter\regulatory@src@p@lidnum
-                    \expandafter{\regulatory@src@lid}{\@@afmt}%
+                \expandafter\regulatory@src@join\expandafter\regulatory@src@p@paragraphnum
+                    \expandafter{\regulatory@src@paragraph}{\@@afmt}%
                     {\regulatory@src@and}{\regulatory@src@to}{\@@afmt}%
             \fi
         \fi
-        \ifx\regulatory@src@onderdeel\@empty\else
-            \regsrc@set{\regulatory@src@reg}{\regulatory@src@thissystem}{onderdeelnum}{\@@fmt}%
+        \ifx\regulatory@src@point\@empty\else
+            \regsrc@set{\regulatory@src@reg}{\regulatory@src@thissystem}{pointnum}{\@@fmt}%
             \expandafter\regulatory@src@join\expandafter\regulatory@src@piece
-                \expandafter{\regulatory@src@onderdeel}{\@@fmt}%
+                \expandafter{\regulatory@src@point}{\@@fmt}%
                 {\regulatory@src@and}{\regulatory@src@to}{\@@fmt}%
-            \regulatory@src@label{onderdeelone}{onderdeelmany}%
-            \regsrc@set{\regulatory@src@reg}{\regulatory@src@thissystem}{onderdeel}{\@@compose}%
-            \expandafter\@@compose\expandafter\regulatory@src@p@onderdeel
+            \regulatory@src@label{pointone}{pointmany}%
+            \regsrc@set{\regulatory@src@reg}{\regulatory@src@thissystem}{point}{\@@compose}%
+            \expandafter\@@compose\expandafter\regulatory@src@p@point
                 \expandafter{\regulatory@src@piece}{\regulatory@src@thislabel}%
-            \protected@edef\regulatory@src@p@onderdeel{\regulatory@src@p@onderdeel}%
+            \protected@edef\regulatory@src@p@point{\regulatory@src@p@point}%
         \fi
-        \ifx\regulatory@src@onder\@empty\else
-            \regsrc@set{\regulatory@src@reg}{\regulatory@src@thissystem}{ondernum}{\@@fmt}%
+        \ifx\regulatory@src@subpoint\@empty\else
+            \regsrc@set{\regulatory@src@reg}{\regulatory@src@thissystem}{subpointnum}{\@@fmt}%
             \expandafter\regulatory@src@join\expandafter\regulatory@src@piece
-                \expandafter{\regulatory@src@onder}{\@@fmt}%
+                \expandafter{\regulatory@src@subpoint}{\@@fmt}%
                 {\regulatory@src@and}{\regulatory@src@to}{\@@fmt}%
-            \regulatory@src@label{onderone}{ondermany}%
-            \regsrc@set{\regulatory@src@reg}{\regulatory@src@thissystem}{onder}{\@@compose}%
-            \expandafter\@@compose\expandafter\regulatory@src@p@onder
+            \regulatory@src@label{subpointone}{subpointmany}%
+            \regsrc@set{\regulatory@src@reg}{\regulatory@src@thissystem}{subpoint}{\@@compose}%
+            \expandafter\@@compose\expandafter\regulatory@src@p@subpoint
                 \expandafter{\regulatory@src@piece}{\regulatory@src@thislabel}%
-            \protected@edef\regulatory@src@p@onder{\regulatory@src@p@onder}%
+            \protected@edef\regulatory@src@p@subpoint{\regulatory@src@p@subpoint}%
         \fi
         \regsrc@set{\regulatory@src@reg}{\regulatory@src@thissystem}{source}{\@@fmt}%
         \@@fmt\regulatory@src@p@source{#3}%

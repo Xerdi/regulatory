@@ -157,7 +157,7 @@
     \package{regulatory-struct} voor de gehele bundel administreert.
     Het voorbeeld hierboven geeft er geen mee, wat inhoudt dat deze standaardwaarden gelden:%
 }
-\begin{labeling}{\option{nameinlink}\quad\texttt{voluit}}
+\begin{labeling}{\option{sourcestyle}\quad\texttt{alttree}}
     \addtokomafont{labelinglabel}{\ttfamily}
     \item[bib2gls\quad true] \translation{%
         definition lists are built with \texttt{bib2gls}. Pass \option{bib2gls=false} to have them written
@@ -202,11 +202,16 @@
         de woordenlijststijl waar \cmd{\printdefs} op terugvalt als hij er geen krijgt; zie
         \zcref{sec:defs}.%
     }
-    \item[bronstijl\quad voluit] \translation{%
-        whether a citation of an external source is written out or abbreviated; see \zcref{sec:sources}.%
+    \item[sourcestyle\quad full] \translation{%
+        whether a citation of an external source is written out (\texttt{full}) or abbreviated
+        (\texttt{short}); see \zcref{sec:sources}. It answers to \option{bronstijl} as well, and to
+        \texttt{voluit} and \texttt{verkort} as values. A value that is none of the four is refused where
+        it is given rather than emptying every lookup that reads it.%
     }{%
-        of een aanhaling van een externe bron voluit of verkort geschreven wordt; zie
-        \zcref{sec:sources}.%
+        of een aanhaling van een externe bron voluit (\texttt{full}) of verkort (\texttt{short})
+        geschreven wordt; zie \zcref{sec:sources}. Hij luistert ook naar \option{bronstijl}, en naar
+        \texttt{voluit} en \texttt{verkort} als waarden. Een waarde die geen van de vier is wordt
+        geweigerd waar hij gegeven wordt in plaats van iedere opzoeking die hem leest leeg te maken.%
     }
 \end{labeling}
 \translation{%
@@ -1103,12 +1108,14 @@ en / and \aref{ex1-sub:lorem,ex1-sub:lorem2,ex1-sub:lorem3,ex1-sub:lorem4}.
 \DescribeMacro{\srcref\\\oarg{provision}\\\marg{key}}
 \translation{%
     Cites a source, either as a whole or down to one of its provisions. The optional argument holds the
-    provision\,---\,\texttt{artikel}, \texttt{lid}, \texttt{onderdeel} and \texttt{onder}\,---\,and stands
+    provision\,---\,\texttt{article}, \texttt{paragraph}, \texttt{point} and \texttt{subpoint}, which answer
+    to \texttt{artikel}, \texttt{lid}, \texttt{onderdeel} and \texttt{onder} as well\,---\,and stands
     before the key, as it does in \cmd{\cite}, so that a bracket in the sentence after a citation is not
     mistaken for it.%
 }{%
     Haalt een bron aan, in zijn geheel of tot op een van zijn bepalingen. Het optionele argument bevat de
-    bepaling\,---\,\texttt{artikel}, \texttt{lid}, \texttt{onderdeel} en \texttt{onder}\,---\,en staat
+    bepaling\,---\,\texttt{article}, \texttt{paragraph}, \texttt{point} en \texttt{subpoint}, welke ook naar
+    \texttt{artikel}, \texttt{lid}, \texttt{onderdeel} en \texttt{onder} luisteren\,---\,en staat
     vóór de sleutel, zoals bij \cmd{\cite}, zodat een blokhaak in de zin ná een verwijzing er niet voor
     wordt aangezien.%
 }
@@ -1140,8 +1147,8 @@ en / and \aref{ex1-sub:lorem,ex1-sub:lorem2,ex1-sub:lorem3,ex1-sub:lorem4}.
 
     The second is the \emph{system}: written out in full, or shortened. The running text of a document is
     in full; a footnote is shortened, and so is a citation that stands between brackets in the running
-    text. The \option{bronstijl} option sets which of the two a document uses, and the star asks for the
-    other one. The full form is the one the Aanwijzingen voor de regelgeving prescribe for regulations
+    text. The \option{sourcestyle} option sets which of the two a document uses, with \texttt{full} or
+    \texttt{short}, and the star asks for the other one. The full form is the one the Aanwijzingen voor de regelgeving prescribe for regulations
     themselves\,---\,a model rather than a rule here, since those instructions bind ministries and not
     contracts\,---\,and the shortened form is the one of the Leidraad voor juridische auteurs.%
 }{%
@@ -1156,7 +1163,8 @@ en / and \aref{ex1-sub:lorem,ex1-sub:lorem2,ex1-sub:lorem3,ex1-sub:lorem4}.
 
     Het tweede is het \emph{systeem}: voluit of verkort. De lopende tekst van een document is voluit; een
     voetnoot is verkort, en een verwijzing die in de lopende tekst tussen haakjes staat ook. De optie
-    \option{bronstijl} zet welke van de twee een document gebruikt, en de ster vraagt om de andere. De
+    \option{sourcestyle} zet welke van de twee een document gebruikt, met \texttt{full} of
+    \texttt{short}, en de ster vraagt om de andere. De
     voluit-vorm is die welke de Aanwijzingen voor de regelgeving voor regelingen zelf voorschrijven\,---\,
     hier een model en geen voorschrift, want die aanwijzingen binden ministeries en geen
     contracten\,---\,en de verkorte is die van de Leidraad voor juridische auteurs.%

@@ -209,6 +209,8 @@ SOURCE_EXPECT = 'SRC bw6 type = regulation' \
                 'SRC avg bestaat' \
                 'SRC onbekend ontbreekt' \
                 'CITE nl-voluit = artikel~96,~tweede lid,~onderdeel~c,~van~Boek 6 van het Burgerlijk Wetboek' \
+                'CITE nl-engelse-sleutels = artikel~96,~tweede lid,~onderdeel~c,~van~Boek 6 van het Burgerlijk Wetboek' \
+                'CITE vierde-niveau-engels = artikel~3.126,~eerste lid,~onderdeel~d,~onder~2' \
                 'CITE nl-verkort = art.~6:96~lid~2~onder~c~BW' \
                 'CITE eu-voluit = artikel~6,~lid~1,~punt~a),~van~de Algemene verordening gegevensbescherming' \
                 'CITE eu-verkort = art.~6~lid~1~punt~a)~AVG' \

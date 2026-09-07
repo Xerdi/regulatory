@@ -191,53 +191,100 @@
 %
 % \subsubsection{\translation{Language configuration}{Taalconfiguratie}}
 %
-% Every language gets its own key family per type of reference, of which the initial values are the English
-% ones. A language definition file only has to state the differences.
+% Every language gets its own designations per type of reference, of which the initial values are the
+% English ones, so a language definition file only has to state the differences. They are kept in one
+% property list, keyed by language, type and key; the keys a definition file may set are listed, so that a
+% misspelling is refused where it is written rather than read back as nothing wherever it is used.
+%    \begin{macrocode}
+\ExplSyntaxOn
+\prop_new:N \g__regulatory_rref_prop
+\cs_generate_variant:Nn \prop_item:Nn  { Ne }
+\cs_generate_variant:Nn \prop_gput:Nnn { Nen }
+\cs_generate_variant:Nn \prop_get:NnNF { NeNF }
+
+\clist_const:Nn \c__regulatory_rref_keys_clist
+  {
+    name , Name , names , Names ,
+    ref~format , label~format , group~conjunction , group~format
+  }
+
+\cs_new_protected:Npn \__regulatory_rref_put:nnnn #1#2#3#4
+  { \prop_gput:Nen \g__regulatory_rref_prop { #1 / #2 / #3 } { #4 } }
+
+\cs_new_protected:Npn \__regulatory_rref_set:nnnn #1#2#3#4
+  {
+    \clist_if_in:NnTF \c__regulatory_rref_keys_clist { #3 }
+      { \__regulatory_rref_put:nnnn { #1 } { #2 } { #3 } { #4 } }
+      { \msg_error:nnnnn { regulatory-ref } { unknown-key } { #1 } { #2 } { #3 } }
+  }
+
+\cs_new_protected:Npn \__regulatory_rref_bare:nnn #1#2#3
+  { \msg_error:nnnnn { regulatory-ref } { key-without-value } { #1 } { #2 } { #3 } }
+
+\msg_new:nnn { regulatory-ref } { unknown-key }
+  {
+    The~#2~designations~of~`#1'~were~given~a~key~`#3',~which~this~package~
+    does~not~know.~\\
+    The~keys~are:~\clist_use:Nn \c__regulatory_rref_keys_clist { ,~ }.
+  }
+
+\msg_new:nnn { regulatory-ref } { key-without-value }
+  { The~key~`#3'~of~the~#2~designations~of~`#1'~was~given~no~value. }
+
+\cs_new_protected:Npn \rref@setup@lang #1#2#3
+  {
+    \keyval_parse:nnn
+      { \__regulatory_rref_bare:nnn { #1 } { #2 } }
+      { \__regulatory_rref_set:nnnn { #1 } { #2 } }
+      { #3 }
+  }
+\ExplSyntaxOff
+
+%    \end{macrocode}
+% \begin{macro}{\rref@init@lang@article}
+% \begin{macro}{\rref@init@lang@para}
+% \begin{macro}{\rref@init@lang@sub}
 %    \begin{macrocode}
 \newcommand\rref@init@lang@article[1]{%
-    \pgfkeys{/rref/#1/article/.is family,
-        /rref/#1/article,
-        name/.initial=\GetTranslation{article},
-        Name/.initial=\GetTranslation{Article},
-        names/.initial=\GetTranslation{articles},
-        Names/.initial=\GetTranslation{Articles},
-        ref format/.initial=\rref@refformat@noop,
-        label format/.initial=\rref@label@prefix,
-        group conjunction/.initial={},
-        group format/.initial=\rref@refformat@noop
-    }
+    \rref@setup@lang{#1}{article}{%
+        name=\GetTranslation{article},
+        Name=\GetTranslation{Article},
+        names=\GetTranslation{articles},
+        Names=\GetTranslation{Articles},
+        ref format=\rref@refformat@noop,
+        label format=\rref@label@prefix,
+        group conjunction={},
+        group format=\rref@refformat@noop
+    }%
 }
 \newcommand\rref@init@lang@para[1]{%
-    \pgfkeys{/rref/#1/para/.is family,
-        /rref/#1/para,
-        name/.initial=\GetTranslation{paragraph},
-        Name/.initial=\GetTranslation{Paragraph},
-        names/.initial=\GetTranslation{paragraphs},
-        Names/.initial=\GetTranslation{Paragraphs},
-        ref format/.initial=\rref@refformat@parenthesis,
-        label format/.initial=\rref@label@refonly,
-        group conjunction/.initial={,},
-        group format/.initial=\rref@refformat@noop
-    }
+    \rref@setup@lang{#1}{para}{%
+        name=\GetTranslation{paragraph},
+        Name=\GetTranslation{Paragraph},
+        names=\GetTranslation{paragraphs},
+        Names=\GetTranslation{Paragraphs},
+        ref format=\rref@refformat@parenthesis,
+        label format=\rref@label@refonly,
+        group conjunction={,},
+        group format=\rref@refformat@noop
+    }%
 }
 \newcommand\rref@init@lang@sub[1]{%
-    \pgfkeys{/rref/#1/sub/.is family,
-        /rref/#1/sub,
-        name/.initial=\GetTranslation{point},
-        Name/.initial=\GetTranslation{Point},
-        names/.initial=\GetTranslation{points},
-        Names/.initial=\GetTranslation{Points},
-        ref format/.initial=\rref@refformat@ordinal,
-        label format/.initial=\rref@label@postfix,
-        group conjunction/.initial={,},
-        group format/.initial=\rref@group@braced
-    }
-}
-
-\newcommand\rref@setup@lang[3]{%
-    \pgfkeys{/rref/#1/#2,#3}
+    \rref@setup@lang{#1}{sub}{%
+        name=\GetTranslation{point},
+        Name=\GetTranslation{Point},
+        names=\GetTranslation{points},
+        Names=\GetTranslation{Points},
+        ref format=\rref@refformat@ordinal,
+        label format=\rref@label@postfix,
+        group conjunction={,},
+        group format=\rref@group@braced
+    }%
 }
 %    \end{macrocode}
+% \end{macro}
+% \end{macro}
+% \end{macro}
 %
 % \begin{macro}{\rref@setup}
 % Declares \meta{language} and configures its three types at once. The declaration itself is recorded, so
@@ -279,13 +326,16 @@
 % the position: Dutch keeps \enquote{lid} singular where the designation follows the ordinals, and says so
 % in its own definition file rather than here.
 %    \begin{macrocode}
-\newcommand\rref@set[4][\rref@lang]{%
-    \pgfkeysgetvalue{/rref/#1/#2/#3}{#4}%
-}
+\ExplSyntaxOn
+\NewDocumentCommand \rref@set { O{\rref@lang} m m m }
+  {
+    \prop_get:NeNF \g__regulatory_rref_prop { #1 / #2 / #3 } #4
+      { \cs_set_eq:NN #4 \relax }
+  }
 
-\newcommand\rref@get[3][\rref@lang]{%
-    \pgfkeysvalueof{/rref/#1/#2/#3}%
-}
+\NewExpandableDocumentCommand \rref@get { O{\rref@lang} m m }
+  { \prop_item:Ne \g__regulatory_rref_prop { #1 / #2 / #3 } }
+\ExplSyntaxOff
 
 \newif\ifrref@plural
 \newcommand\rref@name[2][\rref@lang]{%

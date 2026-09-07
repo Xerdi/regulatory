@@ -104,15 +104,16 @@
 %
 % \subsubsection{\translation{Package options}{Pakketopties}}
 %
-% Everything from here on belongs to \package{regulatory-struct}. The options are handled with
-% \package{pgfopts}, so all of them are stored in the \texttt{/regulatory} key family.
+% Everything from here on belongs to \package{regulatory-struct}. The options are keys of the
+% \texttt{regulatory} family of \pkg{l3keys}, which the kernel offers and which this bundle uses for every
+% key it reads: the options here, the argument of \cmd{\srcref}, and the fields of an attachment. The
+% registers of \zcref{sec:sources} are the one thing that is not keys but a store, and those are property
+% lists.
 % \iffalse
 %<*package>
 % \fi
 %    \begin{macrocode}
-\RequirePackage{pgfopts}
 \RequirePackage{xifthen}
-\RequirePackage{keyval}
 \RequirePackage{xspace}
 %    \end{macrocode}
 %
@@ -121,33 +122,54 @@
 % \begin{macro}{\ifregulatory@legacy}
 % \begin{macro}{\ifregulatory@alldefs}
 % \begin{macro}{\ifregulatory@nameinlink}
-% Each option is stored in a switch. The switches are shared by all three modules, which is the reason for
-% keeping them in this base module. The \texttt{nameinlink} switch is declared with \cmd{\newboolean},
-% because it is queried with \cmd{\ifthenelse} in \package{regulatory-ref} as well.
+% Each switch option is stored in a \cmd{\newif} switch, which \texttt{.legacy\_if\_set:n} sets. The
+% switches are shared by every module, which is the reason for keeping them in this base module. The
+% \texttt{nameinlink} switch is declared with \cmd{\newboolean}, because it is queried with
+% \cmd{\ifthenelse} in \package{regulatory-ref} as well; \cmd{\newboolean} builds a \cmd{\newif} switch,
+% so the same property reaches it.
 %    \begin{macrocode}
 \newif\ifregulatory@markdown
 \newif\ifregulatory@bibtogls
 \newif\ifregulatory@legacy
 \newif\ifregulatory@alldefs
 \newboolean{regulatory@nameinlink}
-\pgfkeys{
-    /regulatory/.is family,
-    /regulatory,
-    md/.is if=regulatory@markdown,
-    md=false,
-    bib2gls/.is if=regulatory@bibtogls,
-    bib2gls=true,
-    legacy/.is if=regulatory@legacy,
-    legacy=false,
-    alldefs/.is if=regulatory@alldefs,
-    alldefs=false,
-    nameinlink/.is if=regulatory@nameinlink,
-    nameinlink=true,
-    defstyle/.store in=\regulatory@defstyle,
-    defstyle=alttree,
-    bronstijl/.store in=\regulatory@bronstijl,
-    bronstijl=voluit
-}
+\ExplSyntaxOn
+\tl_new:N \regulatory@defstyle
+\tl_new:N \regulatory@sourcestyle
+\keys_define:nn { regulatory }
+  {
+    md          .legacy_if_set:n = regulatory@markdown ,
+    md          .default:n       = true ,
+    md          .initial:n       = false ,
+    bib2gls     .legacy_if_set:n = regulatory@bibtogls ,
+    bib2gls     .default:n       = true ,
+    bib2gls     .initial:n       = true ,
+    legacy      .legacy_if_set:n = regulatory@legacy ,
+    legacy      .default:n       = true ,
+    legacy      .initial:n       = false ,
+    alldefs     .legacy_if_set:n = regulatory@alldefs ,
+    alldefs     .default:n       = true ,
+    alldefs     .initial:n       = false ,
+    nameinlink  .legacy_if_set:n = regulatory@nameinlink ,
+    nameinlink  .default:n       = true ,
+    nameinlink  .initial:n       = true ,
+    defstyle    .tl_set:N        = \regulatory@defstyle ,
+    defstyle    .initial:n       = alttree ,
+%    \end{macrocode}
+% The style a citation of an external source is written in is a choice and not a string, so that a value
+% this bundle does not know is refused where it is given. It used to be stored as given, and a misspelling
+% then reached every register lookup as a path that holds nothing: a citation came out with its numbers and
+% without a single word, and nothing said so.
+%    \begin{macrocode}
+    sourcestyle .choice: ,
+    sourcestyle / full    .code:n = \tl_set:Nn \regulatory@sourcestyle { full } ,
+    sourcestyle / short   .code:n = \tl_set:Nn \regulatory@sourcestyle { short } ,
+    sourcestyle / voluit  .code:n = \tl_set:Nn \regulatory@sourcestyle { full } ,
+    sourcestyle / verkort .code:n = \tl_set:Nn \regulatory@sourcestyle { short } ,
+    sourcestyle .initial:n = full ,
+    bronstijl   .meta:n    = { sourcestyle = {#1} } ,
+  }
+\ExplSyntaxOff
 %    \end{macrocode}
 % \end{macro}
 % \end{macro}
@@ -156,20 +178,32 @@
 % \end{macro}
 %
 % \begin{macro}{\regulatory@defstyle}
-% The \option{defstyle} option is the only one that carries a value rather than a switch: it holds the
-% name of the style \cmd{\printdefs} reaches for when it is given no style of its own.
+% \begin{macro}{\regulatory@sourcestyle}
+% The two options that carry a value rather than a switch. \option{defstyle} holds the name of the style
+% \cmd{\printdefs} reaches for when it is given no style of its own; \option{sourcestyle} holds
+% \texttt{full} or \texttt{short}, which is the arrangement \cmd{\srcref} writes a citation in.
+% \end{macro}
 % \end{macro}
 %
-% A local configuration file may set other defaults, before the options given to the package are processed.
+% \begin{macro}{\regulatorysetup}
+% Sets the same keys after the package is loaded, and is what a \file{regulatory.cfg} writes. A local
+% configuration file is read before the options given to the package are processed, so a document always
+% wins from the directory it stands in.
 %    \begin{macrocode}
+\ExplSyntaxOn
+\NewDocumentCommand \regulatorysetup { m }
+  { \keys_set:nn { regulatory } { #1 } }
+\ExplSyntaxOff
+
 \InputIfFileExists{regulatory.cfg}{%
     \PackageInfo{regulatory}{Using local configuration file}%
 }{%
     \PackageInfo{regulatory}{No local configuration file}%
 }
 
-\ProcessPgfPackageOptions{/regulatory}
+\ProcessKeyOptions[regulatory]
 %    \end{macrocode}
+% \end{macro}
 %
 % \subsubsection{\translation{Prerequisites}{Vereisten}}
 %
@@ -222,7 +256,6 @@
 \RequirePackage[user,counter,hyperref,xr]{zref}
 \RequirePackage{zref-xr,zref-user,zref-clever,zref-hyperref}
 \RequirePackage{hyperref}
-\RequirePackage{pgf}
 \RequirePackage{translations}
 %    \end{macrocode}
 %

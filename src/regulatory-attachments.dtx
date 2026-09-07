@@ -78,40 +78,97 @@
 %
 % \begin{macro}{\newartifact}
 % An artifact holds everything known about another document: where its file is, how it is referred to, and
-% what a PDF viewer should say about it once it is attached. Every artifact is a key family of its own,
-% named after \meta{name}.
+% what a PDF viewer should say about it once it is attached. The artifacts of a document live in one
+% property list, keyed by \meta{name} and field, and the fields a document may give are listed rather than
+% left open: a field this package does not know is a misspelling of one that it does, and it used to be
+% stored under the wrong name and read back as nothing.
 %    \begin{macrocode}
 \newcommand\artifact@footnote@noop[1]{#1}
 \newcommand\artifact@def@label@default[1]{~(\GetTranslation{see} #1)}
 
-\newcommand\newartifact[2]{%
-    \pgfkeys{
-        /artifact/#1/.is family,
-        /artifact/#1,
-        name/.initial = #1,
-        filename/.initial = #1.pdf,
-        path/.initial = ./,
-        ref label/.initial=,
-        def label/.initial=\artifact@def@label@default,
-        footnote/.initial = true,
-        footnote label/.initial=\artifact@footnote@noop,
-        url/.initial=,
-        referred/.initial = false,
-        defs/.initial=,
-        author/.initial=<author>,
-        subject/.initial=<subject>,
-        description/.initial=<description>
-    }
-    \pgfkeys{/artifact/#1,#2}
-}
+\ExplSyntaxOn
+\prop_new:N \g__regulatory_artifact_prop
+\cs_generate_variant:Nn \prop_item:Nn  { Ne }
+\cs_generate_variant:Nn \prop_gput:Nnn { Nen }
+\cs_generate_variant:Nn \prop_get:NnNF { NeNF }
+\cs_generate_variant:Nn \prop_if_in:NnTF { NeTF }
+
+\clist_const:Nn \c__regulatory_artifact_keys_clist
+  {
+    name , filename , path , ref~label , def~label , footnote , footnote~label ,
+    url , referred , defs , author , subject , description
+  }
+
+\cs_new_protected:Npn \__regulatory_artifact_put:nnn #1#2#3
+  { \prop_gput:Nen \g__regulatory_artifact_prop { #1 / #2 } { #3 } }
+
+\cs_new_protected:Npn \__regulatory_artifact_set:nnn #1#2#3
+  {
+    \clist_if_in:NnTF \c__regulatory_artifact_keys_clist { #2 }
+      { \__regulatory_artifact_put:nnn { #1 } { #2 } { #3 } }
+      { \msg_error:nnnn { regulatory-attachments } { unknown-field } { #1 } { #2 } }
+  }
+
+\cs_new_protected:Npn \__regulatory_artifact_bare:nn #1#2
+  { \msg_error:nnnn { regulatory-attachments } { field-without-value } { #1 } { #2 } }
+
+\msg_new:nnn { regulatory-attachments } { unknown-field }
+  {
+    The~artifact~`#1'~was~given~a~field~`#2',~which~this~package~does~not~know.~\\
+    The~fields~are:~\clist_use:Nn \c__regulatory_artifact_keys_clist { ,~ }.
+  }
+
+\msg_new:nnn { regulatory-attachments } { field-without-value }
+  { The~field~`#2'~of~artifact~`#1'~was~given~no~value. }
+
+\NewDocumentCommand \newartifact { m m }
+  {
+    \__regulatory_artifact_put:nnn { #1 } { name }           { #1 }
+    \__regulatory_artifact_put:nnn { #1 } { filename }       { #1.pdf }
+    \__regulatory_artifact_put:nnn { #1 } { path }           { ./ }
+    \__regulatory_artifact_put:nnn { #1 } { ref~label }      { }
+    \__regulatory_artifact_put:nnn { #1 } { def~label }      { \artifact@def@label@default }
+    \__regulatory_artifact_put:nnn { #1 } { footnote }       { true }
+    \__regulatory_artifact_put:nnn { #1 } { footnote~label } { \artifact@footnote@noop }
+    \__regulatory_artifact_put:nnn { #1 } { url }            { }
+    \__regulatory_artifact_put:nnn { #1 } { referred }       { false }
+    \__regulatory_artifact_put:nnn { #1 } { defs }           { }
+    \__regulatory_artifact_put:nnn { #1 } { author }         { <author> }
+    \__regulatory_artifact_put:nnn { #1 } { subject }        { <subject> }
+    \__regulatory_artifact_put:nnn { #1 } { description }    { <description> }
+    \keyval_parse:nnn
+      { \__regulatory_artifact_bare:nn { #1 } }
+      { \__regulatory_artifact_set:nnn { #1 } }
+      { #2 }
+  }
+
+\cs_new_protected:Npn \artifact@ifknown #1
+  { \prop_if_in:NeTF \g__regulatory_artifact_prop { #1 / name } }
+
+\cs_new_protected:Npn \artifact@ifuncomposable #1
+  { \prop_if_in:NeTF \g__regulatory_artifact_prop { #1 / uncomposable } }
+
+\cs_new_protected:Npn \artifact@setuncomposable #1
+  { \__regulatory_artifact_put:nnn { #1 } { uncomposable } { true } }
+
+\cs_new_protected:Npn \artifact@setreferred #1
+  { \__regulatory_artifact_put:nnn { #1 } { referred } { true } }
+\ExplSyntaxOff
 %    \end{macrocode}
 % \end{macro}
 %
 % The accessors of an artifact, of which the full name and the full filename are the ones prefixed with the
 % path of the artifact.
 %    \begin{macrocode}
-\newcommand\@aget[2]{\pgfkeysvalueof{/artifact/#1/#2}}
-\newcommand\artifact@setfootnotelabel[1]{\pgfkeysgetvalue{/artifact/#1/footnote label}{\artifactfootnotelabel}}
+\ExplSyntaxOn
+\cs_new:Npn \@aget #1#2 { \prop_item:Ne \g__regulatory_artifact_prop { #1 / #2 } }
+\cs_new_protected:Npn \artifact@setfootnotelabel #1
+  {
+    \prop_get:NeNF \g__regulatory_artifact_prop { #1 / footnote~label }
+      \artifactfootnotelabel
+      { \cs_set_eq:NN \artifactfootnotelabel \artifact@footnote@noop }
+  }
+\ExplSyntaxOff
 \newcommand\artifactname[1]{\@aget{#1}{name}}
 \newcommand\artifactfullname[1]{\@aget{#1}{path}\@aget{#1}{name}}
 \newcommand\artifactfilename[1]{\@aget{#1}{filename}}
@@ -301,8 +358,8 @@
 }
 
 \newcommand\artifact@warnuncomposable[1]{%
-    \pgfkeysifdefined{/artifact/#1/uncomposable}{}{%
-        \pgfkeys{/artifact/#1/uncomposable/.initial=true}%
+    \artifact@ifuncomposable{#1}{}{%
+        \artifact@setuncomposable{#1}%
         \PackageWarning{regulatory}{%
             A reference to `#1' is worded in \languagename\space by naming its\MessageBreak
             subject alone: that language inflects the noun a connective\MessageBreak
@@ -319,8 +376,8 @@
 % repeat the footnote.
 %    \begin{macrocode}
 \newcommand\documentfootnote[2][]{%
-    \pgfkeysifdefined{/artifact/#2/referred}{%
-        \pgfkeys{/artifact/#2,referred=true}%
+    \artifact@ifknown{#2}{%
+        \artifact@setreferred{#2}%
         \artifact@setfootnotelabel{#2}%
         \ifthenelse{\equal{#1}{}}{%
             \def\artifact@description{\artifactsubject{#2}}%
