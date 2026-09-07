@@ -632,20 +632,22 @@
 %
 % \subsubsection{Translations}
 %
+% This file used to declare \enquote{Article} for English and Dutch itself, with
+% \cmd{\providetranslation}, deferred to \cmd{\AtBeginDocument} because
+% \package{regulatory-struct} loads \package{translations} well after this file is read.
+% Two things were wrong with it. \cmd{\providetranslation} is not of
+% \package{translations} at all but of \package{translator}, which those two packages renamed
+% around each other in 2016; measured, \package{translations} alone leaves it undefined. So
+% deferring did not avoid an undefined control sequence, it moved it to \cmd{\begin{document}},
+% where the braced arguments are typeset instead. And every document of this suite happens to
+% load \package{glossaries}, which pulls \package{translator} in, so the conversion came out
+% clean here and nowhere else\,---\,the green was a property of what the author loads beside
+% this bundle.
 %
-% Deferred for the same reason as the redefinitions: regulatory.sty requires the
-% translations package around line 99, well after this file is read. Calling
-% \cmd{\providetranslation} here makes it an undefined control sequence, its braced
-% arguments are typeset as text, and that ends the preamble.
-% \iffalse
-%<*html>
-% \fi
-%    \begin{macrocode}
-
-\AtBeginDocument{%
-  \providetranslation{Article}{Article}%
-  \providetranslation[to=dutch]{Article}{Artikel}%
-}
+% The declarations are gone rather than corrected: \package{regulatory-struct} declares the
+% fallback and each language file declares its own, and since every shipped language file is
+% loaded whatever the document speaks, Dutch is there to be found. Reported by the sibling
+% sessions of Xerdi's Documentation Project, who read it in the HTML of the manual.
 
 \endinput
 %    \end{macrocode}

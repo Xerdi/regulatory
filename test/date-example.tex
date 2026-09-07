@@ -1,0 +1,67 @@
+%% de-example.tex
+%% Copyright 2026 E. Nijenhuis
+%
+% This work may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License, either version 1.3c
+% of this license or (at your option) any later version.
+% The latest version of this license is in
+% http://www.latex-project.org/lppl.txt
+% and version 1.3c or later is part of all distributions of LaTeX
+% version 2005/12/01 or later.
+%
+% This work has the LPPL maintenance status ‘maintained’.
+%
+% The Current Maintainer of this work is E. Nijenhuis.
+%
+% This work consists of the files listed in the meta-comment of
+% regulatory-struct.dtx.
+%
+% Het enige voorbeeld dat opzettelijk twee keer waarschuwt over datums. Een
+% aanhaling van regelgeving is een aanhaling van een versie ervan, dus dit pakket
+% laat een document niet ongezegd laten per wanneer het spreekt, en zegt het als
+% het document de gegevens van een bron voorbijloopt.
+\IfDocumentMetadataTF{}{\DocumentMetadata{}}
+\documentclass[12pt,dutch]{article}
+\usepackage{babel}
+\usepackage{regulatory}
+
+\newcommand\translation[2]{#2}
+
+\hypersetup{pdftitle={Voorbeeld Datums}}
+
+\loadsources{sources}
+
+% Drie bronnen over hetzelfde veld. De eerste zegt niet wanneer hij nagelopen is
+% en kan dus nooit verouderd gemeld worden: dat wordt gezegd. De tweede zegt met
+% zoveel woorden dat hij niet nagelopen is, en dat is een besluit, dus daar blijft
+% het stil. De derde schrijft een datum in een andere vorm, wat verkeerd vergelijkt
+% in plaats van niet te vergelijken.
+\newsource{zonder}{regeling}{%
+    citeertitel = Wet zonder datum, afkorting = Wzd, lidwoord = de%
+}
+\newsource{onbekeken}{regeling}{%
+    citeertitel = Wet niet nagelopen, afkorting = Wnn, lidwoord = de,
+    geldig = unverified%
+}
+\newsource{scheef}{regeling}{%
+    citeertitel = Wet met een scheve datum, afkorting = Wsd, lidwoord = de,
+    geldig = 1 januari 2024%
+}
+
+\begin{document}
+    \begin{center}
+        \Huge Voorbeeld Datums
+    \end{center}
+
+    \article{Datums}\label{art:datums}
+    \begin{paras}
+        % Geen \sourcedate en geen date=: het pakket zegt eenmalig dat dit
+        % document niet zegt per wanneer het spreekt.
+        \item Zonder datum: \srcref[artikel=96]{bw6}.
+        % De bron is nagelopen op 2024-01-01 en dit spreekt per 2026-01-01, dus
+        % wat er tussen die twee veranderd is staat niet in deze aanhaling.
+        \item Met een latere datum: \srcref[artikel=96, date=2026-01-01]{bw6}.
+        % Dezelfde bron nog eens: de melding komt één keer per bron.
+        \item Nog eens: \srcref[artikel=97, date=2026-01-01]{bw6}.
+    \end{paras}
+\end{document}

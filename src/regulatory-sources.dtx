@@ -260,10 +260,67 @@
               }
           }
       }
+    \__regulatory_src_checkvalid:
     \prop_gput:NVV \g__regulatory_src_type_prop
       \l__regulatory_src_key_str \l__regulatory_src_type_str
     \seq_gput_right:NV \g__regulatory_src_keys_seq \l__regulatory_src_key_str
     \bool_set_false:N \l__regulatory_src_open_bool
+  }
+%    \end{macrocode}
+%
+% \verb|\__regulatory_src_checkvalid:|
+% Every entry says when it was last held against the text it describes. The date it gives is what
+% \cmd{\sourcedate} is compared with, so an entry without one is never reported stale: \enquote{not looked
+% at yet} and \enquote{looked at and current} would come out as the same silence. A guard whose off switch
+% is an absent field is switched off by accident rather than by decision, so the absence is said out loud
+% and the decision is given a word of its own\,---\,\texttt{valid = unverified}, which is silent, because
+% the author has then said it. Anything else that is not a date is said as well, since a date in another
+% shape compares wrongly rather than not at all.
+%
+% Asked for by the sibling session that keeps the sources this reader is written for, on the argument this
+% whole bundle is built on.
+%
+% There is deliberately no fourth state for \enquote{checked and known to have changed}. Such an entry
+% already warns: it keeps its last good date, the document speaks later, and the source is named. A word in
+% place of that date would fire the same warning while throwing the date away, and the date is the one thing
+% that says how far behind the entry is and whether the citation in front of the reader predates the change.
+% A note that an entry is known to be wrong is for a person reading the file, not a state this guard reads.
+%    \begin{macrocode}
+\cs_new_protected:Npn \__regulatory_src_checkvalid:
+  {
+    \prop_get:cnNTF { g__regulatory_src_e_ \l__regulatory_src_key_str _prop }
+      { valid } \l__regulatory_src_valid_tl
+      {
+        \str_if_eq:VnF \l__regulatory_src_valid_tl { unverified }
+          {
+            \regex_match:NVF \c__regulatory_src_date_regex \l__regulatory_src_valid_tl
+              {
+                \msg_warning:nnxx { regulatory-sources } { valid-not-iso }
+                  { \l__regulatory_src_key_str } { \l__regulatory_src_valid_tl }
+              }
+          }
+      }
+      {
+        \msg_warning:nnx { regulatory-sources } { no-valid }
+          { \l__regulatory_src_key_str }
+      }
+  }
+\cs_generate_variant:Nn \regex_match:NnF { NVF }
+
+\msg_new:nnn { regulatory-sources } { no-valid }
+  {
+    The~source~`#1'~does~not~say~when~it~was~last~held~against~the~text~it~
+    describes,~\\
+    so~it~can~never~be~reported~out~of~date.~Give~it~valid~=~YYYY-MM-DD,~or~
+    valid~=~unverified~to~say~so~on~purpose.~Reported
+  }
+
+\msg_new:nnn { regulatory-sources } { valid-not-iso }
+  {
+    The~source~`#1'~gives~valid~=~`#2',~which~is~neither~YYYY-MM-DD~nor~
+    unverified.~\\
+    Dates~are~compared~as~they~are~written,~so~this~one~compares~wrongly~rather~
+    than~not~at~all.~Reported
   }
 %    \end{macrocode}
 %
@@ -734,6 +791,8 @@
     point     .code:n = \def \regulatory@src@point      { #1 } ,
     subpoint  .code:n = \def \regulatory@src@subpoint   { #1 } ,
     system    .code:n = \def \regulatory@src@thissystem { #1 } ,
+    date      .code:n = \tl_set:Nn \l__regulatory_src_thisdate_tl { #1 } ,
+    datum     .meta:n = { date      = {#1} } ,
     artikel   .meta:n = { article   = {#1} } ,
     lid       .meta:n = { paragraph = {#1} } ,
     onderdeel .meta:n = { point     = {#1} } ,
@@ -743,6 +802,104 @@
   { \keys_set:nn { regulatory / srcref } { #1 } }
 \ExplSyntaxOff
 
+%    \end{macrocode}
+%
+% \begin{macro}{\sourcedate}
+% The date a citation speaks as of. A reference to legislation is a reference to a \emph{version} of it:
+% the same article read a year apart is not necessarily the same article, and the Juriconnect standard says
+% so by carrying the date in the reference itself. This bundle does not print the date and does not build
+% the link yet, but it refuses to let a document leave it unsaid, because the alternative is a citation
+% that silently means \enquote{whenever this was last typeset}.
+%
+% It is a warning and not an error on purpose: a document that cites without a date is defective, but it is
+% not broken, and a package that cannot be added to an existing document without stopping it is a package
+% that does not get added. The warning is said once, and names the command that answers it.
+%
+% An entry may carry a \texttt{valid} field, which is the date the data of that entry was last checked.
+% When the document speaks as of a later date than that, the entry cannot vouch for itself and says so,
+% once per source. That is what makes a shared file of sources safe to use at all, wherever it is kept: the
+% identifiers in it never age, the dates do, and a document that outruns the data it was handed is told
+% rather than quietly given whatever the last update to that file happened to contain. This bundle ships
+% no legislation itself and is not the place for it\,---\,a citeertitel changes on its own clock and a
+% package on CTAN does not\,---\,but it is the place for the machinery that says when the two have come
+% apart.
+%    \begin{macrocode}
+\ExplSyntaxOn
+\tl_new:N \g__regulatory_src_date_tl
+\tl_new:N \l__regulatory_src_thisdate_tl
+\seq_new:N \g__regulatory_src_dated_seq
+\bool_new:N \g__regulatory_src_nodate_bool
+
+\regex_const:Nn \c__regulatory_src_date_regex { \A \d{4}-\d{2}-\d{2} \Z }
+
+\msg_new:nnn { regulatory-sources } { date-not-iso }
+  {
+    The~date~`#1'~is~not~of~the~form~YYYY-MM-DD.~\\
+    Dates~are~compared~as~they~are~written,~so~another~form~would~compare~wrongly~
+    rather~than~not~at~all.
+  }
+
+\NewDocumentCommand \sourcedate { m }
+  {
+    \regex_match:NnTF \c__regulatory_src_date_regex { #1 }
+      { \tl_gset:Nn \g__regulatory_src_date_tl { #1 } }
+      { \msg_error:nnn { regulatory-sources } { date-not-iso } { #1 } }
+  }
+
+\cs_new_protected:Npn \__regulatory_src_checkdate:n #1
+  {
+    \tl_if_empty:NT \l__regulatory_src_thisdate_tl
+      { \tl_set_eq:NN \l__regulatory_src_thisdate_tl \g__regulatory_src_date_tl }
+    \tl_if_empty:NTF \l__regulatory_src_thisdate_tl
+      {
+        \bool_if:NF \g__regulatory_src_nodate_bool
+          {
+            \bool_gset_true:N \g__regulatory_src_nodate_bool
+            \msg_warning:nn { regulatory-sources } { no-date }
+          }
+      }
+      { \__regulatory_src_checkstale:n { #1 } }
+  }
+
+\cs_new_protected:Npn \__regulatory_src_checkstale:n #1
+  {
+    \tl_set:Nx \l__regulatory_src_valid_tl { \srcfield { #1 } { valid } }
+    \tl_if_empty:NF \l__regulatory_src_valid_tl
+      {
+        \str_compare:eNeT \l__regulatory_src_thisdate_tl > \l__regulatory_src_valid_tl
+          {
+            \seq_if_in:NnF \g__regulatory_src_dated_seq { #1 }
+              {
+                \seq_gput_right:Nn \g__regulatory_src_dated_seq { #1 }
+                \msg_warning:nnxxx { regulatory-sources } { stale-source }
+                  { #1 } { \l__regulatory_src_valid_tl } { \l__regulatory_src_thisdate_tl }
+              }
+          }
+      }
+  }
+\cs_generate_variant:Nn \str_compare:nNnT { eNeT }
+
+\msg_new:nnn { regulatory-sources } { no-date }
+  {
+    This~document~cites~legislation~without~saying~as~of~when.~\\
+    Put~\iow_char:N\\sourcedate\{YYYY-MM-DD\}~in~the~preamble,~or~give~one~
+    citation~its~own~with~date=YYYY-MM-DD.~Reported
+  }
+
+\msg_new:nnn { regulatory-sources } { stale-source }
+  {
+    The~source~`#1'~was~last~checked~on~#2,~and~this~document~speaks~as~of~#3.~\\
+    Whatever~changed~in~between~is~not~in~this~citation.~Reported
+  }
+\cs_new_protected:Npn \regulatory@src@checkdate #1
+  { \__regulatory_src_checkdate:n { #1 } }
+\cs_new_protected:Npn \regulatory@src@cleardate
+  { \tl_clear:N \l__regulatory_src_thisdate_tl }
+\ExplSyntaxOff
+%    \end{macrocode}
+% \end{macro}
+%
+%    \begin{macrocode}
 \newcommand\regulatory@src@thislabel{}
 \newcommand\regulatory@src@label[2]{%
     \ifnum\regulatory@src@items>1
@@ -843,7 +1000,9 @@
         }{%
             \edef\regulatory@src@thissystem{\regulatory@sourcestyle}%
         }%
+        \regulatory@src@cleardate
         \regulatory@src@setkeys{#2}%
+        \regulatory@src@checkdate{#3}%
         \edef\regulatory@src@reg{\srcregister{#3}}%
         \regsrc@set{\regulatory@src@reg}{\regulatory@src@thissystem}{separator}%
             {\regulatory@src@sep}%

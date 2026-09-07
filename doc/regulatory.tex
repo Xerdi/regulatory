@@ -1105,6 +1105,59 @@ en / and \aref{ex1-sub:lorem,ex1-sub:lorem2,ex1-sub:lorem3,ex1-sub:lorem4}.
 }\\
 
 \noindent
+\DescribeMacro{\sourcedate\\\marg{YYYY-MM-DD}}
+\translation{%
+    A citation of legislation is a citation of a \emph{version} of it: the same article read a year apart
+    is not necessarily the same article, and the Juriconnect standard carries the date in the reference for
+    that reason. This bundle does not print the date and does not build the link yet, but it does not let a
+    document leave it unsaid, because the alternative is a citation that silently means \enquote{whenever
+    this was last typeset}. \cmd{\sourcedate} says it for the whole document; one citation may say its own
+    with \texttt{date=\meta{YYYY-MM-DD}}, which also answers to \texttt{datum}.
+
+    A document that says neither is told once, as a warning and not an error: citing without a date is
+    defective, but it is not broken, and a package that cannot be added to an existing document without
+    stopping it is a package that does not get added.
+
+    Every entry says when it was last held against the text it describes, in a \texttt{valid} field. When
+    the document speaks as of a later date than that, the entry cannot vouch for itself and says so, once
+    per source. An entry that leaves the field out is told so, because it could then never be reported out
+    of date at all: \enquote{not looked at yet} and \enquote{looked at and current} would be the same
+    silence, and a guard whose off switch is an absent field is switched off by accident rather than by
+    decision. The decision has a word of its own, \texttt{valid = unverified}, which is silent.
+    That is what makes a shared file of sources safe to use at all, wherever it is kept: the identifiers in
+    it never age, the dates do, and a document that outruns the data it was handed is told rather than
+    quietly given whatever the last update to that file happened to contain. This bundle ships no
+    legislation itself and is not the place for it\,---\,a citation title changes on its own clock and a
+    package on CTAN does not\,---\,but it is the place for the machinery that says when the two have come
+    apart.%
+}{%
+    Een aanhaling van regelgeving is een aanhaling van een \emph{versie} ervan: hetzelfde artikel een jaar
+    later gelezen is niet per se hetzelfde artikel, en de Juriconnect-standaard draagt de datum daarom in
+    de verwijzing zelf. Deze bundel drukt de datum niet af en bouwt de link nog niet, maar laat een document
+    hem niet ongezegd, want het alternatief is een aanhaling die stilzwijgend \enquote{wanneer dit voor het
+    laatst gezet is} betekent. \cmd{\sourcedate} zegt het voor het hele document; één aanhaling mag zijn
+    eigen datum geven met \texttt{date=\meta{JJJJ-MM-DD}}, wat ook naar \texttt{datum} luistert.
+
+    Een document dat geen van beide zegt krijgt dat eenmalig te horen, als waarschuwing en niet als fout:
+    aanhalen zonder datum is gebrekkig, maar niet stuk, en een pakket dat niet aan een bestaand document
+    toegevoegd kan worden zonder het te stoppen is een pakket dat niet toegevoegd wordt.
+
+    Iedere entry zegt wanneer hij voor het laatst naast de tekst gelegd is die hij beschrijft, in een veld
+    \texttt{valid}. Spreekt het document per een latere datum, dan kan de entry niet voor zichzelf instaan
+    en zegt dat, één keer per bron. Een entry die het veld weglaat krijgt dat te horen, want hij zou dan
+    nooit als verouderd gemeld kunnen worden: \enquote{nog niet bekeken} en \enquote{bekeken en actueel}
+    zouden dezelfde stilte zijn, en een wacht waarvan de uitschakelaar een ontbrekend veld is wordt per
+    ongeluk uitgezet in plaats van met opzet. Dat besluit heeft een eigen woord, \texttt{valid = unverified},
+    en dat blijft stil. Dat is wat een gedeeld bronbestand überhaupt veilig maakt om te gebruiken, waar het
+    ook bijgehouden wordt: de identifiers erin verouderen nooit, de datums wel, en een document dat de
+    gegevens voorbijloopt die het gekregen heeft wordt dat verteld in plaats van stilletjes bediend met wat
+    de laatste wijziging aan dat bestand toevallig bevatte. Deze bundel levert zelf geen regelgeving mee en
+    is daar ook niet de plek voor\,---\,een citeertitel verandert op zijn eigen klok en een pakket op CTAN
+    niet\,---\,maar hij is wel de plek voor het gereedschap dat zegt wanneer die twee uit elkaar gelopen
+    zijn.%
+}\\
+
+\noindent
 \DescribeMacro{\srcref\\\oarg{provision}\\\marg{key}}
 \translation{%
     Cites a source, either as a whole or down to one of its provisions. The optional argument holds the
@@ -1846,13 +1899,16 @@ De volgende begrippen worden in deze overeenkomst gebruikt.
 
 \subsection{\translation{The test documents}{De testdocumenten}}\label{sec:testdocs}
 \translation{%
-    Six documents are typeset, of which two exist in both languages, so a suite makes eight of
+    Eight documents are typeset, of which two exist in both languages, so a suite makes nine of
+    them per engine and four in the conversion of \zcref{sec:html}. One of the eight is converted
+    only, since what it is for is only read under \package{tex4ht}.
     them. Every one of them is a driver that sets the language, declares the artifacts and loads
     the definitions, and that leaves the body to a file of its own, so that both language
     versions share one text:%
 }{%
-    Er worden zes documenten gezet, waarvan twee in beide talen bestaan, zodat een suite er
-    acht maakt. Ieder daarvan is een driver die de taal instelt, de artefacten declareert en de
+    Er worden acht documenten gezet, waarvan twee in beide talen bestaan, zodat een suite er
+    negen per engine maakt en vier in de omzetting van \zcref{sec:html}. Eén van de acht wordt
+    alleen omgezet, want waar het voor is wordt alleen onder \package{tex4ht} gelezen. Ieder daarvan is een driver die de taal instelt, de artefacten declareert en de
     definities inlaadt, en die de inhoud overlaat aan een eigen bestand, zodat beide taalversies
     één tekst delen:%
 }
@@ -1895,6 +1951,29 @@ De volgende begrippen worden in deze overeenkomst gebruikt.
         PDF-gereedschap uit het PDF-bestand terug te lezen is. Het omkadert elk veld zelf: de
         module tekent een schrijflijn, en het kader laat op papier zien tot waar het vlak reikt
         dat een viewer aanbiedt.%
+    }
+    \item[nolang-example.tex] \translation{%
+        which names no language at all and is converted rather than typeset. Every other document
+        here loads \package{babel}, and a tracked language is what makes \package{tracklang} load a
+        \file{glossaries-\meta{language}.ldf} and with it \package{translator}. Anything in
+        \file{regulatory.4ht} that reaches for a command of that package therefore works in every
+        other document and is undefined in this one, which is how a call to
+        \cmd{\providetranslation} survived in that file.%
+    }{%
+        welke helemaal geen taal noemt en omgezet wordt in plaats van gezet. Ieder ander document
+        hier laadt \package{babel}, en een bijgehouden taal is wat \package{tracklang} een
+        \file{glossaries-\meta{taal}.ldf} laat laden en daarmee \package{translator}. Alles in
+        \file{regulatory.4ht} dat naar een commando van dat pakket grijpt werkt daarom in ieder
+        ander document en is in dit ene ongedefinieerd, en zo heeft een aanroep van
+        \cmd{\providetranslation} in dat bestand het overleefd.%
+    }
+    \item[date-example.tex] \translation{%
+        which cites without saying as of when, and then cites a source whose data was checked
+        before the date it gives. It is the second of the two documents that are meant to warn.%
+    }{%
+        welke aanhaalt zonder te zeggen per wanneer, en daarna een bron aanhaalt waarvan de
+        gegevens nagelopen zijn vóór de datum die het opgeeft. Het is het tweede van de twee
+        documenten die horen te waarschuwen.%
     }
     \item[source-example.tex] \translation{%
         which loads \file{sources.bib} and cites what is in it in every register of
@@ -2009,17 +2088,17 @@ De volgende begrippen worden in deze overeenkomst gebruikt.
 
 \subsection{\translation{What the suite reads back}{Wat de suite naleest}}\label{sec:checks}
 \translation{%
-    Every engine suite ends in seven sets of assertions, each of which prints what it counted and
+    Every engine suite ends in eight sets of assertions, each of which prints what it counted and
     stops the build when it is wrong. They are written the other way round from a test that
     checks a result: each of them exists because something once failed without failing, and its
     job is to make that same silence audible next time. Every one of them has been broken on
     purpose to see it bite\,---\,an assertion that has never failed has not established
     anything yet.%
 }{%
-    Iedere engine-suite eindigt in zeven reeksen controles, die elk opschrijven wat ze geteld
+    Iedere engine-suite eindigt in acht reeksen controles, die elk opschrijven wat ze geteld
     hebben en de bouw stoppen zodra het niet klopt. Ze zijn andersom geschreven dan een test die
     een uitkomst nakijkt: ieder van hen bestaat omdat er ooit iets faalde zonder te falen, en
-    zijn taak is om diezelfde stilte de volgende keer hoorbaar te maken. Alle zeven zijn expres
+    zijn taak is om diezelfde stilte de volgende keer hoorbaar te maken. Alle acht zijn expres
     gebroken om te zien dat ze bijten\,---\,een controle die nooit gefaald heeft, heeft nog
     niets vastgesteld.%
 }
@@ -2079,23 +2158,40 @@ De volgende begrippen worden in deze overeenkomst gebruikt.
     }
     \item[source-checks] \translation{%
         reads back what the reader of bib files read, field by field, and the wording of
-        thirty-eight citations word for word. A citation in the wrong register fails nowhere; it
+        forty citations word for word. A citation in the wrong register fails nowhere; it
         simply stands there wrong. The same target then typesets the two documents that have to
         fail and stops if either of them succeeded.%
     }{%
         leest terug wat de lezer van bib-bestanden gelezen heeft, veld voor veld, en de
-        formulering van achtendertig aanhalingen woord voor woord. Een aanhaling in het verkeerde
+        formulering van veertig aanhalingen woord voor woord. Een aanhaling in het verkeerde
         register faalt nergens; hij staat er gewoon verkeerd. Datzelfde doel zet daarna de twee
         documenten die moeten falen en stopt zodra een van beide toch slaagde.%
+    }
+    \item[date-checks] \translation{%
+        reads back the two things a document can get wrong about the date a citation speaks as
+        of: saying nothing at all, and outrunning the data of the source it cites. The second is
+        counted rather than only found, since it is meant to be said once per source and the
+        example cites the same one twice.%
+    }{%
+        leest de twee dingen terug die een document mis kan hebben met de datum waarop een
+        aanhaling spreekt: er niets over zeggen, en de gegevens van de aangehaalde bron
+        voorbijlopen. De tweede wordt geteld en niet alleen gevonden, want hij hoort één keer per
+        bron te komen en het voorbeeld haalt dezelfde bron twee keer aan.%
     }
     \item[html-checks] \translation{%
         counts what has to survive the conversion of \zcref{sec:html}: sections, headings,
         paragraph items, definitions of both routes and the two list styles. Those disappear
-        without an error, since a lost configuration produces plain text and not a failure.%
+        without an error, since a lost configuration produces plain text and not a failure. It
+        also reads back that the document which names no language still names none, by the words
+        it uses: that document is only worth converting while it is language-less, and its
+        structure would survive a language being added to it.%
     }{%
         telt wat de omzetting van \zcref{sec:html} moet overleven: secties, koppen, leden,
         definities uit beide routes en de twee lijststijlen. Die verdwijnen zonder foutmelding,
-        want een verloren configuratie levert platte tekst op en geen fout.%
+        want een verloren configuratie levert platte tekst op en geen fout. Hij leest ook terug
+        dat het document dat geen taal noemt er nog steeds geen noemt, aan de woorden die het
+        gebruikt: dat document is alleen het omzetten waard zolang het taalloos is, en zijn
+        structuur zou een toegevoegde taal overleven.%
     }
 \end{labeling}
 

@@ -55,7 +55,7 @@ PLAINEXAMPLES = md-example sign-example source-example
 # the package says so once per artifact. It is kept out of log-checks for that
 # reason and asserted by lang-checks instead, which is the only place the warning
 # is proved to still fire.
-WARNEXAMPLES = de-example
+WARNEXAMPLES = de-example date-example
 # Two documents that are meant to fail: a bib with a required field missing, and
 # one with a line the reader does not accept. They are not examples, they are the
 # other half of the reader's guarantee.
@@ -77,6 +77,30 @@ HTML_DEFS_EXAMPLE = example2-nl
 # suite does not ask for.
 HTML_MD_EXAMPLE = md-example
 
+# The conversion of a document that names no language. Its whole point is what it
+# does not load: without a tracked language, tracklang loads no glossaries-<lang>.ldf
+# and the translator package is never pulled in, so anything in regulatory.4ht that
+# reaches for a command of translator is undefined here and defined in every other
+# document of this suite. That masking is what hid a call to \providetranslation in
+# that file; this is the one place the suite can see through it. Measured by putting
+# the call back: the conversion of this document then fails outright, while every
+# other one stays green.
+#
+# Naming no language is the plainest form of the condition, not the only one. A
+# document that loads babel *after* this package has the same gap -- nothing is
+# tracked yet when glossaries loads -- and looks entirely ordinary; doc/regulatory-en.tex
+# is written that way. One document is enough to catch the class, and this is the one
+# that cannot drift into loading a language by accident.
+#
+# Its premise is asserted along with its structure, because the structure survives a
+# document that stops being language-less: add a babel line to quiet something and
+# translator comes back, the masking returns, and this test goes on passing while
+# testing nothing. So the wording is read back too -- English designations present,
+# Dutch ones absent. Nobody will be tempted to add that line to silence a warning,
+# either: measured, a language-less document reports none, since every shipped
+# language file is loaded whatever the document speaks.
+HTML_NOLANG_EXAMPLE = nolang-example
+
 # One suite is one build directory and one target, so they can be asked for
 # together or one at a time. Conformance is not among them: it needs Docker and
 # takes minutes, so it joins only when it is asked for, with
@@ -90,6 +114,7 @@ endif
 .PHONY: all test $(addprefix suite-,$(ENGINES) html conformance) \
         test-engines test-html html-checks md-checks ref-checks sign-checks log-checks \
         lang-checks \
+        date-checks \
         source-checks \
         conformance conformance-run \
         conformance-check conformance-check-run conformance-stale \
@@ -114,7 +139,7 @@ suite-conformance: conformance
 # which is why every path above is absolute. The directory is named after the
 # engine, and so is the engine it builds with: `make build-pdflatex' is pdflatex.
 build-%:
-	$(call run_in,$*,all ref-checks log-checks md-checks sign-checks source-checks lang-checks ENGINE=$*)
+	$(call run_in,$*,all ref-checks log-checks md-checks sign-checks source-checks lang-checks date-checks ENGINE=$*)
 
 .DELETE_ON_ERROR:
 
@@ -177,17 +202,35 @@ ref-checks: $(addsuffix .pdf,$(EXAMPLES))
 	     echo "refs: a label was defined twice; see the example logs" >&2; exit 1; \
 	 fi
 
-# The package says nothing about a document it has no reason to complain about, so
+# Two things are read back from the logs. The package says nothing about a document
+# it has no reason to complain about, so
 # anything it does say here is a defect: a language it has no definitions for, a
 # tex4ht run without its configuration, PDF management where it costs the lists.
 # Those warnings exist to be read by someone, and a suite that lets them pass is a
-# suite that reads nothing.
+# suite that reads nothing. And an undefined control sequence is counted over every
+# example, the ones that warn on purpose included: nonstopmode carries on past it and
+# the run still ends at exit 0, so the only trace is three lines in a log above a
+# green result. That is how a call to \providetranslation survived in regulatory.4ht
+# -- every document here loads glossaries, which pulls in the package that defines
+# it, so it was undefined everywhere but here. Two honest caveats. The engine runs of
+# this suite already stop on one, since latexmk returns non-zero, so the count here is
+# a second belt rather than the first. And no example of this suite exercises either
+# count: every document loads glossaries, and glossaries pulls in the package that
+# defined the command, which is the masking that hid the defect in the first place.
+# Both are kept because the class of failure is real -- make4ht carries on past an
+# undefined command and still writes a page -- and because a check that would have
+# caught it elsewhere is worth having even where it cannot fire.
 log-checks: $(addsuffix .pdf,$(EXAMPLES))
 	@warned=$$(cat $(addsuffix .log,$(BIBEXAMPLES) $(PLAINEXAMPLES)) \
 	     | grep -c 'Package regulatory\(-[a-z]*\)\? Warning' || true); \
-	 echo "log: $$warned package warnings"; \
+	 undef=$$(cat $(addsuffix .log,$(EXAMPLES)) \
+	     | grep -c '^! Undefined control sequence' || true); \
+	 echo "log: $$warned package warnings, $$undef undefined control sequences"; \
 	 if [ "$$warned" -gt 0 ]; then \
 	     echo "log: the package reported something; see the example logs" >&2; exit 1; \
+	 fi; \
+	 if [ "$$undef" -gt 0 ]; then \
+	     echo "log: a run hit an undefined control sequence; see the example logs" >&2; exit 1; \
 	 fi
 
 # The reader of bib files is the one place in this bundle where we own a parser,
@@ -268,6 +311,33 @@ source-checks: source-example.pdf
 # often it is named. A reference cannot be read back the way a citation can --
 # \Aref is not expandable, so there is nothing to \typeout -- so what is asserted
 # here is the decision and not the wording.
+# A citation of legislation is a citation of a version of it, so a document that
+# makes one has to say as of when. Both halves are asserted: the document that
+# says nothing, and the document that outruns the data of the source it cites.
+# The second is counted rather than only found, because the warning is meant to
+# come once per source and the example cites the same one twice.
+#
+# Three more sources cover the field the whole guard hangs on. One says nothing about
+# when it was checked and is told so, since silence by omission is how a guard gets
+# switched off by accident. One says `unverified' and stays silent, because that is a
+# decision and not an omission. One writes a date in another shape, which compares
+# wrongly rather than not at all. The total is asserted as well as the four separately:
+# without it, `unverified' could start warning and every individual count would still
+# be right.
+date-checks: date-example.pdf
+	@nodate=$$(grep -c 'cites legislation without' date-example.log || true); \
+	 stale=$$(grep -c 'was last checked on' date-example.log || true); \
+	 novalid=$$(grep -c "does not say when it" date-example.log || true); \
+	 badvalid=$$(grep -c 'which is neither YYYY-MM-DD' date-example.log || true); \
+	 total=$$(grep -c 'Package regulatory-sources Warning' date-example.log || true); \
+	 echo "date: $$nodate undated, $$stale stale, $$novalid unsaid, $$badvalid misshapen, $$total in all"; \
+	 if [ "$$nodate" -ne 1 ] || [ "$$stale" -ne 1 ] || [ "$$novalid" -ne 1 ] || [ "$$badvalid" -ne 1 ]; then \
+	     echo "date: expected one of each, got $$nodate $$stale $$novalid $$badvalid" >&2; exit 1; \
+	 fi; \
+	 if [ "$$total" -ne 4 ]; then \
+	     echo "date: $$total warnings where four are meant; did unverified stop being silent?" >&2; exit 1; \
+	 fi
+
 lang-checks: de-example.pdf
 	@warned=$$(grep -c 'cannot build the phrase' de-example.log || true); \
 	 echo "lang: $$warned uncomposable warnings over two artifacts"; \
@@ -373,7 +443,8 @@ test-html:
 $(HTML_EXAMPLE).html: $(HTML_DEFS_EXAMPLE).html
 $(HTML_MD_EXAMPLE).html: $(HTML_DEFS_EXAMPLE).html
 
-html-checks: $(HTML_EXAMPLE).html $(HTML_DEFS_EXAMPLE).html $(HTML_MD_EXAMPLE).html
+html-checks: $(HTML_EXAMPLE).html $(HTML_DEFS_EXAMPLE).html $(HTML_MD_EXAMPLE).html \
+             $(HTML_NOLANG_EXAMPLE).html
 	@sections=$$(grep -o '<section' $(HTML_EXAMPLE).html | wc -l); \
 	 headings=$$(grep -oE '<h[1-6]' $(HTML_EXAMPLE).html | wc -l); \
 	 items=$$(grep -o 'enumitem-paras' $(HTML_EXAMPLE).html | wc -l); \
@@ -382,6 +453,13 @@ html-checks: $(HTML_EXAMPLE).html $(HTML_DEFS_EXAMPLE).html $(HTML_MD_EXAMPLE).h
 	 deflist=$$(grep -o "dl class='description'" $(HTML_DEFS_EXAMPLE).html | wc -l); \
 	 undef=$$(cat $(HTML_EXAMPLE).log $(HTML_DEFS_EXAMPLE).log $(HTML_MD_EXAMPLE).log \
 	     | grep -c 'Reference .* undefined' || true); \
+	 undefcs=$$(cat $(HTML_EXAMPLE).log $(HTML_DEFS_EXAMPLE).log $(HTML_MD_EXAMPLE).log \
+	     $(HTML_NOLANG_EXAMPLE).log \
+	     | grep -c '^! Undefined control sequence' || true); \
+	 nolangsections=$$(grep -o '<section' $(HTML_NOLANG_EXAMPLE).html | wc -l); \
+	 nolangitems=$$(grep -o 'enumitem-paras' $(HTML_NOLANG_EXAMPLE).html | wc -l); \
+	 nolangen=$$(grep -oc 'Article 1(' $(HTML_NOLANG_EXAMPLE).html || true); \
+	 nolangnl=$$(grep -oc 'Artikel' $(HTML_NOLANG_EXAMPLE).html || true); \
 	 warned=$$(cat $(HTML_EXAMPLE).log $(HTML_DEFS_EXAMPLE).log $(HTML_MD_EXAMPLE).log \
 	     | grep 'Package regulatory\(-[a-z]*\)\? Warning' \
 	     | grep -vc 'Attachments need the PDF management' || true); \
@@ -389,8 +467,9 @@ html-checks: $(HTML_EXAMPLE).html $(HTML_DEFS_EXAMPLE).html $(HTML_MD_EXAMPLE).h
 	 mdsections=$$(grep -o '<section' $(HTML_MD_EXAMPLE).html | wc -l); \
 	 mditems=$$(grep -o 'enumitem-paras' $(HTML_MD_EXAMPLE).html | wc -l); \
 	 mddefs=$$(grep -o "id='glo_" $(HTML_MD_EXAMPLE).html | wc -l); \
-	 echo "html: $$sections sections, $$headings headings, $$items paras items, $$defs definitions, $$inline inline, $$deflist description list, $$labeling labeling list, $$undef undefined, $$warned unexpected warnings"; \
+	 echo "html: $$sections sections, $$headings headings, $$items paras items, $$defs definitions, $$inline inline, $$deflist description list, $$labeling labeling list, $$undef undefined, $$undefcs undefined commands, $$warned unexpected warnings"; \
 	 echo "html md: $$mdsections sections, $$mditems paras items, $$mddefs definitions"; \
+	 echo "html nolang: $$nolangsections sections, $$nolangitems paras items, $$nolangen English, $$nolangnl Dutch"; \
 	 if [ "$$sections" -lt 1 ] || [ "$$headings" -lt 1 ]; then \
 	     echo "html: no structure in the output; was regulatory.4ht found?" >&2; exit 1; \
 	 fi; \
@@ -402,6 +481,9 @@ html-checks: $(HTML_EXAMPLE).html $(HTML_DEFS_EXAMPLE).html $(HTML_MD_EXAMPLE).h
 	 fi; \
 	 if [ "$$inline" -lt 1 ]; then \
 	     echo "html: the inline definition did not reach the list" >&2; exit 1; \
+	 fi; \
+	 if [ "$$undefcs" -gt 0 ]; then \
+	     echo "html: the conversion hit an undefined command; make4ht carries on past it" >&2; exit 1; \
 	 fi; \
 	 if [ "$$undef" -gt 0 ]; then \
 	     echo "html: a reference resolved to nothing; are the zref labels written?" >&2; exit 1; \
@@ -417,6 +499,12 @@ html-checks: $(HTML_EXAMPLE).html $(HTML_DEFS_EXAMPLE).html $(HTML_MD_EXAMPLE).h
 	 fi; \
 	 if [ "$$deflist" -lt 1 ]; then \
 	     echo "html: the definitions are not a list; did the defstyle survive?" >&2; exit 1; \
+	 fi; \
+	 if [ "$$nolangsections" -lt 1 ] || [ "$$nolangitems" -lt 1 ]; then \
+	     echo "html: the document without a language lost its structure" >&2; exit 1; \
+	 fi; \
+	 if [ "$$nolangen" -lt 1 ] || [ "$$nolangnl" -gt 0 ]; then \
+	     echo "html: that document is no longer language-less, so it no longer tests anything" >&2; exit 1; \
 	 fi
 
 # Four steps, one more than the PDF needs: the definitions come from bib2gls,
@@ -425,6 +513,13 @@ html-checks: $(HTML_EXAMPLE).html $(HTML_DEFS_EXAMPLE).html $(HTML_MD_EXAMPLE).h
 %.html: %.tex $(PROJECT)/tex/regulatory.4ht
 	TEXMFHOME=$(PROJECT) $(MAKE4HT) $<
 	$(BIB2GLS) $*
+	TEXMFHOME=$(PROJECT) $(MAKE4HT) $<
+	TEXMFHOME=$(PROJECT) $(MAKE4HT) $<
+
+# The language-less example declares no definitions at all, so bib2gls has nothing
+# to read and would stop on a missing resource. Two runs, since the reference in it
+# is to a label of its own document and settles on the second.
+$(HTML_NOLANG_EXAMPLE).html: $(HTML_NOLANG_EXAMPLE).tex $(PROJECT)/tex/regulatory.4ht
 	TEXMFHOME=$(PROJECT) $(MAKE4HT) $<
 	TEXMFHOME=$(PROJECT) $(MAKE4HT) $<
 

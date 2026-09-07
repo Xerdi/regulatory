@@ -22,12 +22,15 @@
 
 \newcommand\translation[2]{#2}
 
+% Elke bron in dit bestand is nagelopen op 2024-01-01, en dit document spreekt
+% per diezelfde dag: er is dus niets veranderd tussen de twee.
+\sourcedate{2024-01-01}
 \loadsources{sources}
 % De derde route: een bron die in het document zelf staat, zonder bestand.
 \newsource{uavg}{regeling}{%
     citeertitel = Uitvoeringswet Algemene verordening gegevensbescherming,
     afkorting = UAVG,
-    lidwoord = de%
+    lidwoord = de, geldig = 2024-01-01%
 }
 % Dezelfde verordening zoals een Duits en een Frans document haar aanhalen: het
 % register hoort bij de bron, dus de bron draagt haar naam in de taal waarin ze
@@ -36,30 +39,30 @@
 \newsource{avgde}{euact}{%
     kind = Verordnung, number = {(EU) 2016/679},
     shortname = Datenschutz-Grundverordnung, abbreviation = DSGVO,
-    register = german_eu%
+    register = german_eu, valid = 2024-01-01%
 }
 \newsource{avgfr}{euact}{%
     kind = Règlement, number = {(UE) 2016/679},
     shortname = {règlement général sur la protection des données},
-    abbreviation = RGPD, register = french_eu%
+    abbreviation = RGPD, register = french_eu, valid = 2024-01-01%
 }
 % En zoals een Engels document haar aanhaalt, wat het enige register is dat de
 % delen andersom zet: het diepste niveau eerst.
 \newsource{avgen}{euact}{%
     kind = Regulation, number = {(EU) 2016/679},
     shortname = General Data Protection Regulation, abbreviation = GDPR,
-    determiner = the, register = english_eu%
+    determiner = the, register = english_eu, valid = 2024-01-01%
 }
 % Een verdrag krijgt in het Engels wel een lidwoord en een verordening niet, en
 % dat volgt uit de soort en niet uit het register.
 \newsource{vweu}{regulation}{%
     citetitle = Treaty on the Functioning of the European Union,
-    kind = Treaty, abbreviation = TFEU, register = english_eu%
+    kind = Treaty, abbreviation = TFEU, register = english_eu, valid = 2024-01-01%
 }
 \newsource{wetib}{regeling}{%
     citeertitel = Wet inkomstenbelasting 2001,
     afkorting = Wet IB 2001,
-    lidwoord = de%
+    lidwoord = de, geldig = 2024-01-01%
 }
 
 \hypersetup{pdftitle={Voorbeeld Bronnen}}
