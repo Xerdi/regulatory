@@ -1,3 +1,9 @@
+# Two trees: the project, for the package it documents, and TEXMFHOME as it stands
+# here, for the listings and colours the manual is styled with. CI mounts
+# Xerdi/texmf-packaging at ~/texmf, so there the second one resolves by itself; a
+# working copy has to say where that checkout is, with TEXMFHOME in the
+# environment, or the manual is built against a personal tree and is not the one
+# CI makes. Read once, when make parses this file.
 CNF_LINE = -cnf-line TEXMFHOME={../,$(shell kpsewhich --var-value TEXMFHOME)}
 # The dtx sources are documented with \DocInput from this directory, the examples
 # of the appendix are listed and attached from test/, and the generated package

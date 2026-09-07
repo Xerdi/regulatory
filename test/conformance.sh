@@ -18,7 +18,11 @@ set -eu
 # where this script lives rather than from the working directory.
 HERE=$(cd "$(dirname "$0")" && pwd)
 
-COMPILER=${COMPILER:-lualatex --interaction=nonstopmode --shell-escape -cnf-line TEXMFHOME=..}
+# The default is only used when this script is run by hand; the Makefile passes
+# its own. TEXMFHOME is the project rather than a personal texmf tree, as it is
+# in test/Makefile, and it is named from $HERE: the build directory is not the
+# one this file lives in, so a relative `..' would name whatever is above that.
+COMPILER=${COMPILER:-lualatex --interaction=nonstopmode --shell-escape -cnf-line TEXMFHOME=$HERE/..}
 BIB2GLS=${BIB2GLS:-bib2gls}
 # Pinned by digest: a floating tag would move the conformance claim along with
 # the validator without anyone noticing.

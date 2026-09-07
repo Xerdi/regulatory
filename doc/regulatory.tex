@@ -13,22 +13,8 @@
 %
 % The Current Maintainer of this work is E. Nijenhuis.
 %
-% This work consists of the files regulatory.ins,
-% regulatory-struct.dtx, regulatory-ref.dtx,
-% regulatory-defs.dtx, regulatory-attachments.dtx,
-% regulatory-md.dtx,
-% regulatory-html.dtx,
-% regulatory-english.def, regulatory-dutch.def,
-% regulatory.tex, regulatory-preamble.tex,
-% regulatory-nl.tex, regulatory-en.tex,
-% example1.bib, example2.bib,
-% example1-nl.tex, example2-nl.tex,
-% example1-en.tex, example2-en.tex,
-% md-example.tex, example.md,
-% and the derived files regulatory.sty, regulatory-struct.sty,
-% regulatory-defs.sty, regulatory-ref.sty,
-% regulatory-attachments.sty, regulatory-md.sty
-% and regulatory.4ht.
+% This work consists of the files listed in the meta-comment of
+% regulatory-struct.dtx.
 \translation{%
     \title{Package \package{regulatory}\thanks{This document corresponds to \textsf{regulatory}~\packageversion, written on \packagedate.}}
 }{%
@@ -85,11 +71,13 @@
 
 \section{\translation{Usage}{Gebruik}}\label{sec:usage}
 \translation{%
-    The \package{regulatory} package is explicitly designed for generating PDF documents with \LaTeX{}.
-    Therefore, use either \texttt{pdflatex} or \texttt{lualatex}.%
+    This bundle writes PDF, so the engine is \texttt{pdflatex} or \texttt{lualatex}.
+    There is an HTML conversion as well, which runs on \texttt{make4ht} and needs a configuration of its
+    own; see \zcref{sec:html}.%
 }{%
-    Het pakket \package{regulatory} is uitdrukkelijk bedoeld voor het genereren van PDF-documenten met \LaTeX{}.
-    Gebruik daarom \texttt{pdflatex} of \texttt{lualatex}.%
+    Deze bundel schrijft PDF, dus de engine is \texttt{pdflatex} of \texttt{lualatex}.
+    Er is ook een HTML-conversie, welke op \texttt{make4ht} draait en een eigen configuratie nodig heeft;
+    zie \zcref{sec:html}.%
 }
 \begin{lstlisting}[style=tex,caption={main.tex},label=code:simple]
 \documentclass[dutch]{article}
@@ -99,77 +87,140 @@
 \end{document}
 \end{lstlisting}
 \translation{%
-    Loading \package{regulatory} loads the three modules of the bundle, each of which can be loaded on its
-    own as well:%
+    \package{regulatory} itself is a wrapper and nothing more: it loads the six modules below and hands
+    every option to the first of them.
+    Each module can be loaded on its own, and each asks for what it needs, so the order below is the
+    dependency chain rather than a requirement.%
 }{%
-    Het laden van \package{regulatory} laadt de drie modules van de bundel, welke ieder ook afzonderlijk
-    geladen kunnen worden:%
+    \package{regulatory} zelf is niet meer dan een omhulsel: het laadt de zes modules hieronder en geeft
+    iedere optie door aan de eerste ervan.
+    Elke module is ook afzonderlijk te laden, en elke module vraagt zelf om wat hij nodig heeft, dus de
+    volgorde hieronder is de afhankelijkheidsketen en geen eis.%
 }
 \begin{labeling}{\package{regulatory-attachments}}
     \addtokomafont{labelinglabel}{\ttfamily}
     \item[regulatory-struct] \translation{%
-        the structures and definitions described in this and the following two sections.
-        This module is the base of the bundle and holds the package options.%
+        the structures of \zcref{sec:struct}. This module is the base of the bundle: it holds the options
+        of all of them and reads \file{regulatory.cfg}.%
     }{%
-        de structuren en definities zoals beschreven in deze en de volgende twee secties.
-        Deze module vormt de basis van de bundel en bevat de pakketopties.%
+        de structuren van \zcref{sec:struct}. Deze module vormt de basis van de bundel: hij bevat de
+        opties van alle modules en leest \file{regulatory.cfg}.%
+    }
+    \item[regulatory-defs] \translation{%
+        the definitions and definition lists of \zcref{sec:defs}.%
+    }{%
+        de definities en definitielijsten van \zcref{sec:defs}.%
     }
     \item[regulatory-ref] \translation{%
-        the reference macro families and the language support, which loads
-        \package{regulatory-struct} in turn.%
+        the reference macro families of \zcref{sec:ref} and the language support of \zcref{sec:lang}.%
     }{%
-        de verwijsmacrofamilies en de taalondersteuning, welke op zijn beurt
-        \package{regulatory-struct} laadt.%
+        de verwijsmacrofamilies van \zcref{sec:ref} en de taalondersteuning van \zcref{sec:lang}.%
     }
     \item[regulatory-attachments] \translation{%
-        the interdocument references and PDF attachments, which loads
-        \package{regulatory-ref} in turn.%
+        the interdocument references and PDF attachments of \zcref{sec:extern}, which loads
+        \package{regulatory-ref} and \package{regulatory-defs} in turn.%
     }{%
-        de interdocumentaire verwijzingen en PDF-bijlagen, welke op zijn beurt
-        \package{regulatory-ref} laadt.%
+        de interdocumentaire verwijzingen en PDF-bijlagen van \zcref{sec:extern}, welke op zijn beurt
+        \package{regulatory-ref} en \package{regulatory-defs} laadt.%
+    }
+    \item[regulatory-sign] \translation{%
+        the signature fields of \zcref{sec:sign}. It emits nothing until one of its two commands is used.%
+    }{%
+        de handtekeningvelden van \zcref{sec:sign}. Deze drukt niets af totdat een van zijn twee
+        commando's gebruikt wordt.%
+    }
+    \item[regulatory-sources] \translation{%
+        the citations of legislation outside the document of \zcref{sec:sources}.%
+    }{%
+        de aanhalingen van regelgeving buiten het document van \zcref{sec:sources}.%
     }
 \end{labeling}
 \translation{%
-    A fourth module, \package{regulatory-md}, is loaded on top of these as soon as \package{markdown} is
-    (see \zcref{sec:md}).%
+    A seventh module, \package{regulatory-md}, comes on top of these as soon as \package{markdown} is
+    loaded, whichever order the two are in (see \zcref{sec:md}).
+    The HTML conversion is not a module but a \package{tex4ht} configuration, \file{regulatory.4ht}, which
+    \texttt{make4ht} finds by itself.%
 }{%
-    Een vierde module, \package{regulatory-md}, komt daar bovenop zodra \package{markdown} geladen is (zie
-    \zcref{sec:md}).%
-}\\
-\translation{%
-    Any option given to \package{regulatory} is passed on to \package{regulatory-struct}, which
-    administers them for the whole bundle.
-    The example above does not use any options, which means that \option{bib2gls} is active.
-    To switch back to \TeX{} code for definition lists, pass \option{bib2gls=false}.
-    Additionally, there are the options \option{md}, \option{alldefs}, \option{legacy} and
-    \option{nameinlink}.
-    Where \option{md} activates Markdown support, \option{alldefs} lists all definitions instead of only
-    the used definitions within the same document (useful for Terms and Conditions where not all
-    definitions necessarily appear), \option{legacy} switches to the legacy conjunction (see
-    \cmd{\setjuncto}) and \option{nameinlink} places the hyperlink around the label.
-    Colored borders of hyperlinks are hidden with \cmd{\hypersetup}\marg{hidelinks}, since this package
-    loads \package{hyperref} itself.%
-}{%
-    Iedere optie meegegeven aan \package{regulatory} wordt doorgegeven aan \package{regulatory-struct},
-    welke ze voor de gehele bundel administreert.
-    Het voorbeeld hierboven gebruikt geen opties, wat inhoudt dat \option{bib2gls} actief is.
-    Om terug te schakelen naar \TeX{} code voor definitielijsten geeft men \option{bib2gls=false} mee.
-    Verder zijn er nog de opties \option{md}, \option{alldefs}, \option{legacy} en \option{nameinlink}.
-    Waar \option{md} Markdown support activeert, \option{alldefs} alle definities opsomt in plaats van
-    alleen de gebruikte definities binnen hetzelfde document (handig voor Algemene Voorwaarden waarin
-    niet alle definities per se voorkomen), \option{legacy} omschakelt naar de verouderde conjunctie (zie
-    \cmd{\setjuncto}) en \option{nameinlink} de hyperlink om het label heen plaatst.
-    Gekleurde kaders van hyperlinks worden verborgen met \cmd{\hypersetup}\marg{hidelinks}, aangezien dit
-    pakket \package{hyperref} zelf laadt.%
+    Een zevende module, \package{regulatory-md}, komt daar bovenop zodra \package{markdown} geladen is, in
+    welke volgorde de twee ook staan (zie \zcref{sec:md}).
+    De HTML-conversie is geen module maar een \package{tex4ht} configuratie, \file{regulatory.4ht}, welke
+    \texttt{make4ht} zelf vindt.%
 }\\
 
 \noindent
 \translation{%
-    For HTML there is \texttt{make4ht}, which needs a configuration of its own; see
-    \zcref{sec:html}.%
+    Every option is a key of the \texttt{/regulatory} family, administered by
+    \package{regulatory-struct} for the whole bundle.
+    The example above passes none, which means these defaults hold:%
 }{%
-    Voor HTML is er \texttt{make4ht}, wat een eigen configuratie nodig heeft; zie
-    \zcref{sec:html}.%
+    Iedere optie is een sleutel van de \texttt{/regulatory} familie, welke
+    \package{regulatory-struct} voor de gehele bundel administreert.
+    Het voorbeeld hierboven geeft er geen mee, wat inhoudt dat deze standaardwaarden gelden:%
+}
+\begin{labeling}{\option{nameinlink}\quad\texttt{voluit}}
+    \addtokomafont{labelinglabel}{\ttfamily}
+    \item[bib2gls\quad true] \translation{%
+        definition lists are built with \texttt{bib2gls}. Pass \option{bib2gls=false} to have them written
+        as \TeX{} code instead.%
+    }{%
+        definitielijsten worden met \texttt{bib2gls} gebouwd. Geef \option{bib2gls=false} mee om ze in
+        plaats daarvan als \TeX{} code te laten schrijven.%
+    }
+    \item[md\quad false] \translation{%
+        loading \package{markdown} is left to the document. With \option{md} the package loads it, which
+        it has to do before \package{enumitem}.%
+    }{%
+        het laden van \package{markdown} wordt aan het document gelaten. Met \option{md} laadt het pakket
+        het zelf, wat vóór \package{enumitem} moet gebeuren.%
+    }
+    \item[alldefs\quad false] \translation{%
+        a definition list holds the definitions the document uses. With \option{alldefs} it holds every
+        declared definition, which is what Terms and Conditions want, where not every term necessarily
+        appears in the text.%
+    }{%
+        een definitielijst bevat de definities die het document gebruikt. Met \option{alldefs} bevat hij
+        iedere gedeclareerde definitie, wat Algemene Voorwaarden willen, waarin niet ieder begrip per se
+        in de tekst voorkomt.%
+    }
+    \item[legacy\quad false] \translation{%
+        the conjunction of \zcref{sec:ref}. With \option{legacy} the older one is used, see
+        \cmd{\setjuncto}.%
+    }{%
+        de conjunctie van \zcref{sec:ref}. Met \option{legacy} wordt de verouderde gebruikt, zie
+        \cmd{\setjuncto}.%
+    }
+    \item[nameinlink\quad true] \translation{%
+        the hyperlink of a reference is drawn around the label as a whole. With
+        \option{nameinlink=false} it is drawn around the number only.%
+    }{%
+        de hyperlink van een verwijzing wordt om het gehele label heen getrokken. Met
+        \option{nameinlink=false} alleen om het nummer.%
+    }
+    \item[defstyle\quad alttree] \translation{%
+        the glossary style \cmd{\printdefs} falls back on when it is given none; see \zcref{sec:defs}.%
+    }{%
+        de woordenlijststijl waar \cmd{\printdefs} op terugvalt als hij er geen krijgt; zie
+        \zcref{sec:defs}.%
+    }
+    \item[bronstijl\quad voluit] \translation{%
+        whether a citation of an external source is written out or abbreviated; see \zcref{sec:sources}.%
+    }{%
+        of een aanhaling van een externe bron voluit of verkort geschreven wordt; zie
+        \zcref{sec:sources}.%
+    }
+\end{labeling}
+\translation{%
+    Colored borders of hyperlinks are hidden with \cmd{\hypersetup}\marg{hidelinks}, since this package
+    loads \package{hyperref} itself.
+    A file \file{regulatory.cfg} next to the document is read before the options given to the package are
+    processed, so it can set other defaults for a whole directory of documents at once; the log says which
+    of the two happened.%
+}{%
+    Gekleurde kaders van hyperlinks worden verborgen met \cmd{\hypersetup}\marg{hidelinks}, aangezien dit
+    pakket \package{hyperref} zelf laadt.
+    Een bestand \file{regulatory.cfg} naast het document wordt gelezen vóór de opties die aan het pakket
+    meegegeven zijn verwerkt worden, zodat het andere standaardwaarden kan zetten voor een hele map met
+    documenten tegelijk; de log vermeldt welke van de twee er was.%
 }\\
 
 \noindent
@@ -204,7 +255,7 @@ latexmk -pvc -lualatex -interaction=nonstopmode main
 }{%
     Stel er worden definitie lijsten gebruikt, dan komen er nog extra stappen bij in het generatieproces, namelijk:%
 }
-\begin{lstlisting}[style=Bash,caption={\translation{Commandline with definitions}{Commandline met definities}}]
+\begin{lstlisting}[style=bash,caption={\translation{Commandline with definitions}{Commandline met definities}}]
 lualatex main
 bib2gls main
 lualatex main
@@ -226,68 +277,104 @@ lualatex main
 
 \section{\translation{Structure}{Structuur}}\label{sec:struct}
 \translation{%
-    This package provides familiar structures without breaking the existing functionalities of \LaTeX{}.%
+    This package provides familiar structures without breaking the existing functionalities of \LaTeX{}.
+    The three levels are called \emph{article}, \emph{paragraph} and \emph{point}, after the Dutch
+    ``artikel, lid en onderdeel'' this package started out with.\footnote{%
+        The English names are shortened where \LaTeX{} already speaks for them: a heading of the second
+        level is \cmd{\para} rather than \cmd{\paragraph}, and its list is \texttt{paras} rather than
+        \texttt{paragraphs}. Which of ``section'' and ``paragraph'' names which level differs per
+        jurisdiction, and neither reading is the one \LaTeX{} means by it.%
+    }%
 }{%
-    Dit pakket levert bekende structuren, zonder de bestaande functionaliteiten van \LaTeX{} te breken.%
-}
+    Dit pakket levert bekende structuren, zonder de bestaande functionaliteiten van \LaTeX{} te breken.
+    De drie niveaus heten \emph{artikel}, \emph{lid} en \emph{onderdeel}, waar dit pakket mee begonnen
+    is.\footnote{%
+        De Engelse namen zijn ingekort waar \LaTeX{} de volledige al bezet houdt: een kop van het tweede
+        niveau is \cmd{\para} en niet \cmd{\paragraph}, en zijn lijst heet \texttt{paras} en niet
+        \texttt{paragraphs}.%
+    }%
+}\\
+
+\noindent
 \DescribeMacro{\article}
 \DescribeMacro{\para}
 \translation{%
-    For example, consider \cmd{\article}\marg{title} and \cmd{\para}\marg{title}.
-    These are defined as separate macros and formatted using \package{titlesec}, or, whenever the new
-    \LaTeX{} heading interface is available, with a \texttt{heading} instance.%
+    \cmd{\article}\marg{title} and \cmd{\para}\marg{title} are the two headings.
+    They are defined as separate macros and formatted with \package{titlesec}, or, whenever the new
+    \LaTeX{} heading interface is available, with a \texttt{heading} instance.
+    Both take part in the table of contents, at the level of subsections and subsubsections.%
 }{%
-    Neem b\ij{}voorbeeld \cmd{\article}\marg{title} en \cmd{\para}\marg{title}.
-    Deze zijn als aparte macro's gedefinieerd en opgemaakt met behulp van \package{titlesec}, of, zodra de
-    nieuwe \LaTeX{} kopinterface beschikbaar is, met een \texttt{heading} instantie.%
+    \cmd{\article}\marg{titel} en \cmd{\para}\marg{titel} zijn de twee koppen.
+    Deze zijn als aparte macro's gedefinieerd en opgemaakt met \package{titlesec}, of, zodra de nieuwe
+    \LaTeX{} kopinterface beschikbaar is, met een \texttt{heading} instantie.
+    Beide doen mee in de inhoudsopgave, op het niveau van subsecties en subsubsecties.%
 }\\
 
 \noindent
 \DescribeEnv{paras}
 \translation{%
-    For the \option{paras}\footnote{%
-        Originally the naming was taken from Dutch ``artikel, lid en onderdeel'', which was hard to introduce in English, due to ambiguity reasons.%
-        Therefore, section and part are aliased to paras.%
-    } and ``points'', a new environment has been created using \package{enumitem}.
-    The labels for the members have been adjusted to
+    The \texttt{paras} environment holds the two levels below an article, built with \package{enumitem}.
+    A paragraph is labelled \texttt{\textbackslash thearticle.\textbackslash arabic*.}, so it repeats the
+    number of the article it belongs to, and a point is labelled
+    \texttt{\textbackslash abalphnum\{\textbackslash arabic*\})}.%
 }{%
-    Voor de \option{paras} en ``onderdelen'' is een nieuwe environment aangemaakt met behulp van \package{enumitem}.
-    De labels van de leden zijn aangepast naar
-}\lstinline[style=tex]|\thearticle.\arabic*|\translation{
-    for paragraphs and
-}{, voor leden en,
-}\lstinline[style=tex]|\abalphnum{\arabic*)|\translation{
-    for points.%
-}{, voor onderdelen.}
+    De \texttt{paras} environment bevat de twee niveaus onder een artikel, gebouwd met \package{enumitem}.
+    Een lid krijgt het label \texttt{\textbackslash thearticle.\textbackslash arabic*.}, en herhaalt
+    daarmee het nummer van het artikel waar het bij hoort, en een onderdeel het label
+    \texttt{\textbackslash abalphnum\{\textbackslash arabic*\})}.%
+}\\
+
+\noindent
 \translation{%
-    For ``points'', \cmd{\abalpnum} from the \package{fmtcount}\footnote{%
-        The Dutch language definition is now included into package \href{https://github.com/Xerdi/fmtcount}{\package{fmtcount}} itself.
-        Be sure to update the package if \texttt{fc-dutch.def} is missing} package is used to enumerate multiple points.
-    Suppose \cmd{\alph} were used; in that case, \option{paras} (second level) would be limited to 26 points.
-    With \cmd{\abalphnum}, for example, with a value of 125, the result is `\texttt{du}'.
+    That \cmd{\abalphnum} comes from \package{fmtcount}\footnote{%
+        The Dutch language definition is now included in \href{https://github.com/Xerdi/fmtcount}{\package{fmtcount}}
+        itself. Be sure to update the package if \texttt{fc-dutch.def} is missing.%
+    } and is what lets an article run past 26 points: \cmd{\alph} stops there, whereas \cmd{\abalphnum}
+    of, say, 125 is `\texttt{du}'.%
 }{%
-    Voor onderdelen wordt er gebruik gemaakt van \cmd{\abalpnum} uit pakket \package{fmtcount}\footnote{%
-        De Nederlandse taal definitie is nu inbegrepen in pakket \href{https://github.com/Xerdi/fmtcount}{\package{fmtcount}} zelf.
-        Zorg ervoor dat het pakket up to date is als \texttt{fc-dutch.def} mist.} om meerdere onderdelen te kunnen opsommen.
-    Stel er zou gebruik gemaakt worden van \cmd{\alph}, dan is \option{paras} beperkt tot 26 onderdelen.
-    Bij \cmd{\abalphnum} met b\ij{}voorbeeld een waarde van 125 is `\texttt{du}' de uitkomst.
+    Die \cmd{\abalphnum} komt uit \package{fmtcount}\footnote{%
+        De Nederlandse taaldefinitie is nu inbegrepen in
+        \href{https://github.com/Xerdi/fmtcount}{\package{fmtcount}} zelf.
+        Zorg ervoor dat het pakket up-to-date is als \texttt{fc-dutch.def} mist.%
+    } en is wat een artikel voorbij 26 onderdelen laat lopen: \cmd{\alph} houdt daar op, terwijl
+    \cmd{\abalphnum} van b\ij{}voorbeeld 125 `\texttt{du}' is.%
+}\\
+
+\noindent
+\DescribeEnv{provisions}
+\translation{%
+    Not every document is divided into articles.
+    The \texttt{provisions} environment is a flat enumeration, numbered within the \cmd{\section} it
+    stands in rather than within an article, for a text that has one level and no headings of its own.%
+}{%
+    Niet ieder document is in artikelen verdeeld.
+    De \texttt{provisions} environment is een vlakke opsomming, genummerd binnen de \cmd{\section}
+    waarin hij staat in plaats van binnen een artikel, voor een tekst met één niveau en zonder eigen
+    koppen.%
 }
 
 \begin{lstlisting}[style=tex]
-\article{Voorbeeld}
+\article{...}
 \begin{paras}
-   \item \textfill
-   \begin{paras}
-     \item \textfill
-   \end{paras}
-   \item \textfill
+    \item ...
+    \begin{paras}
+        \item ...
+        \item ...
+    \end{paras}
+    \item ...
 \end{paras}
 
-\article{Voorbeeld2}
-\textfill
+\article{...}
+...
 
-\para{Voorbeeld3}
-\textfill
+\para{...}
+...
+
+\section{...}
+\begin{provisions}
+    \item ...
+    \item ...
+\end{provisions}
 \end{lstlisting}
 \translation
 {See \zcref{code:example1,code:example2} in \zcref{sec:example} for more \LaTeX{} examples.}
@@ -1791,11 +1878,15 @@ De volgende begrippen worden in deze overeenkomst gebruikt.
     \item[sign-example.tex] \translation{%
         which places the signature fields of \zcref{sec:sign} and has no definitions at all. It
         is written uncompressed, so that the annotation over a field can be read back out of the
-        PDF file without a PDF tool.%
+        PDF file without a PDF tool. It frames each field itself: the module draws a line to
+        write on, and the frame is what shows on paper how far the area reaches that a viewer
+        offers.%
     }{%
         welke de handtekeningvelden van \zcref{sec:sign} plaatst en helemaal geen definities
         heeft. Het wordt ongecomprimeerd geschreven, zodat de annotatie over een veld zonder
-        PDF-gereedschap uit het PDF-bestand terug te lezen is.%
+        PDF-gereedschap uit het PDF-bestand terug te lezen is. Het omkadert elk veld zelf: de
+        module tekent een schrijflijn, en het kader laat op papier zien tot waar het vlak reikt
+        dat een viewer aanbiedt.%
     }
     \item[source-example.tex] \translation{%
         which loads \file{sources.bib} and cites what is in it in every register of

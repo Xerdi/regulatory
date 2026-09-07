@@ -13,22 +13,8 @@
 %
 % The Current Maintainer of this work is E. Nijenhuis.
 %
-% This work consists of the files regulatory.ins,
-% regulatory-struct.dtx, regulatory-ref.dtx,
-% regulatory-defs.dtx, regulatory-attachments.dtx,
-% regulatory-md.dtx,
-% regulatory-html.dtx,
-% regulatory-english.def, regulatory-dutch.def,
-% regulatory.tex, regulatory-preamble.tex,
-% regulatory-nl.tex, regulatory-en.tex,
-% example1.bib, example2.bib,
-% example1-nl.tex, example2-nl.tex,
-% example1-en.tex, example2-en.tex,
-% md-example.tex, example.md,
-% and the derived files regulatory.sty, regulatory-struct.sty,
-% regulatory-defs.sty, regulatory-ref.sty,
-% regulatory-attachments.sty, regulatory-md.sty
-% and regulatory.4ht.
+% This work consists of the files listed in the meta-comment of
+% regulatory-struct.dtx.
 \usepackage{gitinfo-lua}
 \usepackage{listings}
 % The Markdown syntax extension is Lua, not TeX, so it is not documented with
@@ -66,12 +52,33 @@
 % A Markdown source of this bundle holds no TeX any more, so the language is no
 % longer derived from it: what is worth marking is where a label is written and
 % where one is read.
+% MoreSelectCharTable, and \makeatletter for it, because of `)'. With
+% breaklines on -- which the \lstset below turns on -- listings rebinds that
+% character in its own SelectCharTable hook, to offer a break after a closing
+% parenthesis. That hook runs after the one which installs the delimiters of a
+% language, so the rebinding wins and `)' stops ending a delimiter: from the
+% first (#label) onwards the whole listing keeps the colour of that delimiter,
+% including the ones after it, which never open again. Measured on listings
+% 1.11b, with `]' as the end delimiter as the control: that one closes.
+% MoreSelectCharTable is run after the hook, so putting the delimiters back
+% there is what undoes it. The break after `)' is what is given up for it.
+\makeatletter
+\@ifundefined{lst@DefDelims}{%
+    \PackageError{regulatory-doc}{Listings no longer defines
+        \string\lst@DefDelims}{%
+        The Markdown listings put their delimiters back with it, since
+        breaklines\MessageBreak takes the closing parenthesis away from them.
+        Without it a listing comes out\MessageBreak in one colour from its
+        first link onwards.}%
+}{}
 \lstdefinelanguage{Markdown}{%
     sensitive=true,
     moredelim=[s][\bfseries\color{blue}]{\{\#}{\}},
     moredelim=[s][\color{purple}]{<\#}{>},
     moredelim=[s][\color{purple}]{(\#}{)},
+    MoreSelectCharTable=\lst@DefDelims,
 }
+\makeatother
 
 \lstdefinestyle{md}{%
     language=Markdown
