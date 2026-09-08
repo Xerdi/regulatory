@@ -59,7 +59,7 @@ a3a-ua1|example2-nl|pdfstandard=A-3a,pdfstandard=UA-1,$TAGGED|3a:pass,ua1:pass
 a3b|example1-nl|pdfstandard=A-3b|3b:xfail
 a2b-embedded-nonpdf|example1-nl|pdfstandard=A-2b|2b:fail
 a4f-embedded-nonpdf|example1-nl|pdfstandard=A-4f|4f:pass
-a2b-signed|sign-example|pdfstandard=A-2b|2b:xfail
+a2b-signed|sign-example|pdfstandard=A-2b|2b:pass
 "
 
 # Everything that can change a verdict: the package, the documents, and the matrix

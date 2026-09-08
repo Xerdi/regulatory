@@ -28,7 +28,7 @@
 % range of articles asks for `tot'.
 %    \begin{macrocode}
 \ProvidesRegulatoryLanguage{dutch}
-    [2026/09/05 0.0.5 Dutch definitions for regulatory]
+    [2026/09/08 1.0.0 Dutch definitions for regulatory]
 
 \DeclareTranslation{dutch}{article}{artikel}
 \DeclareTranslation{dutch}{Article}{Artikel}

@@ -26,7 +26,7 @@
 %</driver>
 %<package>\NeedsTeXFormat{LaTeX2e}
 %<package>\ProvidesPackage{regulatory-sign}
-%<package>    [2026/09/05 0.0.5 Xerdi's Regulatory Package (Signatures)]
+%<package>    [2026/09/08 1.0.0 Xerdi's Regulatory Package (Signatures)]
 %
 %<*driver>
 \documentclass[10pt,english]{ltxdoc}
@@ -144,6 +144,46 @@
 %
 % \subsubsection{\translation{Signature fields}{Handtekeningvelden}}
 %
+% \begin{macro}{\regulatory@sign@appearance}
+% An annotation has to say what it looks like. ISO 19005 puts it as a requirement rather than a nicety:
+% rule 6.3.3-1 of both PDF/A-2 and PDF/A-3 asks every annotation that is not a \texttt{Popup}, a
+% \texttt{Link} or of zero size to carry an appearance dictionary, and veraPDF says of a field without one
+% \enquote{An annotation does not contain an appearance dictionary}. A signature field is a
+% \texttt{Widget}, so it is asked as well, and a document with one used to lose its conformance over it.
+%
+% What it points at is deliberately empty. The line to sign on is drawn on the page by
+% \cmd{\regulatory@sign@annot}, not by the annotation, so an appearance that drew anything would draw it
+% twice; and a signing tool replaces the normal appearance of the field with its own the moment the field
+% is signed. One object serves every field: the bounding box of an appearance is mapped onto the rectangle
+% of the annotation, so a stream that draws nothing needs no size of its own.
+%
+% Only where the PDF management of \LaTeX{} is active, which a document that cares about PDF/A has
+% declared anyway, since the standards need it for much more than this. The test is for the management
+% and not for the command: under \package{tex4ht} the object commands exist and their backend does not,
+% so asking whether they are defined answers yes and then fails on the first call.
+%    \begin{macrocode}
+\ExplSyntaxOn
+\cs_new:Npn \regulatory@sign@appearance { }
+\bool_lazy_and:nnT
+  { \cs_if_exist_p:N \pdfmanagement_if_active_p: }
+  { \cs_if_exist_p:N \pdf_object_new:n }
+  {
+    \pdfmanagement_if_active:T
+      {
+    \pdf_object_new:n { regulatory/sign/blank }
+    \AddToHook { shipout/firstpage }
+      {
+        \pdf_object_write:nnn { regulatory/sign/blank } { stream }
+          { { /Type /XObject /Subtype /Form /BBox [0~0~1~1] } { } }
+      }
+    \cs_gset:Npn \regulatory@sign@appearance
+      { /AP~<<~/N~\pdf_object_ref:n { regulatory/sign/blank }~>> }
+      }
+  }
+\ExplSyntaxOff
+%    \end{macrocode}
+% \end{macro}
+%
 % \begin{macro}{\signaturefield}
 % Draws a signature field of \meta{width} by \meta{height} under the name \meta{name}, which is the name a
 % viewer stores the signature under and the one a signing tool asks for. The optional \meta{tooltip} is
@@ -160,6 +200,7 @@
         /BS << /W 0 >>
         /F 4
         /DA (/Helv 0 Tf 0 g)
+        \regulatory@sign@appearance
     }%
 }
 %    \end{macrocode}

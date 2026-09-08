@@ -34,7 +34,7 @@
 % another one gives it a \texttt{ref label}, which is what the German case forces anyway.
 %    \begin{macrocode}
 \ProvidesRegulatoryLanguage{french}
-    [2026/09/06 0.0.5 French definitions for regulatory]
+    [2026/09/08 1.0.0 French definitions for regulatory]
 
 \DeclareTranslation{french}{article}{article}
 \DeclareTranslation{french}{Article}{Article}

@@ -36,7 +36,7 @@
 % name asks for \texttt{point} now.
 %    \begin{macrocode}
 \ProvidesRegulatoryLanguage{english}
-    [2026/09/05 0.0.5 English definitions for regulatory]
+    [2026/09/08 1.0.0 English definitions for regulatory]
 
 \DeclareTranslation{english}{article}{article}
 \DeclareTranslation{english}{Article}{Article}
