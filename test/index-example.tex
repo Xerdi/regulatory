@@ -1,0 +1,66 @@
+%% de-example.tex
+%% Copyright 2026 E. Nijenhuis
+%
+% This work may be distributed and/or modified under the
+% conditions of the LaTeX Project Public License, either version 1.3c
+% of this license or (at your option) any later version.
+% The latest version of this license is in
+% http://www.latex-project.org/lppl.txt
+% and version 1.3c or later is part of all distributions of LaTeX
+% version 2005/12/01 or later.
+%
+% This work has the LPPL maintenance status ‘maintained’.
+%
+% The Current Maintainer of this work is E. Nijenhuis.
+%
+% This work consists of the files listed in the meta-comment of
+% regulatory-struct.dtx.
+%
+% Het enige document dat de geindexeerde route neemt. Met bib2gls=false leest
+% \loadglsdefs een TeX-bestand met \newglossaryentry in plaats van een bib, zet
+% \makeglossaries aan en laat het sorteren aan makeindex over: een tweede programma
+% tussen twee LaTeX-runs, waar de andere drie routes er geen of een ander hebben.
+%
+% Die route had geen enkele dekking. Ze kwam boven bij het opruimen van de
+% afhankelijkheden: \makeglossaries hangt aan een haak die van \AtEndPreamble naar
+% \AddToHook{begindocument/before} ging, en er was geen document dat die haak ooit
+% liet vuren. Wat hier nagelezen wordt is dus niet alleen de lijst maar ook dat dit
+% document werkelijk deze route neemt -- zonder dat zou het document naar bib2gls
+% kunnen afglijden en zou de test blijven slagen zonder iets te meten.
+\IfDocumentMetadataTF{}{\DocumentMetadata{}}
+\documentclass[12pt,dutch]{article}
+\usepackage{babel}
+\usepackage[bib2gls=false]{regulatory}
+
+\newcommand\translation[2]{#2}
+
+\hypersetup{pdftitle={Voorbeeld Geindexeerde definities}}
+
+\loadglsdefs{index-defs}
+
+% De naam wordt eerst uitgerekend en dan pas opgeschreven: \typeout expandeert zijn
+% argument en \ifthenelse is niet expandabel, wat de run opblaast in plaats van hem
+% te laten falen op iets leesbaars.
+\makeatletter
+\AtBeginDocument{%
+    \ifthenelse{\boolean{regulatory@indexeddefs}}%
+        {\def\@indexroute{indexed}}%
+        {\def\@indexroute{bib2gls}}%
+    \typeout{INDEX route=\@indexroute}%
+}
+\makeatother
+
+\begin{document}
+    \begin{center}
+        \Huge Voorbeeld Geindexeerde definities
+    \end{center}
+
+    \article{Definities}\label{art:defs}
+    \printdefs{Authentieke akte}
+
+    \article{Gebruik}\label{art:gebruik}
+    \begin{paras}
+        \item \label{lid:onderhands} Een \gls{onderhands} volstaat.
+        \item \label{lid:authentiek} Voor de levering is een \gls{authentiek} vereist.
+    \end{paras}
+\end{document}

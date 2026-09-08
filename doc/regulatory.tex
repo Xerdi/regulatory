@@ -1899,15 +1899,15 @@ De volgende begrippen worden in deze overeenkomst gebruikt.
 
 \subsection{\translation{The test documents}{De testdocumenten}}\label{sec:testdocs}
 \translation{%
-    Eight documents are typeset, of which two exist in both languages, so a suite makes nine of
-    them per engine and four in the conversion of \zcref{sec:html}. One of the eight is converted
+    Nine documents are typeset, of which two exist in both languages, so a suite makes ten of
+    them per engine and four in the conversion of \zcref{sec:html}. One of the nine is converted
     only, since what it is for is only read under \package{tex4ht}.
     them. Every one of them is a driver that sets the language, declares the artifacts and loads
     the definitions, and that leaves the body to a file of its own, so that both language
     versions share one text:%
 }{%
-    Er worden acht documenten gezet, waarvan twee in beide talen bestaan, zodat een suite er
-    negen per engine maakt en vier in de omzetting van \zcref{sec:html}. Eén van de acht wordt
+    Er worden negen documenten gezet, waarvan twee in beide talen bestaan, zodat een suite er
+    tien per engine maakt en vier in de omzetting van \zcref{sec:html}. Eén van de negen wordt
     alleen omgezet, want waar het voor is wordt alleen onder \package{tex4ht} gelezen. Ieder daarvan is een driver die de taal instelt, de artefacten declareert en de
     definities inlaadt, en die de inhoud overlaat aan een eigen bestand, zodat beide taalversies
     één tekst delen:%
@@ -1951,6 +1951,18 @@ De volgende begrippen worden in deze overeenkomst gebruikt.
         PDF-gereedschap uit het PDF-bestand terug te lezen is. Het omkadert elk veld zelf: de
         module tekent een schrijflijn, en het kader laat op papier zien tot waar het vlak reikt
         dat een viewer aanbiedt.%
+    }
+    \item[index-example.tex] \translation{%
+        which takes the second definition route of \zcref{sec:defs}: \option{bib2gls=false}, so
+        \cmd{\loadglsdefs} reads \file{index-defs.tex} of \cmd{\newglossaryentry} commands and
+        \texttt{makeindex} does the sorting. It is the only document that needs a program between the
+        runs other than \texttt{bib2gls}, and until it was written that route had no coverage at all.%
+    }{%
+        welke de tweede definitieroute van \zcref{sec:defs} neemt: \option{bib2gls=false}, zodat
+        \cmd{\loadglsdefs} het bestand \file{index-defs.tex} met \cmd{\newglossaryentry} leest en
+        \texttt{makeindex} het sorteren doet. Het is het enige document dat een ander programma dan
+        \texttt{bib2gls} tussen de runs nodig heeft, en tot het geschreven werd had die route geen
+        enkele dekking.%
     }
     \item[nolang-example.tex] \translation{%
         which names no language at all and is converted rather than typeset. Every other document
@@ -2088,17 +2100,17 @@ De volgende begrippen worden in deze overeenkomst gebruikt.
 
 \subsection{\translation{What the suite reads back}{Wat de suite naleest}}\label{sec:checks}
 \translation{%
-    Every engine suite ends in eight sets of assertions, each of which prints what it counted and
+    Every engine suite ends in nine sets of assertions, each of which prints what it counted and
     stops the build when it is wrong. They are written the other way round from a test that
     checks a result: each of them exists because something once failed without failing, and its
     job is to make that same silence audible next time. Every one of them has been broken on
     purpose to see it bite\,---\,an assertion that has never failed has not established
     anything yet.%
 }{%
-    Iedere engine-suite eindigt in acht reeksen controles, die elk opschrijven wat ze geteld
+    Iedere engine-suite eindigt in negen reeksen controles, die elk opschrijven wat ze geteld
     hebben en de bouw stoppen zodra het niet klopt. Ze zijn andersom geschreven dan een test die
     een uitkomst nakijkt: ieder van hen bestaat omdat er ooit iets faalde zonder te falen, en
-    zijn taak is om diezelfde stilte de volgende keer hoorbaar te maken. Alle acht zijn expres
+    zijn taak is om diezelfde stilte de volgende keer hoorbaar te maken. Alle negen zijn expres
     gebroken om te zien dat ze bijten\,---\,een controle die nooit gefaald heeft, heeft nog
     niets vastgesteld.%
 }
@@ -2166,6 +2178,21 @@ De volgende begrippen worden in deze overeenkomst gebruikt.
         formulering van veertig aanhalingen woord voor woord. Een aanhaling in het verkeerde
         register faalt nergens; hij staat er gewoon verkeerd. Datzelfde doel zet daarna de twee
         documenten die moeten falen en stopt zodra een van beide toch slaagde.%
+    }
+    \item[index-checks] \translation{%
+        reads back that the indexed route was taken, that both definitions were written to the file
+        \texttt{makeindex} reads, and that they came back in the other order than they were declared
+        in\,---\,which is the only evidence in the result that the program between the runs did
+        anything. The glossary files are removed before the run: measured, with the
+        \texttt{makeglossaries} step taken out on purpose the checks still passed, because the sorted
+        file of the previous build was still there.%
+    }{%
+        leest terug dat de geïndexeerde route genomen is, dat beide definities in het bestand
+        geschreven zijn dat \texttt{makeindex} leest, en dat ze in een andere volgorde terugkomen dan
+        waarin ze gedeclareerd zijn\,---\,het enige bewijs in het resultaat dat het programma tussen
+        de runs iets gedaan heeft. De woordenlijstbestanden worden vóór de run weggegooid: gemeten,
+        met de \texttt{makeglossaries}-stap er expres uit slaagden de controles nog steeds, omdat het
+        gesorteerde bestand van de vorige bouw er nog lag.%
     }
     \item[date-checks] \translation{%
         reads back the two things a document can get wrong about the date a citation speaks as

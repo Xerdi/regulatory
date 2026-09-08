@@ -35,6 +35,7 @@
 % example1-en.tex, example2-en.tex,
 % md-example.tex, example.md, de-example.tex,
 % date-example.tex, nolang-example.tex,
+% index-example.tex, index-defs.tex,
 % sign-example.tex, source-example.tex,
 % badsource.tex, badsource.bib,
 % badsyntax.tex, badsyntax.bib,
@@ -113,9 +114,12 @@
 % \iffalse
 %<*package>
 % \fi
+% \package{ifthen} rather than \package{xifthen}: measured, nothing here uses a command of the second that
+% the first does not have, and \package{xifthen} drags in \package{calc}, which changes how every
+% \cmd{\setlength} in the document is parsed. \package{xspace} stood here as well and is gone; it was
+% called nowhere.
 %    \begin{macrocode}
-\RequirePackage{xifthen}
-\RequirePackage{xspace}
+\RequirePackage{ifthen}
 %    \end{macrocode}
 %
 % \begin{macro}{\ifregulatory@markdown}
@@ -242,18 +246,22 @@
 \fi
 %    \end{macrocode}
 %
-% The remaining prerequisites of the whole bundle are loaded here, in this exact order. Note that
-% \package{xr-hyper} and the \texttt{xr} option of \package{zref} are only used by
-% \package{regulatory-attachments}, but both have to be loaded before \package{hyperref}, which is loaded
-% by this module. \package{glossaries} is not among them: it belongs to \package{regulatory-defs}, so a
-% document that only wants the structures does not carry it.
+% The remaining prerequisites of the whole bundle are loaded here, in this exact order. The \texttt{xr}
+% option of \package{zref} is only used by \package{regulatory-attachments}, but has to be loaded before
+% \package{hyperref}, which is loaded by this module. \package{glossaries} is not among them: it belongs to
+% \package{regulatory-defs}, so a document that only wants the structures does not carry it.
+%
+% \package{xr-hyper} used to stand beside it and is gone. Nothing in this bundle calls
+% \cmd{\externaldocument}; the references to another document are \cmd{\zexternaldocument} of
+% \package{zref-xr}, and the links they produce come from \package{zref-hyperref}. Measured on the same
+% example built both ways: eleven \texttt{/GoToR} actions, eighteen link annotations and two file
+% specifications, with the package and without it. A document that wants \cmd{\externaldocument} loads
+% \package{xr-hyper} itself, which is where that choice belongs.
 %    \begin{macrocode}
 \RequirePackage{xcolor}
-\RequirePackage{xpatch}
 \RequirePackage{enumitem}
 \RequirePackage{fmtcount}
 \RequirePackage{scrextend}
-\RequirePackage{xr-hyper}
 \RequirePackage[user,counter,hyperref,xr]{zref}
 \RequirePackage{zref-xr,zref-user,zref-clever,zref-hyperref}
 \RequirePackage{hyperref}

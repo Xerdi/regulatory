@@ -50,6 +50,12 @@ COMPILER ?= $(ENGINE) --interaction=nonstopmode --shell-escape $(CNF_LINE)
 BIBEXAMPLES = example1-nl example2-nl example1-en example2-en
 BIBFILES = example1.bib example2.bib
 PLAINEXAMPLES = md-example sign-example source-example
+
+# The indexed definition route: bib2gls=false, so \loadglsdefs reads a TeX file of
+# \newglossaryentry and makeindex does the sorting. It needs a program between the
+# runs that none of the others do, so it gets a rule of its own rather than a place
+# in PLAINEXAMPLES.
+INDEXEXAMPLE = index-example
 # The one document that is meant to warn. German inflects the noun a connective
 # governs, so a reference to another document cannot be worded from its subject;
 # the package says so once per artifact. It is kept out of log-checks for that
@@ -60,12 +66,17 @@ WARNEXAMPLES = de-example date-example
 # one with a line the reader does not accept. They are not examples, they are the
 # other half of the reader's guarantee.
 BADEXAMPLES = badsource badsyntax
-EXAMPLES = $(BIBEXAMPLES) $(PLAINEXAMPLES) $(WARNEXAMPLES)
+EXAMPLES = $(BIBEXAMPLES) $(PLAINEXAMPLES) $(WARNEXAMPLES) $(INDEXEXAMPLE)
 
 # make4ht ships with TeX Live, so the HTML test stays within what `test' promises:
 # a TeX installation and nothing else.
 MAKE4HT ?= make4ht
 BIB2GLS ?= bib2gls
+
+# The second definition route sorts with makeindex, driven by makeglossaries. It is
+# the only route that needs this program, and the only one no document exercised
+# until index-example.
+MAKEGLOSSARIES ?= makeglossaries
 HTML_EXAMPLE = example1-nl
 # The second one covers the definitions declared in the document itself, which no
 # other check would see disappear: they fail by being absent, not by erroring.
@@ -115,6 +126,7 @@ endif
         test-engines test-html html-checks md-checks ref-checks sign-checks log-checks \
         lang-checks \
         date-checks \
+        index-checks \
         source-checks \
         conformance conformance-run \
         conformance-check conformance-check-run conformance-stale \
@@ -139,7 +151,7 @@ suite-conformance: conformance
 # which is why every path above is absolute. The directory is named after the
 # engine, and so is the engine it builds with: `make build-pdflatex' is pdflatex.
 build-%:
-	$(call run_in,$*,all ref-checks log-checks md-checks sign-checks source-checks lang-checks date-checks ENGINE=$*)
+	$(call run_in,$*,all ref-checks log-checks md-checks sign-checks source-checks lang-checks date-checks index-checks ENGINE=$*)
 
 .DELETE_ON_ERROR:
 
@@ -175,6 +187,21 @@ $(addsuffix .pdf,$(BIBEXAMPLES)): %.pdf: %.tex | %.glstex
 $(addsuffix .pdf,$(PLAINEXAMPLES) $(WARNEXAMPLES)): %.pdf: %.tex | %.aux
 	$(COMPILER) $*
 	$(COMPILER) $*
+
+# The indexed route, and the only place makeglossaries is run: the first pass writes
+# the glo file, makeglossaries sorts it into a gls file, and the last pass reads that
+# back. Depends on the definitions it loads, which are a TeX file here and not a bib.
+#
+# The glossary files are removed first, and that is not tidiness. Measured: with the
+# makeglossaries step taken out of this recipe on purpose, the checks below still
+# passed, because the sorted file of the previous build was still lying in the build
+# directory. A suite that reads a file it did not just make reads the last run.
+$(INDEXEXAMPLE).pdf: $(INDEXEXAMPLE).tex index-defs.tex
+	rm -f $(INDEXEXAMPLE).definitions-gl?
+	$(COMPILER) $(INDEXEXAMPLE)
+	$(MAKEGLOSSARIES) $(INDEXEXAMPLE)
+	$(COMPILER) $(INDEXEXAMPLE)
+	$(COMPILER) $(INDEXEXAMPLE)
 
 # Both example documents refer to each other, so the labels of the second one
 # have to be on disk before the first one is typeset. Order-only for the reason
@@ -336,6 +363,40 @@ date-checks: date-example.pdf
 	 fi; \
 	 if [ "$$total" -ne 4 ]; then \
 	     echo "date: $$total warnings where four are meant; did unverified stop being silent?" >&2; exit 1; \
+	 fi
+
+# The second of the four definition routes, and the one the manual already called the
+# least exercised -- until this document it was exercised not at all. Three things are
+# read back. That this document really takes that route, because a document that
+# drifted to bib2gls would still print a list and this check would still pass. That
+# \makeglossaries fired, which is the glo file existing at all: it hangs on a hook
+# that moved from \AtEndPreamble to the kernel's, and nothing was watching that hook.
+# And that makeindex sorted the entries into the gls file the last run reads back --
+# not merely copied them: the document declares Onderhandse first and Authentieke
+# second, so a sorted file has them the other way round, and that reversal is the only
+# evidence in the file that the program between the runs did anything.
+index-checks: $(INDEXEXAMPLE).pdf
+	@route=$$(grep -c 'INDEX route=indexed' $(INDEXEXAMPLE).log || true); \
+	 glo=$$(grep -c 'glossaryentry' $(INDEXEXAMPLE).definitions-glo 2>/dev/null || echo 0); \
+	 gls=$$(grep -c 'glossentry' $(INDEXEXAMPLE).definitions-gls 2>/dev/null || echo 0); \
+	 wrote=$$(grep -n 'glossaryentry{Onderhandse' $(INDEXEXAMPLE).definitions-glo \
+	     2>/dev/null | cut -d: -f1); \
+	 sorted=$$(grep -n 'glossentry{onderhands}' $(INDEXEXAMPLE).definitions-gls \
+	     2>/dev/null | cut -d: -f1); \
+	 first=$$(grep -n 'glossentry{authentiek}' $(INDEXEXAMPLE).definitions-gls \
+	     2>/dev/null | cut -d: -f1); \
+	 echo "index: route $$route, $$glo indexed, $$gls sorted, written at $$wrote, sorted to $$sorted"; \
+	 if [ "$$route" -ne 1 ]; then \
+	     echo "index: that document no longer takes the indexed route, so it tests nothing" >&2; exit 1; \
+	 fi; \
+	 if [ "$$glo" -ne 2 ]; then \
+	     echo "index: $$glo entries were indexed where two are meant; did \makeglossaries run?" >&2; exit 1; \
+	 fi; \
+	 if [ "$$gls" -ne 2 ]; then \
+	     echo "index: $$gls entries came back sorted where two are meant; did makeglossaries run?" >&2; exit 1; \
+	 fi; \
+	 if [ -z "$$first" ] || [ -z "$$sorted" ] || [ "$$first" -ge "$$sorted" ]; then \
+	     echo "index: the gls file is in document order, so makeindex sorted nothing" >&2; exit 1; \
 	 fi
 
 lang-checks: de-example.pdf
@@ -539,6 +600,7 @@ clean-examples:
 	@cd $(TESTDIR) && for example in $(EXAMPLES) $(BADEXAMPLES); do latexmk -f -c $$example; done
 	rm -rf $(TESTDIR)/_markdown_*
 	rm -f $(TESTDIR)/*.glstex $(TESTDIR)/*.luabridge.lua $(TESTDIR)/conformance.check.tex
+	rm -f $(TESTDIR)/*-glg $(TESTDIR)/*-glo $(TESTDIR)/*-gls $(TESTDIR)/*.ist
 	rm -f $(TESTDIR)/*.html $(TESTDIR)/*.css $(TESTDIR)/*.4ct $(TESTDIR)/*.4tc
 	rm -f $(TESTDIR)/*.idv $(TESTDIR)/*.lg $(TESTDIR)/*.tmp $(TESTDIR)/*.xref
 

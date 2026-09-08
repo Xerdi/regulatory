@@ -15,6 +15,11 @@
 %
 % This work consists of the files listed in the meta-comment of
 % regulatory-struct.dtx.
+% \widthof, in the two conjunction tables of the reference section. It used to arrive
+% through xifthen, which regulatory-struct loaded and which pulls calc in; that package
+% is gone from the bundle because nothing in it used a command of xifthen that plain
+% ifthen does not have. The manual does use one, so the manual asks for it.
+\usepackage{calc}
 \usepackage{gitinfo-lua}
 \usepackage{listings}
 % The Markdown syntax extension is Lua, not TeX, so it is not documented with

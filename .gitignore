@@ -317,3 +317,11 @@ _markdown_*
 .idea
 *.atfi
 *.markdown.in
+
+## The glossary files of a named glossary type: glossaries writes them as
+## <job>.<type>-glo and the *.glo rule above does not reach them. The ist is
+## makeindex's style file, which this project never writes by hand.
+/test/*-glg
+/test/*-glo
+/test/*-gls
+/test/*.ist

@@ -238,8 +238,12 @@
 % \texttt{makeglossaries}; declaring the entries in the document or reading them with \package{bib2gls}
 % does not. With the \option{alldefs} option every unused definition is added at the end of the document,
 % so that it shows up in the list as well.
+%
+% The kernel hook rather than \cmd{\AtEndPreamble} of \package{etoolbox}, which is what this was and which
+% cost a \package{xpatch} in the prerequisites for one call. Both fire in the same place; the hook is the
+% one that is there without asking for it.
 %    \begin{macrocode}
-\AtEndPreamble{%
+\AddToHook{begindocument/before}{%
 \ifthenelse{\boolean{regulatory@indexeddefs}}{\makeglossaries}{}%
 }
 \AtEndDocument{%
