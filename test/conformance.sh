@@ -32,8 +32,13 @@ VERAPDF_IMAGE=${VERAPDF_IMAGE:-verapdf/cli@sha256:d5ee329657cf9bc4b2400392dd54c7
 CONFORMANCE_TABLE=${CONFORMANCE_TABLE:-$HERE/conformance.tex}
 
 TAGGED='testphase={phase-III,title}'
+NOCSS='\tagpdfsetup{attach-css=false}'
+ANNOT='\PassOptionsToPackage{attachmentlink=annotation}{regulatory}'
 
-# name | document | \DocumentMetadata options | flavour:expectation,...
+# name | document | \DocumentMetadata options | flavour:expectation,... | preamble
+#
+# The last field is optional and is put between the \DocumentMetadata and the
+# document, for a case that turns on something a document cannot say for itself.
 #
 # The documents differ in what they embed, which is what the A-standards care
 # about: md-example embeds nothing, example1-nl embeds a bib file (not a PDF),
@@ -42,10 +47,22 @@ TAGGED='testphase={phase-III,title}'
 # demands of.
 #
 # The A-4 case is deliberately untagged. With testphase=phase-III latex-lab hangs
-# latex-list-css.html and latex-align-css.html on the catalog as associated
-# files, and both A-2 and A-4 require every embedded file to be a PDF/A itself.
-# A tagged document can therefore only be A-4f or A-3, which allow any file type,
-# and never A-2a or A-4.
+# latex-list-css.html and latex-align-css.html on the catalog as associated files,
+# and both A-2 and A-4 require every embedded file to be a PDF/A itself. Those two
+# files are the whole obstacle, and tagpdf has a key that leaves them out:
+# \tagpdfsetup{attach-css=false}. The four tagged cases below are two pairs that
+# differ in nothing else, so what the key costs and what it buys is on record
+# rather than argued: without it A-2a fails on 6.8-5 and A-4 on 6.9-3, with it
+# both pass, and UA-1 passes either way. What is given up is styling hints for
+# lists and for MathML alignment, not structure.
+#
+# The attachmentlink=annotation route puts a file attachment annotation on the page
+# where the other route puts a link. A link is one of the three subtypes the
+# A-standards exempt from needing an appearance dictionary and a file attachment is
+# not, so that route is the one that can lose a conformance claim by existing. It
+# is here for that reason and not for coverage. The second of the two adds the
+# tagging, because PDF/UA has demands of an annotation that PDF/A has not, and an
+# annotation this bundle places itself is one nothing else in the suite tags.
 #
 # The same document is put through A-2b and A-4f to have the difference between
 # the two on record rather than read out of a standard: a bib file inside the
@@ -56,9 +73,15 @@ a2b|md-example|pdfstandard=A-2b|2b:pass
 a4|md-example|pdfstandard=A-4|4:pass
 a4f-ua2|example2-nl|pdfstandard=A-4f,pdfstandard=UA-2,$TAGGED|4f:pass,ua2:pass
 a3a-ua1|example2-nl|pdfstandard=A-3a,pdfstandard=UA-1,$TAGGED|3a:pass,ua1:pass
+a2a-ua1-tagged|md-example|pdfstandard=A-2a,pdfstandard=UA-1,$TAGGED|2a:fail,ua1:pass
+a2a-ua1-nocss|md-example|pdfstandard=A-2a,pdfstandard=UA-1,$TAGGED|2a:pass,ua1:pass|$NOCSS
+a4-tagged|md-example|pdfstandard=A-4,$TAGGED|4:fail
+a4-nocss|md-example|pdfstandard=A-4,$TAGGED|4:pass|$NOCSS
 a3b|example1-nl|pdfstandard=A-3b|3b:xfail
 a2b-embedded-nonpdf|example1-nl|pdfstandard=A-2b|2b:fail
 a4f-embedded-nonpdf|example1-nl|pdfstandard=A-4f|4f:pass
+a4f-attachannot|example1-nl|pdfstandard=A-4f|4f:pass|$ANNOT
+a4f-ua2-attachannot|example2-nl|pdfstandard=A-4f,pdfstandard=UA-2,$TAGGED|4f:pass,ua2:pass|$ANNOT
 a2b-signed|sign-example|pdfstandard=A-2b|2b:pass
 "
 
@@ -101,10 +124,14 @@ results=""
 rows=""
 
 for case in $CASES; do
-    name=$(echo "$case" | cut -d'|' -f1)
-    doc=$(echo "$case" | cut -d'|' -f2)
-    meta=$(echo "$case" | cut -d'|' -f3)
-    checks=$(echo "$case" | cut -d'|' -f4)
+    name=$(printf '%s\n' "$case" | cut -d'|' -f1)
+    doc=$(printf '%s\n' "$case" | cut -d'|' -f2)
+    meta=$(printf '%s\n' "$case" | cut -d'|' -f3)
+    checks=$(printf '%s\n' "$case" | cut -d'|' -f4)
+    # printf and not echo: the sh of a Debian is dash, whose echo turns the
+    # backslash of a preamble into an escape, and \tagpdfsetup would arrive as a
+    # tab followed by agpdfsetup.
+    pre=$(printf '%s\n' "$case" | cut -d'|' -f5)
     # One prefix for everything a flavour build writes, so cleaning is unambiguous.
     job="conf-$doc-$name"
 
@@ -112,10 +139,10 @@ for case in $CASES; do
     # Every jobname needs its own bib2gls run: \GlsXtrLoadResources writes
     # <jobname>.glstex, so reusing the one of the bare build breaks the
     # glossary of a flavour build.
-    $COMPILER -jobname="$job" "\\DocumentMetadata{$meta}\\input{$doc}" >"$job.build.log" 2>&1 || true
+    $COMPILER -jobname="$job" "\\DocumentMetadata{$meta}$pre\\input{$doc}" >"$job.build.log" 2>&1 || true
     $BIB2GLS "$job" >>"$job.build.log" 2>&1 || true
-    $COMPILER -jobname="$job" "\\DocumentMetadata{$meta}\\input{$doc}" >>"$job.build.log" 2>&1 || true
-    $COMPILER -jobname="$job" "\\DocumentMetadata{$meta}\\input{$doc}" >>"$job.build.log" 2>&1 || true
+    $COMPILER -jobname="$job" "\\DocumentMetadata{$meta}$pre\\input{$doc}" >>"$job.build.log" 2>&1 || true
+    $COMPILER -jobname="$job" "\\DocumentMetadata{$meta}$pre\\input{$doc}" >>"$job.build.log" 2>&1 || true
 
     if [ ! -f "$job.pdf" ]; then
         echo "   BUILD FAILED, see $job.build.log"

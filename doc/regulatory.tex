@@ -213,6 +213,25 @@
         \texttt{voluit} en \texttt{verkort} als waarden. Een waarde die geen van de vier is wordt
         geweigerd waar hij gegeven wordt in plaats van iedere opzoeking die hem leest leeg te maken.%
     }
+    \item[attachmentlink\quad goto] \translation{%
+        how an attachment of \zcref{sec:extern} is opened from the page. With \texttt{goto} the link
+        is an embedded go-to action, which names the file inside this document and is the right thing
+        to say\,---\,and is the one action \package{poppler} does not implement, so under most
+        viewers on a free desktop the link does nothing. With \option{attachmentlink=annotation} a
+        file attachment annotation is placed over the same text instead, which Acrobat and
+        \package{poppler} both do implement. It shows nothing of its own: the text stays the only
+        thing on the page, and it is the annotation that opens. Either way the file is also in the
+        attachment pane of the viewer, which needs neither.%
+    }{%
+        hoe een bijlage uit \zcref{sec:extern} vanaf de pagina geopend wordt. Met \texttt{goto} is de
+        link een embedded go-to action, die het bestand binnen dit document noemt en daarmee zegt wat
+        er te zeggen valt\,---\,en is tegelijk de ene actie die \package{poppler} niet
+        implementeert, zodat de link onder de meeste viewers op een vrij bureaublad niets doet. Met
+        \option{attachmentlink=annotation} komt er in plaats daarvan een file attachment annotatie
+        over dezelfde tekst, die Acrobat en \package{poppler} allebei wel kennen. Hij laat zelf niets
+        zien: de tekst blijft het enige op de pagina en de annotatie is wat opent. Hoe dan ook staat
+        het bestand ook in het bijlagenpaneel van de viewer, dat geen van beide nodig heeft.%
+    }
 \end{labeling}
 \translation{%
     Colored borders of hyperlinks are hidden with \cmd{\hypersetup}\marg{hidelinks}, since this package
@@ -2052,8 +2071,7 @@ De volgende begrippen worden in deze overeenkomst gebruikt.
 \noindent
 \translation{%
     What makes the first three a test rather than three separate documents is the way they point
-    at each other, which is what \zcref{sec:extern} is about. The other two stand on their own
-    and are drawn nowhere below.
+    at each other, which is what \zcref{sec:extern} is about.
     \file{example1-nl} names \file{example2-nl} with \cmd{\refdocument}, so it can refer to its
     articles without attaching it.
     \file{example2-nl} names \file{example1-nl} with \cmd{\masterdocument} instead, which
@@ -2065,8 +2083,7 @@ De volgende begrippen worden in deze overeenkomst gebruikt.
     \cmd{\attachdocument}, which is the case the PDF standards disagree about most:%
 }{%
     Wat de eerste drie tot een test maakt in plaats van drie losse documenten is de manier waarop
-    ze naar elkaar wijzen, waar \zcref{sec:extern} over gaat. De andere twee staan op zichzelf en
-    zijn hieronder niet getekend.
+    ze naar elkaar wijzen, waar \zcref{sec:extern} over gaat.
     \file{example1-nl} noemt \file{example2-nl} met \cmd{\refdocument}, zodat het naar diens
     artikelen kan verwijzen zonder het bij te voegen.
     \file{example2-nl} noemt \file{example1-nl} juist met \cmd{\masterdocument}, wat daarnaast
@@ -2079,14 +2096,7 @@ De volgende begrippen worden in deze overeenkomst gebruikt.
 }
 
 \begin{adjustbox}{width=\textwidth}
-\begin{tikzpicture}[
-        every node/.style = {font=\small},
-        doc/.style        = {draw, rounded corners, minimum height=8mm, minimum width=25mm,
-                             font=\small\ttfamily},
-        data/.style       = {draw, dashed, minimum height=7mm, font=\small\ttfamily},
-        rel/.style        = {-{Stealth[length=2mm]}, semithick},
-        lbl/.style        = {font=\scriptsize\sffamily, fill=white, inner sep=1.5pt}
-    ]
+\begin{tikzpicture}[diagram]
     \node[doc]  (e1)    at ( 0   , 0   ) {example1-nl};
     \node[doc]  (e2)    at ( 7   , 0   ) {example2-nl};
     \node[doc]  (md)    at ( 4 ,-3.2   ) {md-example};
@@ -2122,6 +2132,348 @@ De volgende begrippen worden in deze overeenkomst gebruikt.
     \file{md-example} laadt daarnaast \file{example1.bib} in, wat omwille van de leesbaarheid
     niet getekend is.%
 }
+
+\noindent
+\translation{%
+    The other six are drawn as well, each on the one thing it is there for. They keep the shapes
+    of the picture above and add three: a grey box is a program that runs between two \LaTeX{}
+    runs, a sharp-cornered box something written out literally\,---\,keys in a document, an
+    object in the PDF file\,---\,and a doubled box the assertion of \zcref{sec:checks} that
+    reads the result back.%
+}{%
+    De andere zes zijn ook getekend, elk op het ene waar hij voor staat. Ze houden de vormen van
+    de tekening hierboven aan en voegen er drie toe: een grijze kader is een programma dat tussen
+    twee \LaTeX{} draaien loopt, een kader met scherpe hoeken iets dat letterlijk uitgeschreven
+    staat\,---\,sleutels in een document, een object in het PDF-bestand\,---\,en een dubbele
+    kader de controle uit \zcref{sec:checks} die de uitkomst naleest.%
+}
+
+\noindent
+\translation{%
+    \file{sign-example} places two of the fields of \zcref{sec:sign}. What it draws and what it
+    carries come apart without anything looking wrong: the frame and the line are set by \TeX{}
+    and are on the page whatever happens, while the annotation that makes the area a field is
+    invisible on paper and shows only when somebody tries to sign. Both fields point at the same
+    appearance object, which is what an empty appearance is for\,---\,the line is drawn by the
+    page, so an appearance that drew one would draw it twice.%
+}{%
+    \file{sign-example} plaatst twee van de velden uit \zcref{sec:sign}. Wat het tekent en wat het
+    draagt lopen uit elkaar zonder dat er iets verkeerd uitziet: het kader en de lijn worden door
+    \TeX{} gezet en staan hoe dan ook op de pagina, terwijl de annotatie die het vlak tot een veld
+    maakt op papier onzichtbaar is en pas blijkt wanneer iemand probeert te tekenen. Beide velden
+    wijzen naar hetzelfde verschijningsobject, en daar is een lege verschijning voor\,---\,de lijn
+    wordt door de pagina getekend, dus een verschijning die er een tekende zou hem dubbel
+    tekenen.%
+}
+
+\begin{adjustbox}{width=\textwidth}
+\begin{tikzpicture}[diagram]
+    \node[note,anchor=south] at (2.5,5.3) {\translation{what comes out on paper}{wat er op papier uitkomt}};
+    \draw (0,3.2) rectangle (5.0,5.0);
+    \draw[semithick] (0.5,3.75) -- (4.5,3.75);
+    \node[lbl] at (2.5,5.0) {\cmd{\fbox}, \translation{by this example}{door dit voorbeeld}};
+    \node[note,anchor=north] at (2.5,3.6) {\translation{the line, by the module}{de lijn, door de module}};
+    \draw (0,0.2) rectangle (5.0,2.0);
+    \draw[semithick] (0.5,0.75) -- (4.5,0.75);
+
+    \draw[greycolor] (8.3,-0.2) rectangle (12.7,5.4);
+    \node[note,anchor=south] at (10.5,5.5) {/Annots};
+    \node[obj] (w1) at (10.5,4.1) {/Subtype /Widget\\/FT /Sig\\/T (opdrachtgever)};
+    \node[obj] (w2) at (10.5,1.1) {/Subtype /Widget\\/FT /Sig\\/T (opdrachtnemer)};
+    \node[obj] (ap) at (14.8,2.6) {/AP /N};
+    \node[note,anchor=north] at (14.8,1.4) {\translation{one appearance object,\\shared by both fields}%
+        {één verschijningsobject,\\door beide velden gedeeld}};
+
+    \draw[rel] (5.0,4.1) -- node[lbl,above]{/Rect}
+        node[lbl,below]{\translation{the same rectangle}{hetzelfde vlak}} (w1.west);
+    \draw[rel] (5.0,1.1) -- node[lbl,above]{/Rect} (w2.west);
+    \draw[rel] (w1.east) -- (ap.north west);
+    \draw[rel] (w2.east) -- (ap.south west);
+
+    \node[prog]  (grep) at (10.5,-1.8) {grep '/FT /Sig'};
+    \node[check] (chk)  at (10.5,-3.6) {sign-checks};
+    \draw[rel] (10.5,-0.2) -- (grep);
+    \draw[rel] (grep) -- (chk);
+    \node[note,anchor=east] at (8.9,-1.8) {\translation{written uncompressed, so reading the field\\%
+        back needs no PDF tool}%
+        {ongecomprimeerd geschreven, zodat het veld\\teruglezen geen PDF-gereedschap vraagt}};
+    \node[note,anchor=east] at (8.9,-3.6) {\translation{two fields, or the box was drawn\\without one}%
+        {twee velden, of het kader is zonder\\veld getekend}};
+\end{tikzpicture}
+\end{adjustbox}
+
+\noindent
+\translation{%
+    The routes of \zcref{sec:defs} differ in what has to run between the two \LaTeX{} runs,
+    and that is what separates the documents below. \file{index-example} is the only one on the
+    second route and the only one that asks for a program other than \package{bib2gls}. Its
+    assertion does not read the list but the order: the document declares \emph{Onderhandse}
+    first and \emph{Authentieke} second, so a file that comes back the other way round is the only
+    evidence anywhere in the run that \texttt{makeindex} did anything at all.%
+}{%
+    De wegen van \zcref{sec:defs} verschillen in wat er tussen de twee \LaTeX{} draaien moet
+    lopen, en dat is wat de documenten hieronder uit elkaar houdt. \file{index-example} is de
+    enige op de tweede weg en de enige die om een ander programma dan \package{bib2gls} vraagt.
+    Zijn controle leest niet de lijst maar de volgorde: het document declareert \emph{Onderhandse}
+    eerst en \emph{Authentieke} daarna, dus een bestand dat andersom terugkomt is het enige bewijs
+    in de hele draai dat \texttt{makeindex} überhaupt iets gedaan heeft.%
+}
+
+\begin{adjustbox}{width=\textwidth}
+\begin{tikzpicture}[diagram]
+    \node[data,anchor=west] (bib1)  at (0, 3.0) {example1.bib};
+    \node[data,anchor=west] (bib2)  at (0, 0.6) {example2.bib};
+    \node[data,anchor=west] (idefs) at (0,-2.8) {index-defs.tex};
+
+    \node[doc] (d1) at (6.4, 3.0) {example1-nl\\md-example};
+    \node[doc] (d2) at (6.4, 0.6) {example2-nl};
+    \node[doc] (d3) at (6.4,-2.8) {index-example};
+
+    \node[prog]  (b2g)   at (11.4, 1.8) {bib2gls};
+    \node[prog]  (mkidx) at (11.4,-2.8) {makeindex};
+    \node[check] (chk)   at (15.6,-2.8) {index-checks};
+
+    \draw[rel] (bib1) -- node[lbl,above]{\cmd{\loadglsdefs}} (d1);
+    \draw[rel] (bib2) -- node[lbl,above]{\cmd{\loadglsdefs}} (d2);
+    \draw[rel] (idefs) -- node[lbl,above]{\cmd{\loadglsdefs}}
+        node[lbl,below]{\option{bib2gls=false}} (d3);
+
+    \draw[rel] (d1) -- node[lbl,above]{.aux} (b2g);
+    \draw[rel] (d2) -- node[lbl,below]{.aux} (b2g);
+    \draw[rel] (d3) -- node[lbl,above]{.definitions-glo} (mkidx);
+    \draw[rel] (mkidx) -- node[lbl,above]{.definitions-gls} (chk);
+
+    \draw[rel] (d2) to[out=-120,in=-60,looseness=9]
+        node[lbl,below]{\cmd{\newdefinition}} (d2);
+    \node[note,anchor=north] at (6.4,-1.4) {\translation{no second program at all}%
+        {helemaal geen tweede programma}};
+
+    \node[note,anchor=south] at (11.4, 2.6) {\translation{between the two \LaTeX{} runs}%
+        {tussen de twee \LaTeX{} draaien}};
+    \node[note,anchor=north] at (11.4, 1.0) {\translation{hands back .glstex}{geeft .glstex terug}};
+    \node[note,anchor=north] at (12.0,-3.6) {\translation{sorted: authentiek before onderhands, the only\\%
+        evidence in the file that the program did anything}%
+        {gesorteerd: authentiek vóór onderhands, het enige\\%
+        bewijs in het bestand dat het programma iets deed}};
+\end{tikzpicture}
+\end{adjustbox}
+
+\noindent
+\translation{%
+    A tracked language is what makes \package{tracklang} load a \file{glossaries-\meta{language}.ldf},
+    and that file is what brings \package{translator} along. Every other document here loads
+    \package{babel}, so a command of that package works in all of them and is undefined in the one
+    that names no language at all, which is how a call to \cmd{\providetranslation} survived in
+    \file{regulatory.4ht}. The headings this document does get are English: the language files
+    this bundle ships are loaded whatever the document speaks.%
+}{%
+    Een bijgehouden taal is wat \package{tracklang} een \file{glossaries-\meta{taal}.ldf} laat
+    laden, en dat bestand is wat \package{translator} meebrengt. Ieder ander document hier laadt
+    \package{babel}, dus een commando van dat pakket werkt in allemaal en is ongedefinieerd in het
+    ene dat helemaal geen taal noemt, en zo heeft een aanroep van \cmd{\providetranslation} het
+    overleefd in \file{regulatory.4ht}. De kopjes die dit document wél krijgt zijn Engels: de
+    taalbestanden die deze bundel meelevert worden geladen wat het document ook spreekt.%
+}
+
+\begin{adjustbox}{width=\textwidth}
+\begin{tikzpicture}[diagram]
+    \node[note,anchor=south] at (1.2, 1.9) {\translation{every other document}{ieder ander document}};
+    \node[bare] (b1) at ( 1.2, 1.4) {babel};
+    \node[bare] (t1) at ( 3.8, 1.4) {tracklang};
+    \node[bare] (l1) at ( 8.0, 1.4) {glossaries-dutch.ldf};
+    \node[bare] (r1) at (11.6, 1.4) {translator};
+    \node[bare] (p1) at (15.0, 1.4) {\cmd{\providetranslation}};
+
+    \node[note,anchor=south] at (1.2,-0.9) {nolang-example};
+    \node[bare,faded] (b0) at ( 1.2,-1.4) {\translation{no babel}{geen babel}};
+    \node[bare]                (t0) at ( 3.8,-1.4) {tracklang};
+    \node[bare,faded] (l0) at ( 8.0,-1.4) {\translation{no ldf}{geen ldf}};
+    \node[bare,faded] (r0) at (11.6,-1.4) {\translation{no translator}{geen translator}};
+    \node[bare,text=warncolor] (p0) at (15.0,-1.4) {\translation{undefined}{ongedefinieerd}};
+
+    \draw[rel] (b1) -- (t1);
+    \draw[rel] (t1) -- node[lbl,below=2mm]{\translation{a language is tracked}%
+        {er wordt een taal bijgehouden}} (l1);
+    \draw[rel] (l1) -- (r1);
+    \draw[rel] (r1) -- (p1);
+    \draw[gone] (b0) -- (t0);
+    \draw[gone] (t0) -- node[lbl,below=2mm]{\translation{nothing is tracked}%
+        {er wordt niets bijgehouden}} (l0);
+    \draw[gone] (l0) -- (r0);
+    \draw[gone] (r0) -- (p0);
+
+    \node[data]  (fourht) at (11.0,-3.6) {regulatory.4ht};
+    \node[check] (chk)    at (15.0,-3.6) {html-checks};
+    \draw[rel] (fourht) -- node[lbl,below]{\translation{reaches for it}{grijpt ernaar}} (p0);
+    \draw[rel] (p0) -- node[lbl,right]{\translation{caught here}{hier gevangen}} (chk);
+    \node[note,anchor=north] at (13.0,-4.6) {\translation{that file is read under \package{tex4ht} only, so this\\%
+        document is converted and never typeset}%
+        {dat bestand wordt alleen onder \package{tex4ht} gelezen, dus\\%
+        dit document wordt omgezet en nooit gezet}};
+\end{tikzpicture}
+\end{adjustbox}
+
+\noindent
+\translation{%
+    \file{date-example} is meant to warn four times over, and its assertion counts one of each and
+    nothing beyond them. One is about a source that was last checked before the date this document
+    speaks as of, and it is said once however often that source is cited; one is about a document
+    that nowhere says as of when it cites; and two are about entries that cannot be held against a
+    date at all. The fourth entry says as much on purpose and stays silent, which is the
+    difference the picture is drawn for: a guard whose off switch is an absent field is switched
+    off by accident rather than by decision.%
+}{%
+    \file{date-example} hoort vier keer te waarschuwen, en zijn controle telt er van elk één en
+    verder niets. Eén gaat over een bron die nagelopen is vóór de dag per welke dit document
+    spreekt, en die wordt één keer gezegd hoe vaak die bron ook aangehaald wordt; één over
+    een document dat nergens zegt per wanneer het aanhaalt; en twee over entries die helemaal niet
+    naast een datum te leggen zijn. De vierde entry zegt dat met zoveel woorden en blijft stil, en
+    daar is deze tekening voor: een wacht waarvan de uitschakelaar een ontbrekend veld is wordt per
+    ongeluk uitgezet in plaats van met opzet.%
+}
+
+\begin{adjustbox}{width=\textwidth}
+\begin{tikzpicture}[diagram]
+    \fill[greycolor!40] (2,-0.18) rectangle (8,0.18);
+    \draw[rel] (-0.4,0) -- (11.4,0);
+    \draw[semithick] (2,-0.3) -- (2,0.3);
+    \draw[semithick] (8,-0.3) -- (8,0.3);
+    \node[note,anchor=north east] at (2.4,-0.45) {2024-01-01\\%
+        \translation{bw6 was last checked}{bw6 is nagelopen}};
+    \node[note,anchor=north west] at (7.6,-0.45) {2026-01-01\\%
+        \texttt{date=} \translation{of two citations}{van twee aanhalingen}};
+    \node[note,anchor=south] at (5,0.3) {\translation{whatever changed here is not in the citation}%
+        {wat hier veranderde staat niet in de aanhaling}};
+
+    \draw[rel,warncolor] (5,-1.5) -- (5,-0.3);
+    \node[warn,anchor=north] at (5,-1.6) {%
+        \translation{once for the source, however often it is cited}%
+                    {één keer voor de bron, hoe vaak hij ook aangehaald wordt}};
+
+    \node[note,anchor=north west] at (-0.4,-2.7) {\translation{and what the document writes itself}%
+        {en wat het document zelf schrijft}};
+    \node[obj] (s0) at (1.8,-3.7) {\cmd{\srcref}};
+    \node[obj] (s1) at (1.8,-4.7) {zonder};
+    \node[obj] (s2) at (1.8,-5.7) {onbekeken};
+    \node[obj] (s3) at (1.8,-6.7) {scheef};
+    \node[note,anchor=west] at (3.4,-3.7) {\translation{no \texttt{date=}, no \cmd{\sourcedate}}%
+        {geen \texttt{date=}, geen \cmd{\sourcedate}}};
+    \node[note,anchor=west] at (3.4,-4.7) {\translation{no \texttt{valid} field}{geen veld \texttt{valid}}};
+    \node[note,anchor=west] at (3.4,-5.7) {\texttt{valid = unverified}};
+    \node[note,anchor=west] at (3.4,-6.7) {\texttt{valid = 1 januari 2024}};
+    \node[warn,anchor=west] at (7.4,-3.7) {\translation{it says nowhere as of when it cites}%
+        {het zegt nergens per wanneer het aanhaalt}};
+    \node[warn,anchor=west] at (7.4,-4.7) {\translation{could never be reported out of date}%
+        {kan nooit verouderd gemeld worden}};
+    \node[ok,anchor=west]   at (7.4,-5.7) {\translation{a decision, and decisions are silent}%
+        {een besluit, en besluiten zijn stil}};
+    \node[warn,anchor=west] at (7.4,-6.7) {\translation{neither YYYY-MM-DD nor unverified}%
+        {noch JJJJ-MM-DD noch unverified}};
+
+    \node[check] (chk) at (1.8,-8.0) {date-checks};
+    \node[note,anchor=west] at (3.4,-8.0) {\translation{four warnings, one of each, and nothing beyond them}%
+        {vier waarschuwingen, van elk één, en verder niets}};
+\end{tikzpicture}
+\end{adjustbox}
+
+\noindent
+\translation{%
+    The register belongs to the source and not to the sentence it stands in, so the same three
+    keys come out as four different citations. The English one is the only register that puts the
+    deepest level first, and the only one in which the name of the instrument does not follow the
+    provision. The Dutch key names are aliases of the English ones and therefore have to produce
+    the same citation word for word; where they do not, the alias is not what it says it is.
+    \file{source-example} is read back that way for forty citations, since one in the wrong
+    register fails nowhere\,---\,it simply stands there wrong.%
+}{%
+    Het register hoort bij de bron en niet bij de zin waar hij in staat, dus dezelfde drie sleutels
+    komen er als vier verschillende aanhalingen uit. Het Engelse is het enige register dat het
+    diepste niveau vooropzet, en het enige waarin de naam van het instrument niet op de bepaling
+    volgt. De Nederlandse sleutelnamen zijn aliassen van de Engelse en horen dus woord voor woord
+    dezelfde aanhaling op te leveren; verschilt er iets, dan is de alias niet wat hij zegt te zijn.
+    \file{source-example} wordt zo voor veertig aanhalingen nagelezen, want een aanhaling in het
+    verkeerde register faalt nergens\,---\,hij staat er gewoon verkeerd.%
+}
+
+\begin{adjustbox}{width=\textwidth}
+\begin{tikzpicture}[diagram]
+    \node[obj,anchor=west] (en) at (0, 1.4) {article=6,\\paragraph=1,\\point=a};
+    \node[obj,anchor=west] (nl) at (0,-1.4) {artikel=6,\\lid=1,\\onderdeel=a};
+    \node[obj] (src) at (4.6, 0.0) {\cmd{\srcref}};
+    \draw[rel] (en.east) -- (src);
+    \draw[rel] (nl.east) -- (src);
+    \node[note,anchor=north] at (1.3,-2.6) {\translation{the same three keys,\\word for word the same citation}%
+        {dezelfde drie sleutels,\\woord voor woord dezelfde aanhaling}};
+
+    \node[note,anchor=east] at ( 8.6, 3.0) {\texttt{dutch\_eu}};
+    \node[note,anchor=east] at ( 8.6, 1.0) {\texttt{german\_eu}};
+    \node[note,anchor=east] at ( 8.6,-1.0) {\texttt{french\_eu}};
+    \node[note,anchor=east] at ( 8.6,-3.0) {\texttt{english\_eu}};
+    \node[bare,anchor=west] at ( 8.9, 3.0) {artikel~6, lid~1, punt~a), van~de~\ldots};
+    \node[bare,anchor=west] at ( 8.9, 1.0) {Artikel~6 Absatz~1 Buchstabe~a der~\ldots};
+    \node[bare,anchor=west] at ( 8.9,-1.0) {article~6, paragraphe~1, point~a), du~\ldots};
+    \node[bare,anchor=west] at ( 8.9,-3.0) {point~(a) of Article~6(1) of~the~\ldots};
+
+    \draw[rel] (src) to[out=50,in=180]  (7.0, 3.0);
+    \draw[rel] (src) to[out=25,in=180]  (7.0, 1.0);
+    \draw[rel] (src) to[out=-25,in=180] (7.0,-1.0);
+    \draw[rel] (src) to[out=-50,in=180] (7.0,-3.0);
+
+    \node[note,anchor=north west] at (8.9,-3.6) {\translation{the one register that puts the deepest level first,\\%
+        and the one in which \ldots{} does not stand at the end}%
+        {het enige register dat het diepste niveau vooropzet,\\%
+        en het enige waarin \ldots{} niet achteraan staat}};
+    \node[note,anchor=south west] at (8.9, 3.5) {\translation{\ldots{} is the name of the instrument}%
+        {\ldots{} is de naam van het instrument}};
+
+    \node[check] (chk) at (4.6,-4.6) {source-checks};
+    \draw[rel] (src) -- node[lbl,left]{\translation{word for word}{woord voor woord}} (chk);
+\end{tikzpicture}
+\end{adjustbox}
+
+\noindent
+\translation{%
+    German inflects the noun a connective governs\,---\,\emph{des Vertrags}, \emph{des
+    Beschlusses}\,---\,so no rule builds the phrase from a subject in the nominative.
+    \file{de-example} names two documents, one of which carries a wording of its own and one of
+    which does not, and refers to the one without it twice. That is what makes a single number
+    enough: three references over two artifacts, and exactly one warning.%
+}{%
+    Het Duits verbuigt het woord dat een voegwoord regeert\,---\,\emph{des Vertrags}, \emph{des
+    Beschlusses}\,---\,dus geen regel bouwt de wending uit een onderwerp in de nominatief.
+    \file{de-example} noemt twee documenten, waarvan er één een eigen verwoording draagt en de
+    ander niet, en verwijst twee keer naar degene zonder. Dat is wat één getal genoeg maakt:
+    drie verwijzingen over twee artefacten, en precies één waarschuwing.%
+}
+
+\begin{adjustbox}{width=\textwidth}
+\begin{tikzpicture}[diagram]
+    \node[doc] (de)   at (0,0) {de-example};
+    \node[doc] (ohne) at (6.0, 1.8) {example2-nl};
+    \node[doc] (mit)  at (6.0,-1.8) {example1-nl};
+
+    \draw[rel] (de) to[bend left=8] node[lbl]%
+        {\cmd{\refdocument}\texttt{[ohne-]}\\\texttt{subject=Beispielurkunde}} (ohne);
+    \draw[rel] (de) to[bend right=8] node[lbl]%
+        {\cmd{\refdocument}\texttt{[mit-]}\\\texttt{ref label=der Musterurkunde}} (mit);
+
+    \node[note,anchor=west] at (7.8, 1.8) {\translation{named twice with \cmd{\Aref}}%
+        {twee keer genoemd met \cmd{\Aref}}};
+    \node[note,anchor=west] at (7.8,-1.8) {\translation{named once with \cmd{\Aref}}%
+        {één keer genoemd met \cmd{\Aref}}};
+    \node[warn,anchor=west] at (7.8, 0.6) {\translation{one warning: German inflects the noun\\%
+        a connective governs, so the phrase cannot\\be built from a subject}%
+        {één waarschuwing: het Duits verbuigt het woord\\%
+        dat een voegwoord regeert, dus de wending is\\niet uit een onderwerp te bouwen}};
+    \node[ok,anchor=west] at (7.8,-2.8) {\translation{silent: the phrase is given}%
+        {stil: de verwoording staat er}};
+
+    \node[check] (chk) at (0,-3.4) {lang-checks};
+    \draw[rel] (de) -- (chk);
+    \node[note,anchor=west] at (1.6,-3.4) {\translation{exactly one, over two artifacts and three references}%
+        {precies één, over twee artefacten en drie verwijzingen}};
+\end{tikzpicture}
+\end{adjustbox}
 
 \subsection{\translation{What the suite reads back}{Wat de suite naleest}}\label{sec:checks}
 \translation{%
@@ -2285,28 +2637,42 @@ De volgende begrippen worden in deze overeenkomst gebruikt.
 
 \noindent
 \translation{%
-    Two claims a document written with this package cannot make.
+    One claim a document written with this package cannot make.
     \textbf{PDF/A-1} forbids embedded files outright, so any document that attaches something is
     out of reach.
-    \textbf{PDF/A-2a} and \textbf{PDF/A-4} are out of reach for a \emph{tagged} document:
-    tagging hangs a pair of HTML files on the catalog as associated files, and both standards
-    require every embedded file to be a PDF/A itself. A tagged document can be PDF/A-3 or
-    PDF/A-4f, both of which allow any file type.
 
-    That difference is measured rather than read out of a standard: the same document with the
+    \textbf{PDF/A-2a} and \textbf{PDF/A-4} stood here as a second, and they do not belong there.
+    Tagging hangs a pair of HTML files on the catalog as associated files, and both standards
+    require every embedded file to be a PDF/A itself\,---\,but those two files are the whole
+    obstacle, and \package{tagpdf} has a key that leaves them out:
+    \cmd{\tagpdfsetup}\texttt{\{attach-css=false\}}. The table carries both halves as two pairs
+    of cases that differ in nothing else, on a document that attaches nothing of its own:
+    without the key PDF/A-2a fails on rule 6.8-5 and PDF/A-4 on rule 6.9-3, with it both pass,
+    and \textbf{PDF/UA-1} passes either way. What is given up is what those two files are
+    for\,---\,styling hints for lists and for the alignment of MathML\,---\,and not the
+    structure a reader is read by.
+
+    The difference between the profiles is measured the same way: the same document with the
     same attachment appears twice in the table, failing PDF/A-2b on rule 6.8-5 and passing
     PDF/A-4f. Anything that is not a PDF therefore decides the profile, and it is worth knowing
     which one before a document is issued rather than after.%
 }{%
-    Twee claims die een document geschreven met dit pakket niet kan maken.
+    Eén claim die een document geschreven met dit pakket niet kan maken.
     \textbf{PDF/A-1} verbiedt ingesloten bestanden categorisch, dus ieder document dat iets
     bijvoegt valt af.
-    \textbf{PDF/A-2a} en \textbf{PDF/A-4} vallen af voor een \emph{getagd} document: taggen hangt
-    een tweetal HTML-bestanden als associated files aan de catalog, en beide standaarden eisen
-    dat ieder ingesloten bestand zelf een PDF/A is. Een getagd document kan wel PDF/A-3 of
-    PDF/A-4f zijn, welke beide ieder bestandstype toelaten.
 
-    Dat verschil is gemeten en niet uit een standaard gelezen: hetzelfde document met dezelfde
+    \textbf{PDF/A-2a} en \textbf{PDF/A-4} stonden hier als tweede, en daar horen ze niet.
+    Taggen hangt een tweetal HTML-bestanden als associated files aan de catalog, en beide
+    standaarden eisen dat ieder ingesloten bestand zelf een PDF/A is\,---\,maar die twee
+    bestanden zíjn de hele hindernis, en \package{tagpdf} heeft een sleutel die ze weglaat:
+    \cmd{\tagpdfsetup}\texttt{\{attach-css=false\}}. De tabel draagt beide helften als twee paren
+    gevallen die in niets anders verschillen, op een document dat zelf niets bijvoegt: zonder de
+    sleutel faalt PDF/A-2a op rule 6.8-5 en PDF/A-4 op rule 6.9-3, mét hem slagen ze allebei, en
+    \textbf{PDF/UA-1} slaagt hoe dan ook. Wat je inlevert is waar die twee bestanden voor
+    zijn\,---\,opmaakhints voor lijsten en voor de uitlijning van MathML\,---\,en niet de
+    structuur waarop een lezer wordt voorgelezen.
+
+    Het verschil tussen de profielen is op dezelfde manier gemeten: hetzelfde document met dezelfde
     bijlage staat twee keer in de tabel, waar het PDF/A-2b faalt op regel 6.8-5 en PDF/A-4f
     haalt. Alles wat geen PDF is bepaalt dus het profiel, en dat is de moeite waard te weten
     vóórdat een document uitgegeven wordt in plaats van erna.%

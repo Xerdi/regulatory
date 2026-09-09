@@ -1,25 +1,7 @@
-%% de-example.tex
-%% Copyright 2026 E. Nijenhuis
-%
-% This work may be distributed and/or modified under the
-% conditions of the LaTeX Project Public License, either version 1.3c
-% of this license or (at your option) any later version.
-% The latest version of this license is in
-% http://www.latex-project.org/lppl.txt
-% and version 1.3c or later is part of all distributions of LaTeX
-% version 2005/12/01 or later.
-%
-% This work has the LPPL maintenance status ‘maintained’.
-%
-% The Current Maintainer of this work is E. Nijenhuis.
-%
-% This work consists of the files listed in the meta-comment of
-% regulatory-struct.dtx.
-%
-% Het enige voorbeeld dat opzettelijk twee keer waarschuwt over datums. Een
-% aanhaling van regelgeving is een aanhaling van een versie ervan, dus dit pakket
-% laat een document niet ongezegd laten per wanneer het spreekt, en zegt het als
-% het document de gegevens van een bron voorbijloopt.
+% The only example that warns on purpose, four times over, about dates. A citation
+% of legislation is a citation of a version of it, so this bundle does not let a
+% document leave unsaid as of when it speaks, and says so when the document outruns
+% the data of a source.
 \IfDocumentMetadataTF{}{\DocumentMetadata{}}
 \documentclass[12pt,dutch]{article}
 \usepackage{babel}
@@ -31,11 +13,11 @@
 
 \loadsources{sources}
 
-% Drie bronnen over hetzelfde veld. De eerste zegt niet wanneer hij nagelopen is
-% en kan dus nooit verouderd gemeld worden: dat wordt gezegd. De tweede zegt met
-% zoveel woorden dat hij niet nagelopen is, en dat is een besluit, dus daar blijft
-% het stil. De derde schrijft een datum in een andere vorm, wat verkeerd vergelijkt
-% in plaats van niet te vergelijken.
+% Three sources about the same field. The first does not say when it was checked
+% and can therefore never be reported out of date: that is said. The second says as
+% much in so many words, and that is a decision, so there it stays silent. The
+% third writes a date in another shape, which compares wrongly rather than not
+% comparing at all.
 \newsource{zonder}{regeling}{%
     citeertitel = Wet zonder datum, afkorting = Wzd, lidwoord = de%
 }
@@ -55,13 +37,13 @@
 
     \article{Datums}\label{art:datums}
     \begin{paras}
-        % Geen \sourcedate en geen date=: het pakket zegt eenmalig dat dit
-        % document niet zegt per wanneer het spreekt.
+        % No \sourcedate and no date=: the bundle says once that this document
+        % does not say as of when it speaks.
         \item Zonder datum: \srcref[artikel=96]{bw6}.
-        % De bron is nagelopen op 2024-01-01 en dit spreekt per 2026-01-01, dus
-        % wat er tussen die twee veranderd is staat niet in deze aanhaling.
+        % The source was checked on 2024-01-01 and this speaks as of 2026-01-01,
+        % so whatever changed between the two is not in this citation.
         \item Met een latere datum: \srcref[artikel=96, date=2026-01-01]{bw6}.
-        % Dezelfde bron nog eens: de melding komt één keer per bron.
+        % The same source once more: the report comes once per source.
         \item Nog eens: \srcref[artikel=97, date=2026-01-01]{bw6}.
     \end{paras}
 \end{document}

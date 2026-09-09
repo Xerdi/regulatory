@@ -226,23 +226,107 @@
         {\pdf_object_ref:n{regulatory/attach/#3}}
     \group_end:
   }
-
-
-\cs_generate_variant:Nn \__regulatory_embed:nnnn {eeen}
+%    \end{macrocode}
+%
+% The description arrives expanded, all four arguments alike. The string conversion of
+% \package{l3pdf} assumes the purifying step has already been done, and says so in its own
+% source, so a description handed over unexpanded is written into the PDF as the tokens it is
+% made of: every attachment used to carry \cmd{\artifactdescription}\marg{label} as its
+% description rather than the description itself, which is what a viewer shows beside the file
+% in its attachment pane.
+%    \begin{macrocode}
+\cs_generate_variant:Nn \__regulatory_embed:nnnn {eeee}
 \cs_new_protected:Npn \regulatory@embed #1#2#3#4
-  { \__regulatory_embed:eeen {#1}{#2}{#3}{#4} }
+  { \__regulatory_embed:eeee {#1}{#2}{#3}{#4} }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}{\regulatory@attach@annot}
+% The other route of \option{attachmentlink}: a file attachment annotation of exactly the size of
+% \#2, with \#2 drawn over it, so that the text is what the reader sees and the annotation is what
+% the reader opens. \verb|\pdfannot_box:nnnn| advances by nothing of its own, so the text that
+% follows lands exactly where the annotation is.
+% The appearance is the empty one, since the page already draws everything there
+% is to see; an appearance there has to be, because the A-standards ask one of every annotation
+% that is not a \texttt{Popup}, a \texttt{Link} or of zero size. The \texttt{/Contents} is the
+% description the file was embedded with, which is what a screen reader announces.
+%    \begin{macrocode}
+\box_new:N \l__regulatory_attach_box
+\tl_new:N \l__regulatory_attach_desc_tl
+\str_new:N \l__regulatory_attach_desc_str
+\cs_new:Npn \regulatory@attach@appearance { }
+\bool_lazy_and:nnT
+  { \cs_if_exist_p:N \pdfmanagement_if_active_p: }
+  { \cs_if_exist_p:N \pdf_object_new:n }
+  {
+    \pdfmanagement_if_active:T
+      {
+        \pdf_object_new:n { regulatory/attach/blank }
+        \AddToHook { shipout/firstpage }
+          {
+            \pdf_object_write:nnn { regulatory/attach/blank } { stream }
+              { { /Type~/XObject /Subtype~/Form /BBox~[0~0~1~1] } { } }
+          }
+        \cs_gset:Npn \regulatory@attach@appearance
+          { /AP~<<~/N~\pdf_object_ref:n { regulatory/attach/blank }~>> }
+      }
+  }
+\cs_new_protected:Npn \regulatory@attach@annot #1#2
+  {
+    \tl_set:Ne \l__regulatory_attach_desc_tl
+      { \cs_if_exist_use:cF { regulatory@desc@ #1 } { } }
+    \pdf_string_from_unicode:nVN {utf16/string}
+      \l__regulatory_attach_desc_tl \l__regulatory_attach_desc_str
+    \hbox_set:Nn \l__regulatory_attach_box { #2 }
+    \mode_leave_vertical:
+    \pdfannot_box:nnne
+      { \box_wd:N \l__regulatory_attach_box }
+      { \box_ht:N \l__regulatory_attach_box }
+      { \box_dp:N \l__regulatory_attach_box }
+      {
+        /Subtype~/FileAttachment
+        /FS~\pdf_object_ref:n { regulatory/attach/ #1 }
+        /F~4
+        \tl_if_empty:NF \l__regulatory_attach_desc_tl
+          { /Contents~\l__regulatory_attach_desc_str }
+        \regulatory@attach@appearance
+      }
+    \box_use:N \l__regulatory_attach_box
+  }
 %    \end{macrocode}
 % \end{macro}
 %
 % \begin{macro}{\regulatory@attachmentlink}
-% Turns \#2 into a link that opens the embedded file named \#1 in a new window.
+% Turns \#2 into whatever \option{attachmentlink} says: a link that opens the embedded file named
+% \#1 in a new window, or the annotation above.
+%
+% For the link, the destination is the first page of the target, and it is not optional: an
+% embedded go-to action without a \texttt{/D} is not one, and a viewer that reads it has nowhere
+% to go. Not every viewer goes there even so\,---\,\texttt{GoToE} is the one file-opening action
+% poppler does not implement, so in the viewers built on it the file is reachable through the
+% attachment pane and not through this link. That is what the other route is for.
+%
+% The link also carries the file in its \texttt{/AF}. An action is something a consumer has to
+% perform to learn what it points at; an associated file is something it can read. This route
+% names the file indirectly, by a key in the name tree of the document, so the entry says
+% declaratively what the action says only when it is followed. The other route needs none: a file
+% attachment annotation names its file in \texttt{/FS} already, and an \texttt{/AF} beside it
+% would say the same thing twice.
 %    \begin{macrocode}
 \NewDocumentCommand \regulatory@attachmentlink { m m }
   {
-    \pdfannot_link_begin:nnw {user}
-      { /Subtype/Link/F~4/A<</S/GoToE/NewWindow~true/T<</R/C/N~(#1)>>>> }
-    #2
-    \pdfannot_link_end:n {user}
+    \str_if_eq:VnTF \regulatory@attachkind { annotation }
+      { \regulatory@attach@annot {#1} {#2} }
+      {
+        \pdfannot_link_begin:nnw {user}
+          {
+            /Subtype/Link/F~4
+            /AF~[~\pdf_object_ref:n { regulatory/attach/ #1 }~]
+            /A<</S/GoToE/D~[0~/Fit]/NewWindow~true/T<</R/C/N~(#1)>>>>
+          }
+        #2
+        \pdfannot_link_end:n {user}
+      }
   }
 %    \end{macrocode}
 % \end{macro}
@@ -279,6 +363,8 @@
             {\artifactfilename{#1}}%
             {regulatory-#1}%
             {\artifactdescription{#1}}%
+        \expandafter\xdef\csname regulatory@desc@regulatory-#1\endcsname
+            {\artifactdescription{#1}}%
         \expandafter\xdef\csname regulatory@embedded@#1\endcsname{regulatory-#1}%
     \fi
 }
@@ -313,6 +399,7 @@
         \IfFileExists{#2}{%
             \expandafter\ifx\csname regulatory@plain@#2\endcsname\relax
                 \regulatory@embed {#2}{#2}{regulatory-#2}{#1}%
+                \expandafter\xdef\csname regulatory@desc@regulatory-#2\endcsname{#1}%
                 \expandafter\xdef\csname regulatory@plain@#2\endcsname{regulatory-#2}%
             \fi
             \expandafter\expandafter\expandafter\regulatory@attachmentlink

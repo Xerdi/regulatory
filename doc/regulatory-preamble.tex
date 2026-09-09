@@ -42,6 +42,42 @@
 \colorlet{artlabel}{primary}
 \colorlet{green}{greencolor}
 
+% The pictures of the test section share their shapes, so that a box means the same
+% thing in every one of them: a rounded box is a document that becomes a PDF file, a
+% dashed one a file it reads, a grey one a program that runs between two LaTeX runs,
+% a sharp-cornered one something written out literally -- keys in a document, an
+% object in the PDF file -- and a doubled one an assertion of the suite that reads
+% the result back.
+% Two colours the prose does not use. A warning is a state a document can be in
+% and not a defect of the manual, and a step that did not happen is drawn in grey
+% -- but grey as text, not as a rule: greycolor is a hairline colour and reads at
+% about two to one against white, which is not enough to be read at scriptsize.
+\definecolor{warncolor}{HTML}{8C3A2E}
+\definecolor{fadedcolor}{HTML}{707070}
+\tikzset{
+    diagram/.style = {
+        every node/.style = {font=\small},
+        doc/.style   = {draw, rounded corners, minimum height=8mm, minimum width=25mm,
+                        align=center, font=\small\ttfamily},
+        data/.style  = {draw, dashed, minimum height=7mm, align=center,
+                        font=\small\ttfamily},
+        prog/.style  = {draw, fill=greycolor!40, minimum height=7mm, align=center,
+                        font=\small\ttfamily},
+        obj/.style   = {draw, minimum height=7mm, align=left, font=\small\ttfamily},
+        check/.style = {draw, double, minimum height=7mm, align=center,
+                        font=\small\ttfamily},
+        bare/.style  = {align=center, font=\small\ttfamily},
+        rel/.style   = {-{Stealth[length=2mm]}, semithick},
+        gone/.style  = {-{Stealth[length=2mm]}, semithick, densely dotted, fadedcolor},
+        faded/.style = {text=fadedcolor},
+        lbl/.style   = {font=\scriptsize\sffamily, fill=white, inner sep=1.5pt,
+                        align=center},
+        note/.style  = {font=\scriptsize\sffamily, align=left},
+        warn/.style  = {font=\scriptsize\sffamily, align=left, text=warncolor},
+        ok/.style    = {font=\scriptsize\sffamily, align=left, text=greencolor}
+    }
+}
+
 \lstdefinestyle{tex}{%
     language=[LaTeX]TeX,
     keywordsprefix={\\},

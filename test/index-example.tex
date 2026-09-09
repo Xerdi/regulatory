@@ -1,32 +1,14 @@
-%% de-example.tex
-%% Copyright 2026 E. Nijenhuis
+% The only document that takes the indexed route. With bib2gls=false,
+% \loadglsdefs reads a TeX file of \newglossaryentry instead of a bib, turns
+% \makeglossaries on and leaves the sorting to makeindex: a second program between
+% two LaTeX runs, where the other three routes have none or another one.
 %
-% This work may be distributed and/or modified under the
-% conditions of the LaTeX Project Public License, either version 1.3c
-% of this license or (at your option) any later version.
-% The latest version of this license is in
-% http://www.latex-project.org/lppl.txt
-% and version 1.3c or later is part of all distributions of LaTeX
-% version 2005/12/01 or later.
-%
-% This work has the LPPL maintenance status ‘maintained’.
-%
-% The Current Maintainer of this work is E. Nijenhuis.
-%
-% This work consists of the files listed in the meta-comment of
-% regulatory-struct.dtx.
-%
-% Het enige document dat de geindexeerde route neemt. Met bib2gls=false leest
-% \loadglsdefs een TeX-bestand met \newglossaryentry in plaats van een bib, zet
-% \makeglossaries aan en laat het sorteren aan makeindex over: een tweede programma
-% tussen twee LaTeX-runs, waar de andere drie routes er geen of een ander hebben.
-%
-% Die route had geen enkele dekking. Ze kwam boven bij het opruimen van de
-% afhankelijkheden: \makeglossaries hangt aan een haak die van \AtEndPreamble naar
-% \AddToHook{begindocument/before} ging, en er was geen document dat die haak ooit
-% liet vuren. Wat hier nagelezen wordt is dus niet alleen de lijst maar ook dat dit
-% document werkelijk deze route neemt -- zonder dat zou het document naar bib2gls
-% kunnen afglijden en zou de test blijven slagen zonder iets te meten.
+% That route had no coverage at all. It surfaced while the dependencies were being
+% cleared out: \makeglossaries hangs on a hook that moved from \AtEndPreamble to
+% \AddToHook{begindocument/before}, and no document ever made that hook fire. What
+% is read back here is therefore not only the list but also that this document
+% really takes this route -- without that it could drift to bib2gls and the test
+% would keep passing without measuring anything.
 \IfDocumentMetadataTF{}{\DocumentMetadata{}}
 \documentclass[12pt,dutch]{article}
 \usepackage{babel}
@@ -38,9 +20,9 @@
 
 \loadglsdefs{index-defs}
 
-% De naam wordt eerst uitgerekend en dan pas opgeschreven: \typeout expandeert zijn
-% argument en \ifthenelse is niet expandabel, wat de run opblaast in plaats van hem
-% te laten falen op iets leesbaars.
+% The name is worked out first and written afterwards: \typeout expands its
+% argument and \ifthenelse is not expandable, which blows the run up rather than
+% letting it fail on something readable.
 \makeatletter
 \AtBeginDocument{%
     \ifthenelse{\boolean{regulatory@indexeddefs}}%

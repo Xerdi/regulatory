@@ -90,13 +90,22 @@
 \setboolean{regulatory@indexeddefs}{false}
 
 \renewcommand{\glossarysection}[2][]{\@gobble{#1}\@gobble{#2}}%
+%    \end{macrocode}
+%
+% A listing that opens under a heading opens a line of its own first, and this pulls that line
+% back. How much there is to pull back belongs to the style and not to the preamble: the
+% \texttt{alttree} that \package{glossaries} brings leaves such a line and the two list styles
+% below leave none, so a correction of one line over all three put the first entry of a list on
+% the line of the heading itself. A style that needs no correction says so.
+%    \begin{macrocode}
+\newcommand\regulatory@defsraise{-\baselineskip}
 \setglossarypreamble[definitions]{%
     \ifnum\value{article}=0%
         \article{\GetTranslation{Definitions}}\label{art:definitions}%
-        \vspace*{-\baselineskip}%
+        \vspace*{\regulatory@defsraise}%
     \else%
         \ifnum\value{parasi}=0%
-            \vspace*{-\baselineskip}%
+            \vspace*{\regulatory@defsraise}%
         \fi%
     \fi%
 }
@@ -129,6 +138,7 @@
 }
 
 \newglossarystyle{regulatory-labeling}{%
+    \renewcommand\regulatory@defsraise{\z@}%
     \renewenvironment{theglossary}%
         {\begin{labeling}{\@glswidestname}}%
         {\end{labeling}}%
@@ -136,6 +146,7 @@
 }
 
 \newglossarystyle{regulatory-description}{%
+    \renewcommand\regulatory@defsraise{\z@}%
     \renewenvironment{theglossary}%
         {\begin{description}}%
         {\end{description}}%

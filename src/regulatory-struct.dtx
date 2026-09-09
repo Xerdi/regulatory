@@ -15,7 +15,9 @@
 %
 % The Current Maintainer of this work is E. Nijenhuis.
 %
-% This is the only file that names the work; every other file of it points here.
+% This is the only file that names the work. The sources and the manual carry a
+% notice pointing here; the test files carry none, since a listing of one in the
+% manual would open with seventeen lines of licence.
 %
 % This work consists of the files regulatory.ins,
 % regulatory-struct.dtx, regulatory-ref.dtx,
@@ -141,6 +143,7 @@
 \ExplSyntaxOn
 \tl_new:N \regulatory@defstyle
 \tl_new:N \regulatory@sourcestyle
+\tl_new:N \regulatory@attachkind
 \keys_define:nn { regulatory }
   {
     md          .legacy_if_set:n = regulatory@markdown ,
@@ -172,6 +175,23 @@
     sourcestyle / voluit  .code:n = \tl_set:Nn \regulatory@sourcestyle { full } ,
     sourcestyle / verkort .code:n = \tl_set:Nn \regulatory@sourcestyle { short } ,
     sourcestyle .initial:n = full ,
+%    \end{macrocode}
+% How a link to an attachment is made is a choice for the same reason, and the two values are not a
+% matter of taste. \texttt{goto} is the default and the semantically right one: an embedded go-to
+% action names the file inside this document. It is also the one \package{poppler} does not
+% implement, and that is the engine under most viewers on a free desktop, so there the link does
+% nothing at all. \texttt{annotation} places a file attachment annotation over the same text
+% instead, which both Acrobat and \package{poppler} do implement, at the price of an annotation that
+% the A-standards want an appearance for. Measured, not read out of a manual: the shared library of
+% \package{poppler} names \texttt{GoTo}, \texttt{GoToR}, \texttt{Launch} and \texttt{Named} among
+% its actions and \texttt{GoToE} nowhere, and \texttt{FileAttachment} among its annotations.
+%    \begin{macrocode}
+    attachmentlink .choice: ,
+    attachmentlink / goto       .code:n =
+      \tl_set:Nn \regulatory@attachkind { goto } ,
+    attachmentlink / annotation .code:n =
+      \tl_set:Nn \regulatory@attachkind { annotation } ,
+    attachmentlink .initial:n = goto ,
     bronstijl   .meta:n    = { sourcestyle = {#1} } ,
   }
 \ExplSyntaxOff

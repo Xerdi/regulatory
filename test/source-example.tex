@@ -1,20 +1,3 @@
-%% source-example.tex
-%% Copyright 2026 E. Nijenhuis
-%
-% This work may be distributed and/or modified under the
-% conditions of the LaTeX Project Public License, either version 1.3c
-% of this license or (at your option) any later version.
-% The latest version of this license is in
-% http://www.latex-project.org/lppl.txt
-% and version 1.3c or later is part of all distributions of LaTeX
-% version 2005/12/01 or later.
-%
-% This work has the LPPL maintenance status ‘maintained’.
-%
-% The Current Maintainer of this work is E. Nijenhuis.
-%
-% This work consists of the files listed in the meta-comment of
-% regulatory-struct.dtx.
 \IfDocumentMetadataTF{}{\DocumentMetadata{}}
 \documentclass[12pt,dutch]{article}
 \usepackage{babel}
@@ -22,20 +5,20 @@
 
 \newcommand\translation[2]{#2}
 
-% Elke bron in dit bestand is nagelopen op 2024-01-01, en dit document spreekt
-% per diezelfde dag: er is dus niets veranderd tussen de twee.
+% Every source in this file was checked on 2024-01-01, and this document speaks as
+% of that same day: nothing changed between the two.
 \sourcedate{2024-01-01}
 \loadsources{sources}
-% De derde route: een bron die in het document zelf staat, zonder bestand.
+% The third route: a source that stands in the document itself, with no file.
 \newsource{uavg}{regeling}{%
     citeertitel = Uitvoeringswet Algemene verordening gegevensbescherming,
     afkorting = UAVG,
     lidwoord = de, geldig = 2024-01-01%
 }
-% Dezelfde verordening zoals een Duits en een Frans document haar aanhalen: het
-% register hoort bij de bron, dus de bron draagt haar naam in de taal waarin ze
-% aangehaald wordt. Deze twee gebruiken de Engelse veldnamen, de rest de
-% Nederlandse; beide horen te werken.
+% The same regulation as a German and a French document cite it: the register
+% belongs to the source, so the source carries its name in the language it is cited
+% in. These two use the English field names and the rest the Dutch ones; both are
+% meant to work.
 \newsource{avgde}{euact}{%
     kind = Verordnung, number = {(EU) 2016/679},
     shortname = Datenschutz-Grundverordnung, abbreviation = DSGVO,
@@ -46,15 +29,15 @@
     shortname = {règlement général sur la protection des données},
     abbreviation = RGPD, register = french_eu, valid = 2024-01-01%
 }
-% En zoals een Engels document haar aanhaalt, wat het enige register is dat de
-% delen andersom zet: het diepste niveau eerst.
+% And as an English document cites it, which is the one register that turns the
+% parts around: the deepest level first.
 \newsource{avgen}{euact}{%
     kind = Regulation, number = {(EU) 2016/679},
     shortname = General Data Protection Regulation, abbreviation = GDPR,
     determiner = the, register = english_eu, valid = 2024-01-01%
 }
-% Een verdrag krijgt in het Engels wel een lidwoord en een verordening niet, en
-% dat volgt uit de soort en niet uit het register.
+% In English a treaty takes an article and a regulation does not, and that follows
+% from the kind and not from the register.
 \newsource{vweu}{regulation}{%
     citetitle = Treaty on the Functioning of the European Union,
     kind = Treaty, abbreviation = TFEU, register = english_eu, valid = 2024-01-01%
@@ -67,12 +50,12 @@
 
 \hypersetup{pdftitle={Voorbeeld Bronnen}}
 
-% Wat de suite leest. Een veld dat verkeerd is ingelezen valt in de PDF niet op,
-% dus wordt het hier genoemd waar een controle erbij kan.
+% What the suite reads. A field that was read in wrongly does not show in the PDF,
+% so it is named here where an assertion can reach it.
 \newcommand\report[2]{\typeout{SRC #1 #2 = \srcfield{#1}{#2}}}
-% Hetzelfde voor een verwijzing: die wordt eerst opgebouwd en dan gezet, dus het
-% opgebouwde is wat een controle kan lezen. Een verwijzing in het verkeerde
-% register faalt nergens, hij staat er gewoon verkeerd.
+% The same for a citation: it is built first and typeset afterwards, so what was
+% built is what an assertion can read. A citation in the wrong register fails
+% nowhere, it simply stands there wrong.
 \makeatletter
 \newcommand\citereport[2]{#1\typeout{CITE #2 = \regulatory@src@last}}
 \makeatother
@@ -108,13 +91,13 @@
     \citereport{\srcref*[artikel=6, lid=1, onderdeel=a]{avgde}}{de-verkort}
     \citereport{\srcref[artikel=6, lid=1, onderdeel=a]{avgfr}}{fr-voluit}
     \citereport{\srcref*[artikel=6, lid=1, onderdeel=a]{avgfr}}{fr-verkort}
-    % Dezelfde twee aanhalingen met de Engelse sleutelnamen. De Nederlandse zijn
-    % aliassen van deze, dus beide regels horen woord voor woord hetzelfde op te
-    % leveren; verschilt er iets, dan is de alias niet wat hij zegt te zijn.
+    % The same two citations with the English key names. The Dutch ones are
+    % aliases of these, so both lines have to produce the same thing word for word;
+    % where anything differs, the alias is not what it says it is.
     \citereport{\srcref[article=96, paragraph=2, point=c]{bw6}}{nl-engelse-sleutels}
     \citereport{\srcref[article=3.126, paragraph=1, point=d, subpoint=2]{wetib}}{vierde-niveau-engels}
-    % Opsommingen en reeksen: de auteur schrijft wat hij bedoelt, het register
-    % bepaalt hoe het luidt.
+    % Lists and runs: the author writes what he means, the register decides how it
+    % reads.
     \citereport{\srcref[artikel=3.126, lid=1, onderdeel={c,d}]{wetib}}{lijst-nl}
     \citereport{\srcref[artikel={162--164}]{bw6}}{bereik-nl}
     \citereport{\srcref*[artikel={162--164}]{bw6}}{bereik-verkort}
@@ -122,7 +105,7 @@
     \citereport{\srcref[artikel=6, lid=1, onderdeel={c,e}]{avgde}}{lijst-de}
     \citereport{\srcref[artikel=6, lid=1, onderdeel={a--c}]{avgde}}{bereik-de}
     \citereport{\srcref[artikel=6, lid={1,2,4}]{avgfr}}{lijst-fr}
-    % Het Engels zet de delen andersom en schrijft het lid in het artikel.
+    % English turns the parts around and writes the paragraph inside the article.
     \citereport{\srcref[artikel=6, lid=1, onderdeel=a]{avgen}}{en-voluit}
     \citereport{\srcref*[artikel=6, lid=1, onderdeel=a]{avgen}}{en-verkort}
     \citereport{\srcref[artikel=6]{avgen}}{en-artikel}
