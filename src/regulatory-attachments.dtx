@@ -271,14 +271,8 @@
           { /AP~<<~/N~\pdf_object_ref:n { regulatory/attach/blank }~>> }
       }
   }
-\cs_new_protected:Npn \regulatory@attach@annot #1#2
+\cs_new_protected:Npn \regulatory@attach@place #1#2
   {
-    \tl_set:Ne \l__regulatory_attach_desc_tl
-      { \cs_if_exist_use:cF { regulatory@desc@ #1 } { } }
-    \pdf_string_from_unicode:nVN {utf16/string}
-      \l__regulatory_attach_desc_tl \l__regulatory_attach_desc_str
-    \hbox_set:Nn \l__regulatory_attach_box { #2 }
-    \mode_leave_vertical:
     \pdfannot_box:nnne
       { \box_wd:N \l__regulatory_attach_box }
       { \box_ht:N \l__regulatory_attach_box }
@@ -290,8 +284,34 @@
         \tl_if_empty:NF \l__regulatory_attach_desc_tl
           { /Contents~\l__regulatory_attach_desc_str }
         \regulatory@attach@appearance
+        #2
       }
+  }
+\cs_new_protected:Npn \regulatory@attach@annot #1#2
+  {
+    \tl_set:Ne \l__regulatory_attach_desc_tl
+      { \cs_if_exist_use:cF { regulatory@desc@ #1 } { } }
+    \pdf_string_from_unicode:nVN {utf16/string}
+      \l__regulatory_attach_desc_tl \l__regulatory_attach_desc_str
+    \hbox_set:Nn \l__regulatory_attach_box { #2 }
+    \mode_leave_vertical:
+    \cs_if_exist:NTF \tag_if_active:TF
+      { \tag_if_active:TF { \regulatory@attach@tagged {#1} }
+                          { \regulatory@attach@place {#1} { } } }
+      { \regulatory@attach@place {#1} { } }
     \box_use:N \l__regulatory_attach_box
+  }
+\cs_new_protected:Npn \regulatory@attach@tagged #1
+  {
+        \tag_mc_end_push:
+        \tag_struct_begin:n { tag=Annot }
+        \regulatory@attach@place {#1}
+          { /StructParent~\tag_struct_parent_int: }
+        \exp_args:Nee
+        \tag_struct_insert_annot:nn
+          { \pdfannot_ref_last: } { \tag_struct_parent_int: }
+        \tag_struct_end:
+        \tag_mc_begin_pop:n {}
   }
 %    \end{macrocode}
 % \end{macro}

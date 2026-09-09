@@ -49,7 +49,7 @@ COMPILER ?= $(ENGINE) --interaction=nonstopmode --shell-escape $(CNF_LINE)
 # calling bib2gls would be an error rather than a no-op.
 BIBEXAMPLES = example1-nl example2-nl example1-en example2-en
 BIBFILES = example1.bib example2.bib
-PLAINEXAMPLES = md-example sign-example source-example
+PLAINEXAMPLES = md-example sign-example source-example attach-example
 
 # The indexed definition route: bib2gls=false, so \loadglsdefs reads a TeX file of
 # \newglossaryentry and makeindex does the sorting. It needs a program between the
@@ -124,6 +124,7 @@ endif
 
 .PHONY: all test $(addprefix suite-,$(ENGINES) html conformance) \
         test-engines test-html html-checks md-checks ref-checks sign-checks log-checks \
+        attach-checks \
         lang-checks \
         date-checks \
         index-checks \
@@ -151,7 +152,7 @@ suite-conformance: conformance
 # which is why every path above is absolute. The directory is named after the
 # engine, and so is the engine it builds with: `make build-pdflatex' is pdflatex.
 build-%:
-	$(call run_in,$*,all ref-checks log-checks md-checks sign-checks source-checks lang-checks date-checks index-checks ENGINE=$*)
+	$(call run_in,$*,all ref-checks log-checks md-checks sign-checks attach-checks source-checks lang-checks date-checks index-checks ENGINE=$*)
 
 .DELETE_ON_ERROR:
 
@@ -160,7 +161,26 @@ build-%:
 # at when a reference or a definition came out wrong.
 .SECONDARY:
 
-all: $(addsuffix .pdf,$(EXAMPLES))
+# The documents point at each other, and a reference is only as settled as the aux
+# file it was read from: example1 reads example2's aux for the articles it cites,
+# example2 embeds example1's PDF, and md-example and de-example name documents of
+# their own. The first build of any of them therefore reads a file its writer had
+# not finished, and two runs per document do not close that, because the second run
+# of the first document still read the first run of the second.
+#
+# Measured from a clean tree, before this pass existed: one of the eleven external
+# references of example1-nl pointed at parasii*.8, a destination example2-nl does not
+# have, and two more landed one item early. ref-checks does not see it -- a stale
+# destination is defined, it is merely the wrong one -- so nothing reported it and
+# the PDF files the manual attaches carried it.
+#
+# One pass over the set, after the set exists, settles all three. The marker file
+# keeps that incremental: it runs when a PDF has changed, not on every make.
+all: examples-settled
+
+examples-settled: $(addsuffix .pdf,$(EXAMPLES))
+	@for doc in $(EXAMPLES); do $(COMPILER) $$doc || exit 1; done
+	@touch $@
 
 %.aux: %.tex
 	$(COMPILER) $*
@@ -424,6 +444,54 @@ sign-checks: sign-example.pdf
 # printed leaves an empty article. None of that stops a run, so each is asserted
 # on what the run leaves behind. Everything here is read from files TeX itself
 # wrote, so the suite still needs nothing but a TeX installation.
+# The annotation route of attachmentlink, which nothing else here asks for. What
+# it does is read back from the PDF, and so is what it does not do: the annotation
+# is placed, it is registered on the page, it carries the file and an appearance,
+# and it sits in an Annot structure element, as the reference beside it sits in a
+# Link one.
+#
+# That last pair is the point. A file attachment is a markup annotation, and
+# PDF/UA-2 asks in 8.9.2.3 that one be enclosed in an Annot structure element.
+# It is asserted here rather than left to veraPDF because the validator this
+# suite is pinned to does not report it when it is missing and an older one did:
+# the object is the evidence and the verdict is not. Measured by taking the
+# tagging branch out again -- the annotation then sits in no element and this
+# check fails, while veraPDF goes on saying the document is compliant.
+attach-checks: attach-example.pdf
+	@annot=$$(awk '/[0-9]+ 0 obj/ { for (i = 1; i <= NF; i++) if ($$i == "obj") n = $$(i-2) } \
+	     /\/Subtype \/FileAttachment/ { print n; exit }' attach-example.pdf); \
+	 inline=$$(grep -ao '/Annots \[[^]]*\]' attach-example.pdf | grep -c "$$annot 0 R" || true); \
+	 ref=$$(grep -ao '/Annots [0-9]* 0 R' attach-example.pdf | head -1 | cut -d' ' -f2); \
+	 indirect=0; \
+	 if [ -n "$$ref" ]; then \
+	     indirect=$$(awk -v r="$$ref" -v a="$$annot" '$$0 ~ "^%? *" r " 0 obj" { g = 1; next } \
+	         g && $$0 ~ a " 0 R" { print 1; exit } g && /obj/ { exit }' attach-example.pdf); \
+	 fi; \
+	 placed=$$(grep -ac '/Subtype /FileAttachment' attach-example.pdf || true); \
+	 onpage=$$(( $${inline:-0} + $${indirect:-0} )); \
+	 carries=$$(grep -ac '/Subtype /FileAttachment.*/FS .*/AP ' attach-example.pdf || true); \
+	 goto=$$(grep -ac 'GoToE' attach-example.pdf || true); \
+	 intree=$$(if [ -n "$$annot" ]; then grep -ao '/Obj [0-9]* 0 R' attach-example.pdf \
+	     | grep -c "/Obj $$annot 0 R"; else echo 1; fi || true); \
+	 links=$$(grep -ac '/S /Link' attach-example.pdf || true); \
+	 annotels=$$(grep -ac '/S /Annot' attach-example.pdf || true); \
+	 echo "attach: annotation $$annot, $$onpage on the page, $$carries complete, $$goto go-to links, $$links Link elements, $$intree in the tree"; \
+	 if [ "$$placed" -ne 1 ] || [ "$$onpage" -lt 1 ]; then \
+	     echo "attach: the annotation was not placed on the page" >&2; exit 1; \
+	 fi; \
+	 if [ "$$carries" -ne 1 ]; then \
+	     echo "attach: the annotation names no file or has no appearance" >&2; exit 1; \
+	 fi; \
+	 if [ "$$goto" -ne 0 ]; then \
+	     echo "attach: a go-to link survived where the annotation replaces it" >&2; exit 1; \
+	 fi; \
+	 if [ "$$links" -lt 1 ]; then \
+	     echo "attach: no Link element, so this document proves nothing about the tree" >&2; exit 1; \
+	 fi; \
+	 if [ "$$intree" -ne 1 ] || [ "$$annotels" -lt 1 ]; then \
+	     echo "attach: the annotation is in no structure element, which PDF/UA asks of one" >&2; exit 1; \
+	 fi
+
 md-checks: md-example.pdf
 	@raw=$$(cat _markdown_md-example/*.md.tex | grep -o 'markdownRendererBackslash' | wc -l); \
 	 ext=$$(cat _markdown_md-example/*.md.tex | grep -o 'markdownRendererRegulatoryLabel' | wc -l); \
@@ -599,6 +667,7 @@ $(HTML_MD_EXAMPLE).html: $(HTML_MD_EXAMPLE).tex $(PROJECT)/tex/regulatory.4ht \
 clean-examples:
 	@cd $(TESTDIR) && for example in $(EXAMPLES) $(BADEXAMPLES); do latexmk -f -c $$example; done
 	rm -rf $(TESTDIR)/_markdown_*
+	rm -f $(TESTDIR)/examples-settled
 	rm -f $(TESTDIR)/*.glstex $(TESTDIR)/*.luabridge.lua $(TESTDIR)/conformance.check.tex
 	rm -f $(TESTDIR)/*-glg $(TESTDIR)/*-glo $(TESTDIR)/*-gls $(TESTDIR)/*.ist
 	rm -f $(TESTDIR)/*.html $(TESTDIR)/*.css $(TESTDIR)/*.4ct $(TESTDIR)/*.4tc

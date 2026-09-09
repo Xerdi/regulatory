@@ -1,0 +1,35 @@
+% The one document on the annotation route of attachmentlink. Nothing else in this
+% suite asks for it, so without this document the option ships untested.
+%
+% Tagged on purpose, with testphase in the \DocumentMetadata of the document
+% itself rather than only from the commandline: what is read back below is where
+% the annotation sits in the structure tree, and an untagged document has no tree
+% to sit outside of. The \IfDocumentMetadataTF guard is still there, so a
+% conformance flavour declared in front of this file wins.
+%
+% Written uncompressed for the same reason sign-example is: the annotation and the
+% structure tree are read out of the PDF here with grep, and the suite is meant to
+% need nothing beyond a TeX installation.
+\ifdefined\pdfvariable\pdfvariable compresslevel=0 \else\pdfcompresslevel=0 \fi
+\IfDocumentMetadataTF{}{\DocumentMetadata{testphase={phase-III,title}}}
+\documentclass[12pt,dutch]{article}
+\usepackage{babel}
+\usepackage[attachmentlink=annotation]{regulatory}
+
+\newcommand\translation[2]{#2}
+
+\hypersetup{pdftitle={Voorbeeld Bijlage-annotatie}}
+
+\begin{document}
+    \begin{center}
+        \Huge Voorbeeld Bijlage-annotatie
+    \end{center}
+
+    \article{Bijlage}\label{art:bijlage}
+    \begin{paras}
+        \item \label{lid:bijlage} De definities van dit document zijn bijgevoegd als
+            \attachdocument[Definities van dit document]{example1.bib}{example1.bib}.
+        \item \label{lid:paneel} Hetzelfde bestand staat ook in het bijlagenpaneel,
+            zoals bepaald in \Aref{lid:bijlage}.
+    \end{paras}
+\end{document}

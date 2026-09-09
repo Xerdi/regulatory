@@ -221,7 +221,20 @@
         file attachment annotation is placed over the same text instead, which Acrobat and
         \package{poppler} both do implement. It shows nothing of its own: the text stays the only
         thing on the page, and it is the annotation that opens. Either way the file is also in the
-        attachment pane of the viewer, which needs neither.%
+        attachment pane of the viewer, which needs neither.
+
+        A file attachment is a markup annotation, and PDF/UA asks that one be enclosed in an
+        \texttt{Annot} structure element; this route puts it there, as the reference beside it sits
+        in its \texttt{Link} element. Do not take a validator's word for that either way: the
+        veraPDF this manual is measured with reported nothing when the element was missing and an
+        older one did, so the suite reads the structure tree out of the PDF itself rather than
+        asking for a verdict.
+
+        What remains between the two is a question about documents and not about PDF. The
+        \texttt{goto} route makes the text of \cmd{\documentattachment} a link in the sentence it
+        stands in; this one puts an annotation beside it and leaves the text as text. A reference a
+        reader meets in the flow of a sentence is not the same offer as one beside it, which is why
+        \texttt{goto} is the default.%
     }{%
         hoe een bijlage uit \zcref{sec:extern} vanaf de pagina geopend wordt. Met \texttt{goto} is de
         link een embedded go-to action, die het bestand binnen dit document noemt en daarmee zegt wat
@@ -230,7 +243,20 @@
         \option{attachmentlink=annotation} komt er in plaats daarvan een file attachment annotatie
         over dezelfde tekst, die Acrobat en \package{poppler} allebei wel kennen. Hij laat zelf niets
         zien: de tekst blijft het enige op de pagina en de annotatie is wat opent. Hoe dan ook staat
-        het bestand ook in het bijlagenpaneel van de viewer, dat geen van beide nodig heeft.%
+        het bestand ook in het bijlagenpaneel van de viewer, dat geen van beide nodig heeft.
+
+        Een bijlage-annotatie is een markup-annotatie, en PDF/UA vraagt dat zo een in een
+        \texttt{Annot}-structuurelement zit; deze route zet hem daarin, zoals de verwijzing ernaast
+        in haar \texttt{Link}-element staat. Neem een validator daarin niet op zijn woord, welke
+        kant ook op: de veraPDF waarmee deze handleiding gemeten is meldde niets toen het element
+        ontbrak en een oudere meldde het wel, dus de suite leest de structuurboom zelf uit de PDF in
+        plaats van om een oordeel te vragen.
+
+        Wat er tussen de twee overblijft is een vraag over documenten en niet over PDF. De route
+        \texttt{goto} maakt van de tekst van \cmd{\documentattachment} een link in de zin waar hij
+        staat; deze zet er een annotatie naast en laat de tekst tekst. Een verwijzing die een lezer
+        in de loop van een zin tegenkomt is een ander aanbod dan een die ernaast staat, en daarom is
+        \texttt{goto} de standaard.%
     }
 \end{labeling}
 \translation{%
@@ -1285,7 +1311,7 @@ en / and \aref{ex1-sub:lorem,ex1-sub:lorem2,ex1-sub:lorem3,ex1-sub:lorem4}.
 \noindent
 \DescribeMacro{\newsourceregister\\\marg{name}\\\marg{full}\\\marg{short}}
 \translation{%
-    Declares a register: eight keys for the full form and eight for the shortened one. Four are declared
+    Declares a register: eight keys for the full form and eight for the shortened one. Five are declared
     already: \texttt{dutch} for a Dutch regulation, and \texttt{dutch\_eu}, \texttt{german\_eu},
     \texttt{french\_eu} and \texttt{english\_eu} for an act of the Union cited in Dutch, German, French or
     English. A register is not a language: the same
@@ -1321,7 +1347,7 @@ en / and \aref{ex1-sub:lorem,ex1-sub:lorem2,ex1-sub:lorem3,ex1-sub:lorem4}.
     \texttt{\S~5 Abs.~2 Nr.~3 BGB}, which is another construction and not a translation of this one, and
     there is nobody here who could check the result.%
 }{%
-    Declareert een register: acht sleutels voor de voluit-vorm en acht voor de verkorte. Er zijn er vier
+    Declareert een register: acht sleutels voor de voluit-vorm en acht voor de verkorte. Er zijn er vijf
     gedeclareerd: \texttt{nl} voor een Nederlandse regeling, en \texttt{nl\_eu}, \texttt{de\_eu} en
     \texttt{fr\_eu} voor een handeling van de Unie die in het Nederlands, Duits of Frans wordt aangehaald.
     Een register is geen taal: hetzelfde document kan in meer dan één aanhalen, en doet dat zodra het
