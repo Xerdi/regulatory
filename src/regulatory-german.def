@@ -39,7 +39,7 @@
 % \cmd{\documentlabel} ask for a \texttt{ref label} instead of wording it wrongly in silence.
 %    \begin{macrocode}
 \ProvidesRegulatoryLanguage{german}
-    [2026/09/08 1.0.0 German definitions for regulatory]
+    [2026/09/10 1.0.0 German definitions for regulatory]
 
 \DeclareTranslation{german}{article}{Artikel}
 \DeclareTranslation{german}{Article}{Artikel}
