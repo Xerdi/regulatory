@@ -19,11 +19,19 @@
 \input docstrip.tex
 \keepsilent
 
-% All sources live in this directory, while all generated files belong
-% in the tex directory of the project (see the Makefile).
-\BaseDirectory{..}
-\UseTDS
-\usedir{tex}
+% The generated files are written next to this one, and the Makefile of the
+% project moves them into its tex directory afterwards.
+%
+% They used to be written straight there, with \BaseDirectory{..} and
+% \usedir{tex}. That cannot work outside this project: openout_any is `p' in a
+% stock TeX Live, and paranoid refuses a path that leads out of the current
+% directory. Measured -- the run stops on
+%
+%     Not writing to ../tex/regulatory.sty (openout_any = p)
+%
+% which is what the build on CI did, and what anyone unpacking the release and
+% running this file would have got. Writing beside the source is the one place
+% docstrip may always write.
 \askforoverwritefalse
 
 \preamble
@@ -75,10 +83,11 @@ The Current Maintainer of this work is E. Nijenhuis.
 \Msg{*                                                           *}
 \Msg{*     regulatory.4ht                                       *}
 \Msg{*                                                           *}
-\Msg{* The language definition files regulatory-english.def and  *}
-\Msg{* regulatory-dutch.def are sources of their own, and so is   *}
+\Msg{* The language definition files regulatory-english.def,     *}
+\Msg{* regulatory-dutch.def, regulatory-german.def and           *}
+\Msg{* regulatory-french.def are sources of their own, and so is  *}
 \Msg{* the Markdown syntax extension regulatory-syntax.lua. All   *}
-\Msg{* three belong in that same directory.                       *}
+\Msg{* five belong in that same directory.                        *}
 \Msg{*                                                           *}
 \Msg{* To produce the documentation, run make build-docs, or     *}
 \Msg{* compile doc/regulatory-en.tex and doc/regulatory-nl.tex   *}

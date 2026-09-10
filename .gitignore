@@ -6,6 +6,11 @@
 ## Everything in tex/ is generated from src/*.dtx by "make generate":
 /tex/
 
+## Docstrip writes beside the sources and the Makefile moves the files to tex/.
+## A run of regulatory.ins by hand leaves them here:
+/src/*.sty
+/src/*.4ht
+
 ## Scratch file of `make conformance-check':
 /test/conformance.check.tex
 

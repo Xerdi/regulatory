@@ -32,10 +32,14 @@ generate:
 	@$(MAKE) $(GENERATED) $(COPIED_FILES)
 
 # Docstrip writes every generated file in one run, so the remaining files
-# are made along with the first one.
+# are made along with the first one. It writes them beside the sources, since that
+# is the only place a paranoid openout_any lets it write, so they are moved here
+# afterwards -- by name rather than by wildcard, so that nothing of src can be
+# swept along with them.
 tex/regulatory.sty: $(DTX_SOURCES) $(INS_SOURCE)
 	mkdir -p tex
 	cd src && luatex --interaction=nonstopmode $(CONTRIBUTION).ins
+	mv $(addprefix src/,$(notdir $(GENERATED))) tex/
 
 $(filter-out tex/regulatory.sty,$(GENERATED)): tex/regulatory.sty
 
@@ -82,8 +86,16 @@ install-hooks:
 	git config core.hooksPath .githooks
 	@echo "pre-commit hook installed"
 
+# The tex directory is not in it. Everything there is either written by docstrip from
+# a dtx of src, or a byte-identical copy of a def or lua file that is already in src,
+# so the tarball loses nothing by leaving it out -- and CTAN takes the sources, not
+# the files derived from them. Note that regulatory.ins writes into ../tex and does
+# not create it: measured on an unpacked copy, without that directory the run stops
+# with `Please type another output file name', and with an empty one it writes all
+# nine files. Whoever unpacks this runs `make generate', which makes the directory
+# first.
 $(TAR_BALL): build-docs
-	tar --transform 's,^\.,regulatory,' -czvf $(TAR_BALL) --exclude 'Makefile' --exclude '*.log' --exclude '_markdown*' --exclude 'out' ./README.md ./doc ./src ./test ./tex
+	tar --transform 's,^\.,regulatory,' -czvf $(TAR_BALL) --exclude 'Makefile' --exclude '*.log' --exclude '_markdown*' --exclude 'out' ./README.md ./doc ./src ./test
 
 clean:
 	$(MAKE) -C doc -f Makefile clean-all
