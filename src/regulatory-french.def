@@ -23,7 +23,7 @@
 % \subsection{\translation{French definitions}{Franse definities}}\label{sec:frenchdef}
 % \setcounter{CodelineNo}{0}
 %
-% Half a language, for the same reason as \zcref{sec:germandef}: the designations and the citation
+% Part of a language file, for the same reason as \zcref{sec:germandef}: the designations and the citation
 % register were measured in the French text of the General Data Protection Regulation, and the wording of
 % an internal reference was not.
 %

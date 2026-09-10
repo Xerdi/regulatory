@@ -16,53 +16,78 @@
 % This work consists of the files listed in the meta-comment of
 % regulatory-struct.dtx.
 \translation{%
-    \title{Package \package{regulatory}\thanks{This document corresponds to \textsf{regulatory}~\packageversion, written on \packagedate.}}
+    \title{Package \package{regulatory}\thanks{This document corresponds to \textsf{regulatory}~\packageversion, released on \packagedate.}}
 }{%
-    \title{Het \package{regulatory} pakket\thanks{Dit document correspondeert aan \textsf{regulatory}~\packageversion, geschreven op \packagedate.}}%
+    \title{Het \package{regulatory} pakket\thanks{Dit document hoort bij \textsf{regulatory}~\packageversion, uitgebracht op \packagedate.}}%
+}
+% The standing notice on the title page comes from the packaging tree and is written
+% in English there. The Dutch manual says the same thing in Dutch; the address and
+% the name of the maintainer are the same either way.
+\translation{}{%
+    \MaintainedBy{Dit bestand wordt onderhouden door \Xerdi.\\%
+    Foutmeldingen kunnen worden gemeld op\\%
+    \url{\projecturl}.}%
 }
 \author{Erik Nijenhuis\\
 \href{mailto:erik@xerdi.com}{erik@xerdi.com}}
+\hypersetup{pdfauthor={Erik Nijenhuis <erik@xerdi.com>}}
 \date{\packagedate}
 \maketitle
 \begin{abstract}
     % Structuur %
     \translation{%
-        The \package{regulatory} package is well-suited for legal professionals in a broad sense. This package encompasses common structures, such as articles, sections, parts, and definitions.%
+        The \package{regulatory} package is written for legal professionals in a broad sense. It provides the
+        structures such a document is built from\,---\,articles, paragraphs, points and definitions\,---\,without
+        taking any of \LaTeX{} away.%
     }{%
-        Het \package{regulatory} pakket leent zich uitstekend voor juristen in brede zin.
-        Dit pakket brengt veel voorkomende structuren, zoals artikelen, leden, onderdelen en definities.%
+        Het \package{regulatory} pakket is geschreven voor juristen in brede zin.
+        Het biedt de structuren waaruit zo'n document is opgebouwd\,---\,artikelen, leden, onderdelen en
+        definities\,---\,zonder iets van \LaTeX{} weg te nemen.%
     }
 
     % Verwijzen %
     \translation{%
-        Referring within the legal domain can be a significant challenge; therefore, this package provides an elegant way of referencing, as one would expect with standard \LaTeX{} macros, such as for a chapter using \cmd{\section}, namely through labeling. For this purpose, the \package{regulatory} package introduces its own \cmd{\rref}, \cmd{\nref}, and \cmd{\aref} macro families that provide default support for both Dutch and English.%
+        Referring within the legal domain is a good deal harder than it looks, so this package refers the way
+        \LaTeX{} does: by labelling what is referred to and naming the label. The \cmd{\rref}, \cmd{\nref} and
+        \cmd{\aref} families word the reference from there, in Dutch or in English.%
     }{%
-        Verwijzen binnen het juridisch domein kan een grote uitdaging zijn, daarom biedt dit pakket een elegante manier van verwijzen, zoals men mag verwachten bij standaard \LaTeX{} macro's, zoals voor een hoofdstuk \cmd{\section}, namelijk door middel van labelen.
-        Hiervoor introduceert pakket \package{regulatory} zijn eigen \cmd{\rref}, \cmd{\nref} en \cmd{\aref} macrofamilies die standaard ondersteuning bieden voor Nederlands en Engels.%
+        Verwijzen binnen het juridisch domein is lastiger dan het lijkt, en daarom verwijst dit pakket zoals
+        \LaTeX{} dat doet: door te labelen waarnaar verwezen wordt en dat label te noemen. De macrofamilies
+        \cmd{\rref}, \cmd{\nref} en \cmd{\aref} verwoorden de verwijzing van daaruit, in het Nederlands of in
+        het Engels.%
     }
 
     % Definities %
     \translation{%
-        Managing definitions uniformly across all documents can be achieved using \package{BibTeX}.
-        When it comes to referencing definitions, the \package{regulatory} package aligns with the existing \cmd{\gls} macro family of the \package{glossaries} package.%
+        Definitions are kept in one \BibTeX{} file that serves every document citing the same terms, and they
+        are cited with the \cmd{\gls} family of \package{glossaries}, which this package builds on rather than
+        replaces.%
     }{%
-        Het beheren van definities kan eenduidig voor alle documenten met behulp van \package{BibTeX}.
-        Voor het verwijzen naar definities speelt het \package{regulatory} pakket in op de al bestaande \cmd{\gls} macrofamilie van \package{glossaries}.%
+        Definities worden in één \BibTeX{}-bestand bijgehouden dat ieder document bedient dat dezelfde
+        begrippen aanhaalt, en ze worden aangehaald met de \cmd{\gls} familie van \package{glossaries}, waarop
+        dit pakket voortbouwt in plaats van hem te vervangen.%
     }
     % Externe Documenten %
     \translation{%
-        Referencing articles, sections, parts, and definitions is not limited to within a single document but can also be done from other documents written using the \package{regulatory} package.
-        This makes cross-referencing between documents straightforward. Consider, for example, Terms and Conditions and a Maintenance Agreement that refer to each other's articles or use each other's terms.
-        It is even possible to attach the Terms and Conditions as an appendix to the PDF file for completeness.%
+        Articles, paragraphs, points and definitions of \emph{another} document written with this package are
+        referred to the same way, so two documents can name each other's provisions and share each other's
+        terms\,---\,terms and conditions and a maintenance agreement, say. The document referred to can be
+        embedded in the PDF file as an attachment, so that the reader has it in hand.%
     }{%
-        Het verwijzen naar artikelen, leden, onderdelen en definities beperkt zich niet alleen tot één document, maar zijn ook aan te halen vanuit andere documenten geschreven met het \package{regulatory} pakket.
-        Op deze manier blijft het eenvoudig verwijzen voor documenten onderling.
-        Denk b\ij{}voorbeeld aan Algemene Voorwaarden en een Onderhoudsovereenkomst die naar elkaars artikelen verwijzen of elkaars begrippen gebruiken.
-        Het is zelfs mogelijk om bij documenten de Algemene Voorwaarden als bijlage in het PDF-bestand te voegen voor de volledigheid.%
+        Naar artikelen, leden, onderdelen en definities van een \emph{ander} document dat met dit pakket
+        geschreven is wordt op dezelfde manier verwezen, zodat twee documenten elkaars bepalingen kunnen
+        noemen en elkaars begrippen kunnen delen\,---\,algemene voorwaarden en een onderhoudsovereenkomst,
+        b\ij{}voorbeeld. Het document waarnaar verwezen wordt kan als bijlage in het PDF-bestand worden
+        ingesloten, zodat de lezer het bij de hand heeft.%
     }
 \end{abstract}
 
 \clearpage
+% A listing cannot go inside the argument of \translation -- lstlisting reads its
+% own body -- so a listing whose content has to differ between the two manuals is
+% guarded with this instead of passed to that macro.
+\newif\ifenglishmanual
+\ifthenelse{\equal{\translation{en}{nl}}{en}}{\englishmanualtrue}{\englishmanualfalse}
 % The implementation is documented down to subsubsection level, which has no place
 % in the table of contents of the manual.
 \setcounter{tocdepth}{2}
@@ -76,7 +101,7 @@
     own; see \zcref{sec:html}.%
 }{%
     Deze bundel schrijft PDF, dus de engine is \texttt{pdflatex} of \texttt{lualatex}.
-    Er is ook een HTML-conversie, welke op \texttt{make4ht} draait en een eigen configuratie nodig heeft;
+    Er is ook een HTML-conversie, die op \texttt{make4ht} draait en een eigen configuratie nodig heeft;
     zie \zcref{sec:html}.%
 }
 \begin{lstlisting}[style=tex,caption={main.tex},label=code:simple]
@@ -120,7 +145,7 @@
         the interdocument references and PDF attachments of \zcref{sec:extern}, which loads
         \package{regulatory-ref} and \package{regulatory-defs} in turn.%
     }{%
-        de interdocumentaire verwijzingen en PDF-bijlagen van \zcref{sec:extern}, welke op zijn beurt
+        de interdocumentaire verwijzingen en PDF-bijlagen van \zcref{sec:extern}, die op zijn beurt
         \package{regulatory-ref} en \package{regulatory-defs} laadt.%
     }
     \item[regulatory-sign] \translation{%
@@ -143,7 +168,7 @@
 }{%
     Een zevende module, \package{regulatory-md}, komt daar bovenop zodra \package{markdown} geladen is, in
     welke volgorde de twee ook staan (zie \zcref{sec:md}).
-    De HTML-conversie is geen module maar een \package{tex4ht} configuratie, \file{regulatory.4ht}, welke
+    De HTML-conversie is geen module maar een \package{tex4ht}-configuratie, \file{regulatory.4ht}, die
     \texttt{make4ht} zelf vindt.%
 }\\
 
@@ -153,27 +178,27 @@
     \package{regulatory-struct} for the whole bundle.
     The example above passes none, which means these defaults hold:%
 }{%
-    Iedere optie is een sleutel van de \texttt{/regulatory} familie, welke
-    \package{regulatory-struct} voor de gehele bundel administreert.
+    Iedere optie is een sleutel van de familie \texttt{/regulatory}, die
+    \package{regulatory-struct} voor de hele bundel bijhoudt.
     Het voorbeeld hierboven geeft er geen mee, wat inhoudt dat deze standaardwaarden gelden:%
 }
 \begin{labeling}{\option{sourcestyle}\quad\texttt{alttree}}
     \addtokomafont{labelinglabel}{\ttfamily}
-    \item[bib2gls\quad true] \translation{%
+    \item[bib2gls\quad true] \DescribeOption[noprint]{bib2gls}\translation{%
         definition lists are built with \texttt{bib2gls}. Pass \option{bib2gls=false} to have them written
         as \TeX{} code instead.%
     }{%
         definitielijsten worden met \texttt{bib2gls} gebouwd. Geef \option{bib2gls=false} mee om ze in
-        plaats daarvan als \TeX{} code te laten schrijven.%
+        plaats daarvan als \TeX{}-code te laten schrijven.%
     }
-    \item[md\quad false] \translation{%
+    \item[md\quad false] \DescribeOption[noprint]{md}\translation{%
         loading \package{markdown} is left to the document. With \option{md} the package loads it, which
         it has to do before \package{enumitem}.%
     }{%
         het laden van \package{markdown} wordt aan het document gelaten. Met \option{md} laadt het pakket
         het zelf, wat vóór \package{enumitem} moet gebeuren.%
     }
-    \item[alldefs\quad false] \translation{%
+    \item[alldefs\quad false] \DescribeOption[noprint]{alldefs}\translation{%
         a definition list holds the definitions the document uses. With \option{alldefs} it holds every
         declared definition, which is what Terms and Conditions want, where not every term necessarily
         appears in the text.%
@@ -182,27 +207,27 @@
         iedere gedeclareerde definitie, wat Algemene Voorwaarden willen, waarin niet ieder begrip per se
         in de tekst voorkomt.%
     }
-    \item[legacy\quad false] \translation{%
+    \item[legacy\quad false] \DescribeOption[noprint]{legacy}\translation{%
         the conjunction of \zcref{sec:ref}. With \option{legacy} the older one is used, see
         \cmd{\setjuncto}.%
     }{%
         de conjunctie van \zcref{sec:ref}. Met \option{legacy} wordt de verouderde gebruikt, zie
         \cmd{\setjuncto}.%
     }
-    \item[nameinlink\quad true] \translation{%
+    \item[nameinlink\quad true] \DescribeOption[noprint]{nameinlink}\translation{%
         the hyperlink of a reference is drawn around the label as a whole. With
         \option{nameinlink=false} it is drawn around the number only.%
     }{%
         de hyperlink van een verwijzing wordt om het gehele label heen getrokken. Met
         \option{nameinlink=false} alleen om het nummer.%
     }
-    \item[defstyle\quad alttree] \translation{%
+    \item[defstyle\quad alttree] \DescribeOption[noprint]{defstyle}\translation{%
         the glossary style \cmd{\printdefs} falls back on when it is given none; see \zcref{sec:defs}.%
     }{%
         de woordenlijststijl waar \cmd{\printdefs} op terugvalt als hij er geen krijgt; zie
         \zcref{sec:defs}.%
     }
-    \item[sourcestyle\quad full] \translation{%
+    \item[sourcestyle\quad full] \DescribeOption[noprint]{sourcestyle}\translation{%
         whether a citation of an external source is written out (\texttt{full}) or abbreviated
         (\texttt{short}); see \zcref{sec:sources}. It answers to \option{bronstijl} as well, and to
         \texttt{voluit} and \texttt{verkort} as values. A value that is none of the four is refused where
@@ -213,55 +238,25 @@
         \texttt{voluit} en \texttt{verkort} als waarden. Een waarde die geen van de vier is wordt
         geweigerd waar hij gegeven wordt in plaats van iedere opzoeking die hem leest leeg te maken.%
     }
-    \item[attachmentlink\quad goto] \translation{%
-        how an attachment of \zcref{sec:extern} is opened from the page. With \texttt{goto} the link
-        is an embedded go-to action, which names the file inside this document and is the right thing
-        to say\,---\,and is the one action \package{poppler} does not implement, so under most
-        viewers on a free desktop the link does nothing. With \option{attachmentlink=annotation} a
-        file attachment annotation is placed over the same text instead, which Acrobat and
-        \package{poppler} both do implement. It shows nothing of its own: the text stays the only
-        thing on the page, and it is the annotation that opens. Either way the file is also in the
-        attachment pane of the viewer, which needs neither.
-
-        A file attachment is a markup annotation, and PDF/UA asks that one be enclosed in an
-        \texttt{Annot} structure element; this route puts it there, as the reference beside it sits
-        in its \texttt{Link} element. Do not take a validator's word for that either way: the
-        veraPDF this manual is measured with reported nothing when the element was missing and an
-        older one did, so the suite reads the structure tree out of the PDF itself rather than
-        asking for a verdict.
-
-        What remains between the two is a question about documents and not about PDF. The
-        \texttt{goto} route makes the text of \cmd{\documentattachment} a link in the sentence it
-        stands in; this one puts an annotation beside it and leaves the text as text. A reference a
-        reader meets in the flow of a sentence is not the same offer as one beside it, which is why
-        \texttt{goto} is the default.%
+    \item[attachmentlink\quad goto] \DescribeOption[noprint]{attachmentlink}\translation{%
+        how an attachment of \zcref{sec:extern} is opened from the page: with an embedded go-to
+        action (\texttt{goto}) or with a file attachment annotation
+        (\option{attachmentlink=annotation}). The two differ in what they mean, in which viewers
+        act on them and in what the PDF standards ask of them; \zcref{sec:attachmentlink} sets them
+        side by side. Either way the file is also in the attachment pane of the viewer, which needs
+        neither.%
     }{%
-        hoe een bijlage uit \zcref{sec:extern} vanaf de pagina geopend wordt. Met \texttt{goto} is de
-        link een embedded go-to action, die het bestand binnen dit document noemt en daarmee zegt wat
-        er te zeggen valt\,---\,en is tegelijk de ene actie die \package{poppler} niet
-        implementeert, zodat de link onder de meeste viewers op een vrij bureaublad niets doet. Met
-        \option{attachmentlink=annotation} komt er in plaats daarvan een file attachment annotatie
-        over dezelfde tekst, die Acrobat en \package{poppler} allebei wel kennen. Hij laat zelf niets
-        zien: de tekst blijft het enige op de pagina en de annotatie is wat opent. Hoe dan ook staat
-        het bestand ook in het bijlagenpaneel van de viewer, dat geen van beide nodig heeft.
-
-        Een bijlage-annotatie is een markup-annotatie, en PDF/UA vraagt dat zo een in een
-        \texttt{Annot}-structuurelement zit; deze route zet hem daarin, zoals de verwijzing ernaast
-        in haar \texttt{Link}-element staat. Neem een validator daarin niet op zijn woord, welke
-        kant ook op: de veraPDF waarmee deze handleiding gemeten is meldde niets toen het element
-        ontbrak en een oudere meldde het wel, dus de suite leest de structuurboom zelf uit de PDF in
-        plaats van om een oordeel te vragen.
-
-        Wat er tussen de twee overblijft is een vraag over documenten en niet over PDF. De route
-        \texttt{goto} maakt van de tekst van \cmd{\documentattachment} een link in de zin waar hij
-        staat; deze zet er een annotatie naast en laat de tekst tekst. Een verwijzing die een lezer
-        in de loop van een zin tegenkomt is een ander aanbod dan een die ernaast staat, en daarom is
-        \texttt{goto} de standaard.%
+        hoe een bijlage uit \zcref{sec:extern} vanaf de pagina geopend wordt: met een embedded go-to
+        action (\texttt{goto}) of met een file attachment annotatie
+        (\option{attachmentlink=annotation}). De twee verschillen in wat ze betekenen, in welke
+        viewers eraan gehoor geven en in wat de PDF-standaarden ervan vragen;
+        \zcref{sec:attachmentlink} zet ze naast elkaar. Hoe dan ook staat het bestand ook in het
+        bijlagenpaneel van de viewer, dat geen van beide nodig heeft.%
     }
 \end{labeling}
 \translation{%
-    Colored borders of hyperlinks are hidden with \cmd{\hypersetup}\marg{hidelinks}, since this package
-    loads \package{hyperref} itself.
+    Coloured borders around hyperlinks are hidden with \cmd{\hypersetup}\marg{hidelinks}, since this
+    package loads \package{hyperref} itself.
     A file \file{regulatory.cfg} next to the document is read before the options given to the package are
     processed, so it can set other defaults for a whole directory of documents at once; the log says which
     of the two happened. It is read while the package loads, so it may require a package a house depends
@@ -295,12 +290,41 @@
 \translation{%
     A document that attaches other documents (see \zcref{sec:extern}) needs the PDF management of
     \LaTeX{}, which is activated with \cmd{\DocumentMetadata}\marg{} in front of \cmd{\documentclass}.
-    Without it, every attachment is typeset as plain text and the package says so once.%
+    Without it, every attachment is typeset as plain text and the package says so once.
+
+    A source that is also converted to HTML declares it conditionally, and this is the one line to
+    write. Under \package{tex4ht} the same declaration pulls in the list code of \LaTeX{} and leaves
+    the conversion nothing to turn a \texttt{paras} item into, so the items come out as running text;
+    \zcref{sec:html} has the measurement. \package{tex4ht} defines \cmd{\HCode} before it reads the
+    document, so that is what the line asks. Every example of this bundle is written this way, and a
+    run that gets it wrong is told so rather than left to the result.%
 }{%
     Een document dat andere documenten als bijlage voegt (zie \zcref{sec:extern}) heeft de
-    PDF-administratie van \LaTeX{} nodig, welke geactiveerd wordt met \cmd{\DocumentMetadata}\marg{}
+    PDF-administratie van \LaTeX{} nodig, die geactiveerd wordt met \cmd{\DocumentMetadata}\marg{}
     vóór \cmd{\documentclass}.
-    Zonder dat wordt iedere bijlage als platte tekst gezet en meldt het pakket dat eenmalig.%
+    Zonder dat wordt iedere bijlage als platte tekst gezet en meldt het pakket dat eenmalig.
+
+    Een bron die ook naar HTML wordt omgezet declareert hem voorwaardelijk, en dat is de ene regel om
+    te schrijven. Onder \package{tex4ht} haalt diezelfde declaratie de lijstcode van \LaTeX{} binnen
+    en laat de omzetting niets om een \texttt{paras} onderdeel in om te zetten, zodat de onderdelen
+    als lopende tekst verschijnen; \zcref{sec:html} bevat de meting. \package{tex4ht} definieert
+    \cmd{\HCode} voordat het het document leest, en daar vraagt de regel naar. Ieder voorbeeld van
+    deze bundel is zo geschreven, en een bouw die het misdoet krijgt dat te horen in plaats van dat
+    het aan de uitkomst wordt overgelaten.%
+}
+\begin{lstlisting}[style=tex,caption={\translation{One source, both outputs}{Eén bron, beide uitvoerformaten}},label=code:metadata]
+\ifdefined\HCode\else\IfDocumentMetadataTF{}{\DocumentMetadata{}}\fi
+\documentclass[dutch]{article}
+\usepackage{regulatory}
+\end{lstlisting}
+\translation{%
+    The \cmd{\IfDocumentMetadataTF} guard leaves a declaration that is already there alone, which is
+    what lets the same source be built once more with a PDF standard declared in front of it; that is
+    how the cases of \zcref{sec:conformance} are made.%
+}{%
+    De wacht \cmd{\IfDocumentMetadataTF} laat een declaratie die er al staat met rust, en dat is wat
+    dezelfde bron nog een keer laat bouwen met een PDF-standaard ervóór gedeclareerd; zo zijn de
+    gevallen van \zcref{sec:conformance} gemaakt.%
 }\\
 
 \noindent
@@ -319,9 +343,9 @@ latexmk -pvc -lualatex -interaction=nonstopmode main
 
 \noindent
 \translation{%
-    Suppose definition lists are used; in that case, additional steps are added to the generation process, e.g:%
+    A document with definition lists adds a step between the \LaTeX{} runs:%
 }{%
-    Stel er worden definitie lijsten gebruikt, dan komen er nog extra stappen bij in het generatieproces, namelijk:%
+    Een document met definitielijsten voegt een stap tussen de \LaTeX{}-draaien toe:%
 }
 \begin{lstlisting}[style=bash,caption={\translation{Commandline with definitions}{Commandline met definities}}]
 lualatex main
@@ -335,17 +359,516 @@ lualatex main
 lualatex main
 \end{lstlisting}
 \translation{%
-    In case \texttt{latexmk} is used, the command \texttt{bib2gls} or \texttt{makeglossaries} can be executed in a separate terminal. LatexMK automatically detects file changes and regenerates the document accordingly.%
+    Under \texttt{latexmk}, \texttt{bib2gls} or \texttt{makeglossaries} can be run in a terminal of its
+    own: \texttt{latexmk} sees the files change and typesets the document again.%
 }{%
-    In het geval gebruik gemaakt wordt van \texttt{latexmk}, dan kan er in een aparte terminal het commando \texttt{bib2gls} of \texttt{makeglossaries} gebruikt worden.
-    LatexMK ziet vanzelf de bestanden wijzigen en genereert dan het document opnieuw.%
+    Onder \texttt{latexmk} kunnen \texttt{bib2gls} en \texttt{makeglossaries} in een eigen terminal
+    draaien: \texttt{latexmk} ziet de bestanden wijzigen en zet het document opnieuw.%
 }
 
 \clearpage
 
+\section{\translation{Before you start}{Voordat u begint}}\label{sec:requirements}
+\translation{%
+    What this bundle needs, what it is measured on, and what it cannot do. Everything here is treated at
+    length further on; this section is the short answer to whether \package{regulatory} fits a document
+    before it is written around it.%
+}{%
+    Wat deze bundel nodig heeft, waaraan hij gemeten is, en wat hij niet kan. Alles hier komt verderop
+    uitgebreid aan bod; dit onderdeel is het korte antwoord op de vraag of \package{regulatory} bij een
+    document past voordat dat document eromheen geschreven wordt.%
+}
+
+\subsection{\translation{Engines and prerequisites}{Engines en vereisten}}
+\translation{%
+    The engine is \texttt{pdflatex} or \texttt{lualatex}: both produce PDF directly, and every example of
+    this bundle is typeset with both on every run of the suite. Nothing here depends on either of the two,
+    and no difference between them is known to this manual. \texttt{xelatex} and a DVI route are not
+    tested and are not claimed.
+
+    The \option{md} route is the exception: \cmd{\markdownInput} reads its source through the Lua
+    interpreter under \texttt{lualatex} and reaches for shell escape under \texttt{pdflatex}, so a Markdown
+    document is more comfortable under \texttt{lualatex}.
+
+    All \TeX{} dependencies of the bundle are available in \TeX{} Live and MiK\kern-.1em\TeX{}:
+    \package{enumitem}, \package{fmtcount}, \package{glossaries} and \package{glossaries-extra},
+    \package{hyperref}, \package{scrextend}, \package{titlesec} (only while the new heading interface is
+    unavailable), \package{translations}, \package{xcolor}, \package{xstring} and the \package{zref}
+    family. Two packages that earlier releases pulled in are gone; see \zcref{sec:migration}.
+
+    Outside \TeX{} there is one prerequisite, and only on one route: the default definition route runs
+    \texttt{bib2gls}, which needs Java. \zcref[S]{sec:defs} has the three routes that do not.%
+}{%
+    De engine is \texttt{pdflatex} of \texttt{lualatex}: beide leveren rechtstreeks PDF, en ieder voorbeeld
+    van deze bundel wordt bij iedere draai van de suite met allebei gezet. Niets hier hangt van een van de
+    twee af, en deze handleiding kent geen verschil tussen beide. \texttt{xelatex} en een DVI-route zijn
+    niet getest en worden niet geclaimd.
+
+    De route \option{md} is de uitzondering: \cmd{\markdownInput} leest zijn bron via de Lua-interpreter
+    onder \texttt{lualatex} en grijpt onder \texttt{pdflatex} naar shell escape, dus een Markdown-document
+    zit onder \texttt{lualatex} ruimer in zijn jas.
+
+    Alle \TeX{}-afhankelijkheden van de bundel zijn beschikbaar in \TeX{} Live en MiK\kern-.1em\TeX{}:
+    \package{enumitem}, \package{fmtcount}, \package{glossaries} en \package{glossaries-extra},
+    \package{hyperref}, \package{scrextend}, \package{titlesec} (alleen zolang de nieuwe kopinterface er
+    niet is), \package{translations}, \package{xcolor}, \package{xstring} en de \package{zref} familie.
+    Twee pakketten die eerdere uitgaven meetrokken zijn weg; zie \zcref{sec:migration}.
+
+    Buiten \TeX{} is er één vereiste, en maar op één route: de standaardroute voor definities draait
+    \texttt{bib2gls}, dat Java nodig heeft. \zcref[S]{sec:defs} bevat de drie routes die dat niet doen.%
+}
+
+\subsection{\translation{Definitions}{Definities}}
+\translation{%
+    Four routes lead to a definition list, and the choice decides what has to run between the \LaTeX{} runs.
+    \zcref[S]{sec:defs} has them in full; in one line each:%
+}{%
+    Er leiden vier wegen naar een definitielijst, en de keuze bepaalt wat er tussen de \LaTeX{}-draaien moet
+    lopen. \zcref[S]{sec:defs} behandelt ze voluit; in één regel per stuk:%
+}
+\begin{labeling}{\option{bib2gls=false}}
+    % Dense typewriter names in a narrowed measure. \emergencystretch rather than
+    % \sloppy: it is only reached for by a paragraph that cannot otherwise be set, so
+    % the lines that do fit are set as tightly as everywhere else.
+    \emergencystretch=3em\relax
+    \addtokomafont{labelinglabel}{\ttfamily}
+    \item[bib2gls] \translation{%
+        the default. One \BibTeX{} file serves every document that cites the same terms, sorted and
+        selected from, and it is what lets \cmd{\masterdocument} pull another document's definitions in.
+        It needs Java.%
+    }{%
+        de standaard. Eén \BibTeX{}-bestand bedient ieder document dat dezelfde begrippen aanhaalt,
+        gesorteerd en geselecteerd, en het is wat \cmd{\masterdocument} de definities van een ander
+        document laat binnenhalen. Het vraagt Java.%
+    }
+    \item[{bib2gls=false}] \translation{%
+        \texttt{makeglossaries} and \texttt{makeindex} instead, reading a file of
+        \cmd{\newglossaryentry}. No Java, still a program between the runs, and of the four the least
+        exercised.%
+    }{%
+        in plaats daarvan \texttt{makeglossaries} en \texttt{makeindex}, die een bestand met
+        \cmd{\newglossaryentry} lezen. Geen Java, nog steeds een programma tussen de draaien, en van de
+        vier de minst beproefde.%
+    }
+    \item[\textbackslash newdefinition] \translation{%
+        definitions declared in the document itself. One \LaTeX{} run and nothing else. No other
+        document can cite them, and they are printed in the order they were declared in.%
+    }{%
+        definities die in het document zelf gedeclareerd worden. Eén \LaTeX{}-draai en verder niets, tegen
+        de prijs dat geen ander document ze kan aanhalen en dat ze in declaratievolgorde worden afgedrukt.%
+    }
+    \item[\translation{by hand}{met de hand}] \translation{%
+        the list written out with \cmd{\describe}, which decides what it lists and in what order. The
+        entries still come from one of the three above.%
+    }{%
+        de lijst zelf uitgeschreven met \cmd{\describe}, die bepaalt wat er opgesomd wordt en in welke
+        volgorde. De definities komen nog steeds uit een van de drie hierboven.%
+    }
+\end{labeling}
+
+\subsection{HTML}
+\translation{%
+    A document converts with \texttt{make4ht}, which drives \package{tex4ht}. \package{tex4ht} carries no
+    configuration for this package, so this one ships \file{regulatory.4ht} next to the package files: a
+    document that finds \package{regulatory} finds it too, and without it a conversion succeeds and
+    produces a document with no headings and no sections at all.
+
+    One condition: \cmd{\DocumentMetadata} must \emph{not} be active in an HTML run, or the list markup of
+    \texttt{paras} goes away. \zcref[S]{code:metadata} is the line to write, and \zcref{sec:html} has the
+    measurements.%
+}{%
+    Een document wordt omgezet met \texttt{make4ht}, dat \package{tex4ht} aanstuurt. \package{tex4ht}
+    levert voor dit pakket geen configuratie, dus levert dit pakket \file{regulatory.4ht} naast de
+    pakketbestanden mee: een document dat \package{regulatory} vindt, vindt dat er meteen bij, en zonder
+    dat bestand slaagt een omzetting en levert een document zonder ook maar één kop of sectie.
+
+    Eén voorwaarde: \cmd{\DocumentMetadata} mag in een HTML-bouw \emph{niet} actief zijn, anders verdwijnt
+    de lijstopmaak van \texttt{paras}. \zcref[S]{code:metadata} is de regel om te schrijven, en
+    \zcref{sec:html} bevat de metingen.%
+}
+
+\subsection{\translation{Attachments}{Bijlagen}}
+\translation{%
+    Embedding another document in the PDF file needs the PDF management of \LaTeX{}, activated with
+    \cmd{\DocumentMetadata} in front of \cmd{\documentclass}. Without it every attachment is typeset as
+    plain text and the package says so once.
+
+    How the attachment is opened from the page is the \option{attachmentlink} option, and neither value is
+    right for everybody: \texttt{goto} is the semantically correct embedded go-to action, which
+    \package{poppler} does not implement, and \option{attachmentlink=annotation} is a file attachment
+    annotation, which every measured viewer opens. \zcref[S]{sec:attachmentlink} sets the two side by side.
+    Either way the file is in the attachment pane of the viewer, which needs neither.%
+}{%
+    Een ander document in het PDF-bestand insluiten vraagt de PDF-administratie van \LaTeX{}, geactiveerd
+    met \cmd{\DocumentMetadata} vóór \cmd{\documentclass}. Zonder dat wordt iedere bijlage als platte tekst
+    gezet en meldt het pakket dat eenmalig.
+
+    Hoe de bijlage vanaf de pagina geopend wordt is de optie \option{attachmentlink}, en geen van beide
+    waarden is voor iedereen de goede: \texttt{goto} is de semantisch juiste embedded go-to action, die
+    \package{poppler} niet implementeert, en \option{attachmentlink=annotation} is een file attachment
+    annotatie, die iedere gemeten viewer wel opent. \zcref[S]{sec:attachmentlink} zet de twee naast elkaar.
+    Hoe dan ook staat het bestand in het bijlagenpaneel van de viewer, dat geen van beide nodig heeft.%
+}
+
+\subsection{\translation{Languages}{Talen}}
+\translation{%
+    Dutch and English are fully supported. German and French ship the designations and the citation
+    register of an act of the Union, both measured, and \emph{not} the wording of an internal reference: a
+    German document gets German words in the English arrangement. Any other language falls back on English
+    entirely, and is told so once. \zcref[S]{sec:lang} has the table and what each case looks like on the
+    page.%
+}{%
+    Het Nederlands en het Engels zijn volledig ondersteund. Het Duits en het Frans leveren de benamingen en
+    het citeerregister van een handeling van de Unie mee, allebei gemeten, en \emph{niet} de verwoording
+    van een interne verwijzing: een Duits document krijgt Duitse woorden in de Engelse opbouw. Iedere
+    andere taal valt volledig terug op het Engels, en krijgt dat één keer te horen. \zcref[S]{sec:lang} bevat
+    de tabel en hoe ieder geval er op de pagina uitziet.%
+}
+
+\subsection{\translation{PDF conformance}{PDF-conformiteit}}
+\translation{%
+    Which standard a document can carry is not a property of this package but of the document: of its
+    tagging, of what it attaches, and of what it refers to. \zcref[S]{sec:conformance} is the measurement, run
+    by veraPDF pinned by digest, and it is what the claims below are worth. In summary, for the documents
+    of this bundle:%
+}{%
+    Welke standaard een document kan dragen is geen eigenschap van dit pakket maar van het document: van
+    zijn tagging, van wat het bijvoegt, en van waar het naar verwijst. \zcref[S]{sec:conformance} is de meting,
+    gedraaid door een op digest gepinde veraPDF, en dat is wat de claims hieronder waard zijn. Samengevat,
+    voor de documenten van deze bundel:%
+}
+\begin{center}
+    \begin{tabular}{@{}lll@{}}
+        \translation{\textbf{Profile}}{\textbf{Profiel}} &
+        \translation{\textbf{Measured}}{\textbf{Gemeten}} &
+        \translation{\textbf{On what}}{\textbf{Waarop}} \\
+        \hline
+        PDF/A-1 & \translation{out of reach}{buiten bereik}
+            & \translation{forbids embedded files outright}{verbiedt ingesloten bestanden categorisch} \\
+        PDF/A-2b & \translation{pass}{slaagt}
+            & \translation{plain, and signed}{gewoon, en ondertekend} \\
+        PDF/A-2b & \translation{fail}{faalt}
+            & \translation{with a non-PDF attachment}{met een bijlage die geen PDF is} \\
+        PDF/A-2a + UA-1 & \translation{pass}{slaagt}
+            & \translation{tagged, with \texttt{attach-css=false}}{getagd, met \texttt{attach-css=false}} \\
+        PDF/A-3 & \translation{out of reach}{buiten bereik}
+            & \translation{referring to provisions of another document}{verwijzend naar bepalingen van een ander document} \\
+        PDF/A-3a + UA-1 & \translation{pass}{slaagt}
+            & \translation{tagged, attaching a PDF}{getagd, met een PDF als bijlage} \\
+        PDF/A-4 & \translation{pass}{slaagt}
+            & \translation{tagged, with \texttt{attach-css=false}}{getagd, met \texttt{attach-css=false}} \\
+        PDF/A-4f + UA-2 & \translation{pass}{slaagt}
+            & \translation{tagged, attaching anything}{getagd, met welke bijlage dan ook} \\
+    \end{tabular}
+\end{center}
+\noindent
+\translation{%
+    Read that as: \emph{this document in this configuration was measured to pass}, and never as
+    \enquote{\package{regulatory} is PDF/A compatible}. The rows differ in one thing each, which is what
+    makes them worth anything.%
+}{%
+    Lees dat als: \emph{dit document in deze samenstelling is gemeten en slaagde}, en nooit als
+    \enquote{\package{regulatory} is PDF/A-compatibel}. De regels verschillen elk in één ding, en dat is
+    wat ze iets waard maakt.%
+}
+
+\subsection{\translation{Known limitations}{Bekende beperkingen}}\label{sec:limits}
+\begin{labeling}{XX}
+    \emergencystretch=2em\relax
+    \item[PDF/A-3] \translation{%
+        a document that refers to the \emph{provisions} of an external document cannot reach it: the
+        \texttt{/GoToR} link is written with a file specification that fails ISO 19005-3 rule 6.8-4, and
+        that specification is not written by this package. Attaching another document and citing its
+        definitions costs nothing. See \zcref{sec:extern,sec:conformance}.%
+    }{%
+        een document dat naar de \emph{bepalingen} van een extern document verwijst haalt het niet: de
+        \texttt{/GoToR}-link wordt geschreven met een bestandsspecificatie die faalt op regel 6.8-4 van
+        ISO 19005-3, en die specificatie wordt niet door dit pakket geschreven. Een ander document
+        bijvoegen en zijn definities aanhalen kost niets. Zie \zcref{sec:extern,sec:conformance}.%
+    }
+    \item[\translation{Languages}{Talen}] \translation{%
+        German and French cannot word an internal reference or the name of another document; see
+        \zcref{sec:lang}. Neither has a national citation register.%
+    }{%
+        het Duits en het Frans kunnen een interne verwijzing en de naam van een ander document niet
+        verwoorden; zie \zcref{sec:lang}. Geen van beide heeft een nationaal citeerregister.%
+    }
+    \item[\translation{Sorting}{Sorteren}] \translation{%
+        \cmd{\loadglsdefs} sorts under the Dutch collation \texttt{nl-NL} whatever language the document
+        is in. A document in another language that wants its own collation prints its list with
+        \cmd{\printunsrtglossary} after a \cmd{\GlsXtrLoadResources} of its own, or lays it out by hand
+        with \cmd{\describe}.%
+    }{%
+        \cmd{\loadglsdefs} sorteert onder de Nederlandse collatie \texttt{nl-NL}, in welke taal het
+        document ook geschreven is. Een document in een andere taal dat een eigen collatie wil, drukt zijn
+        lijst af met \cmd{\printunsrtglossary} na een eigen \cmd{\GlsXtrLoadResources}, of maakt hem met de
+        hand op met \cmd{\describe}.%
+    }
+    \item[HTML] \translation{%
+        the conversion needs \cmd{\DocumentMetadata} to be absent, which is the same declaration the
+        attachments need, so one source cannot be converted and carry attachments in the same run. The
+        \texttt{alttree} definition style carries no list markup at all in HTML; \texttt{labeling} and
+        \texttt{description} do. See \zcref{sec:html}.%
+    }{%
+        de omzetting vraagt dat \cmd{\DocumentMetadata} er niet is, en dat is dezelfde declaratie die de
+        bijlagen nodig hebben, dus één bron kan niet in dezelfde draai omgezet worden én bijlagen dragen.
+        De definitiestijl \texttt{alttree} levert in HTML geen enkele lijstopmaak; \texttt{labeling} en
+        \texttt{description} wel. Zie \zcref{sec:html}.%
+    }
+    \item[Markdown] \translation{%
+        a Markdown source holds no \TeX{}: a backslash is printed rather than obeyed, silently. Only the
+        constructs of \zcref{sec:md} have a counterpart, and a bracketed span may not hold a second span or
+        a bracketed link, which is what the identifier of \zcref{sec:syntax} is for.%
+    }{%
+        een Markdown-bron bevat geen \TeX{}: een backslash wordt afgedrukt in plaats van uitgevoerd, en dat
+        zonder melding. Alleen de onderdelen van \zcref{sec:md} hebben een tegenhanger, en een bracketed
+        span mag geen tweede span en geen link met blokhaken bevatten, en daar is de identifier van
+        \zcref{sec:syntax} voor.%
+    }
+    \item[\cmd{\aref}] \translation{%
+        with more than one label, \option{nameinlink} has no effect and the hyperlink is drawn around the
+        numbers alone.%
+    }{%
+        bij meer dan één label heeft \option{nameinlink} geen effect en wordt de hyperlink alleen om de
+        nummers getrokken.%
+    }
+    \item[\cmd{\loadsources}] \translation{%
+        the \file{bib} reader takes a restricted, line-based syntax and is not a \BibTeX{} parser; a
+        perfectly ordinary \file{bib} file may well be refused. \zcref[S]{sec:sources} states the grammar.%
+    }{%
+        de \file{bib} lezer neemt een beperkte, regelgebaseerde syntaxis aan en is geen \BibTeX{}-parser;
+        een volstrekt gewoon \file{bib}-bestand kan best geweigerd worden. \zcref[S]{sec:sources} geeft de
+        grammatica.%
+    }
+    \item[Juriconnect] \translation{%
+        this release records and guards the date a citation speaks as of, and does not print it and does
+        not build a Juriconnect reference. See \cmd{\sourcedate} in \zcref{sec:sources}.%
+    }{%
+        deze uitgave legt de datum waarop een aanhaling spreekt vast en bewaakt hem, en drukt hem niet af
+        en bouwt geen Juriconnect-verwijzing. Zie \cmd{\sourcedate} in \zcref{sec:sources}.%
+    }
+    \item[\translation{Legislation}{Regelgeving}] \translation{%
+        no legislation ships with this bundle. It holds the machinery for citing instruments and not the
+        instruments: a citation title changes on its own clock and a package on CTAN does not.%
+    }{%
+        er komt geen regelgeving met deze bundel mee. Hij bevat het gereedschap om instrumenten aan te
+        halen en niet de instrumenten: een citeertitel verandert op zijn eigen klok en een pakket op CTAN
+        niet.%
+    }
+\end{labeling}
+
+\subsection{\translation{What the tests establish}{Wat de tests vaststellen}}
+\translation{%
+    One thing is worth saying this early, because it is what the claims in this manual rest on. A document
+    that is generated without an error is not thereby correct. Nearly everything this bundle can get wrong
+    comes out as a finished document all the same: a citation worded in the wrong register, a definition
+    that quietly did not arrive, a label that resolved to nothing, a heading that became a bold sentence.
+
+    So the suite does not check that a build succeeds. It reads the result back\,---\,references and the
+    labels they resolve to, definitions and the order a program sorted them into, the wording of forty
+    citations word for word, the sections and headings of the HTML conversion, the annotations and
+    structure elements in the PDF file itself, and the warnings the package did and did not give. Two
+    documents are there to \emph{fail} and two more to \emph{warn}, because a guarantee is worth what its
+    refusal is worth. \zcref[S]{sec:tests} is the whole of it.%
+}{%
+    Eén ding is het waard om nu al te zeggen, want het is waar de beweringen in deze handleiding op rusten.
+    Een document dat zonder fout gegenereerd wordt is daarmee nog niet correct. Vrijwel alles wat deze
+    bundel verkeerd kan doen komt er evengoed als afgerond document uit: een aanhaling in het verkeerde
+    register, een definitie die stilzwijgend niet aankwam, een label dat nergens heen wees, een kop die een
+    vetgedrukte zin werd.
+
+    De suite controleert dus niet of een bouw slaagt. Zij leest de uitkomst terug\,---\,verwijzingen en de
+    labels waar ze op uitkomen, definities en de volgorde waarin een programma ze sorteerde, de bewoording
+    van veertig aanhalingen woord voor woord, de secties en koppen van de HTML-omzetting, de annotaties en
+    structuurelementen in het PDF-bestand zelf, en de waarschuwingen die het pakket wel en niet gaf. Twee
+    documenten staan er om te \emph{falen} en twee om te \emph{waarschuwen}, want een garantie is zoveel
+    waard als haar weigering. \zcref[S]{sec:tests} behandelt het geheel.%
+}
+
+\subsection{\translation{Public, extension and internal}{Publiek, uitbreiding en intern}}\label{sec:api}
+\translation{%
+    Three kinds of name occur in this manual, and they carry different promises for the 1.x releases.%
+}{%
+    Er komen in deze handleiding drie soorten namen voor, en ze dragen verschillende beloften voor de
+    1.x-uitgaven.%
+}
+
+\begin{sloppypar}
+\noindent
+\translation{\textbf{Public API}}{\textbf{Publieke API}}\quad
+\translation{%
+        what an ordinary document writes: the environments \texttt{paras}, \texttt{provisions},
+        \texttt{definitions} and \texttt{externals}; \cmd{\article} and \cmd{\para}; the \cmd{\rref},
+        \cmd{\nref} and \cmd{\aref} families and the conjunction commands; \cmd{\loadglsdefs},
+        \cmd{\newdefinition}, \cmd{\printdefs} and \cmd{\describe}; \cmd{\refdocument},
+        \cmd{\masterdocument}, \cmd{\newartifact} and the \cmd{\document\ldots} commands;
+        \cmd{\signaturefield}; \cmd{\loadsources}, \cmd{\newsource}, \cmd{\srcref}, \cmd{\srcfield},
+        \cmd{\srctype}, \cmd{\ifsourceexists} and \cmd{\sourcedate}; \cmd{\autocitedefs} and the Markdown
+        constructs; and the package options. These keep working through 1.x, and where one has to change,
+        the old spelling stays as an alias.%
+    }{%
+        wat een gewoon document schrijft: de omgevingen \texttt{paras}, \texttt{provisions},
+        \texttt{definitions} en \texttt{externals}; \cmd{\article} en \cmd{\para}; de families
+        \cmd{\rref}, \cmd{\nref} en \cmd{\aref} en de koppelcommando's; \cmd{\loadglsdefs},
+        \cmd{\newdefinition}, \cmd{\printdefs} en \cmd{\describe}; \cmd{\refdocument},
+        \cmd{\masterdocument}, \cmd{\newartifact} en de \cmd{\document\ldots} commando's;
+        \cmd{\signaturefield}; \cmd{\loadsources}, \cmd{\newsource}, \cmd{\srcref}, \cmd{\srcfield},
+        \cmd{\srctype}, \cmd{\ifsourceexists} en \cmd{\sourcedate}; \cmd{\autocitedefs} en de
+        Markdown-constructies; en de pakketopties. Die blijven de hele 1.x-reeks werken, en waar er een
+        moet veranderen blijft de oude schrijfwijze als alias staan.%
+    }
+\end{sloppypar}
+
+\begin{sloppypar}
+\noindent
+\textbf{Extension API}\quad
+\translation{%
+        what a language file, a citation register or an integration writes:
+        \cmd{\ProvidesRegulatoryLanguage} and \cmd{\RegulatoryLoadLanguage}; \cmd{\rref@setup} and the
+        format commands it is given, \cmd{\rref@refformat@\ldots}, \cmd{\rref@label@\ldots} and
+        \cmd{\rref@group@braced}; \cmd{\newsourceregister}, \cmd{\newsourcedeterminer},
+        \cmd{\newsourcetype}, \cmd{\newsourcetypealias}, \cmd{\newsourcefieldalias} and the
+        \cmd{\regulatory@src@\ldots} formats a register is built from; \cmd{\regulatorysetup} and
+        \file{regulatory.cfg}; and \cmd{\regulatory@ifmodule}. Several of these carry an at sign, which is
+        not an oversight: they are meant to be written in a \file{.def} file, which is read with the at
+        sign made a letter. They are supported through 1.x as they stand.%
+    }{%
+        wat een taalbestand, een citeerregister of een integratie schrijft:
+        \cmd{\ProvidesRegulatoryLanguage} en \cmd{\RegulatoryLoadLanguage}; \cmd{\rref@setup} en de
+        formaatcommando's die hij meekrijgt, \cmd{\rref@refformat@\ldots}, \cmd{\rref@label@\ldots} en
+        \cmd{\rref@group@braced}; \cmd{\newsourceregister}, \cmd{\newsourcedeterminer},
+        \cmd{\newsourcetype}, \cmd{\newsourcetypealias}, \cmd{\newsourcefieldalias} en de
+        \cmd{\regulatory@src@\ldots} formaten waaruit een register wordt opgebouwd;
+        \cmd{\regulatorysetup} en \file{regulatory.cfg}; en \cmd{\regulatory@ifmodule}. Verscheidene
+        daarvan dragen een apenstaartje, en dat is geen slordigheid: ze zijn bedoeld om in een
+        \file{.def} bestand geschreven te worden, dat gelezen wordt met het apenstaartje als letter. Ze
+        worden zoals ze zijn de hele 1.x-reeks ondersteund.%
+    }
+\end{sloppypar}
+
+\begin{sloppypar}
+\noindent
+\translation{\textbf{Internal}}{\textbf{Intern}}\quad
+\translation{%
+        everything else, including every \cmd{\regulatory@\ldots}, \cmd{\artifact@\ldots} and
+        \cmd{\rref@\ldots} not named above, and every \pkg{l3} name with a double underscore. These are
+        documented in \zcref{sec:impl} because the implementation is documented, and not because they may
+        be used; they change without notice. Two artifact fields belong here as well and are described
+        under \cmd{\refdocument}: \texttt{referred}, which the package sets itself, and \texttt{url},
+        which is reserved and does nothing.%
+    }{%
+        al het overige, waaronder iedere \cmd{\regulatory@\ldots}, \cmd{\artifact@\ldots} en
+        \cmd{\rref@\ldots} die hierboven niet genoemd is, en iedere \pkg{l3} naam met een dubbele
+        underscore. Die staan in \zcref{sec:impl} omdat de implementatie gedocumenteerd is en niet omdat
+        ze gebruikt mogen worden; ze veranderen zonder aankondiging. Twee artefactvelden horen hier ook
+        en staan beschreven bij \cmd{\refdocument}: \texttt{referred}, dat het pakket zelf zet, en
+        \texttt{url}, dat gereserveerd is en niets doet.%
+    }
+\end{sloppypar}
+\clearpage
+
+\section{\translation{Migration to 1.0}{Overstappen naar 1.0}}\label{sec:migration}
+\translation{%
+    What a document written for an earlier release runs into. Everything below is a change that can be seen
+    from outside the package; the rest of 1.0 is addition.%
+}{%
+    Waar een document dat voor een eerdere uitgave geschreven is tegenaan loopt. Alles hieronder is een
+    verandering die van buiten het pakket te zien is; de rest van 1.0 is aanvulling.%
+}
+\begin{labeling}{\translation{Markdown}{Markdown}}
+    \emergencystretch=2em\relax
+    \item[\package{calc}] \translation{%
+        \textbf{This is the one that stops a build.} \package{xifthen} is no longer a prerequisite, since
+        nothing here used a command of it that plain \package{ifthen} does not have. It pulled in
+        \package{calc}, which this bundle never used either, so \package{calc} is no longer there for the
+        asking. A document that writes \cmd{\widthof}, \cmd{\heightof} or one of the \package{calc}
+        arithmetic forms was leaning on that and now stops with an undefined command. The fix is
+        \cmd{\usepackage}\marg{calc} in the document, or \cmd{\RequirePackage}\marg{calc} in a
+        \file{regulatory.cfg} for a whole directory of them. This manual is one of the documents it caught,
+        and asks for \package{calc} itself.%
+    }{%
+        \textbf{Dit is degene die een bouw stopt.} \package{xifthen} is geen vereiste meer, aangezien niets
+        hier een commando van dat pakket gebruikte dat het gewone \package{ifthen} niet heeft. Het trok
+        \package{calc} mee, dat deze bundel evenmin ooit gebruikte, dus \package{calc} is er niet langer
+        vanzelf. Een document dat \cmd{\widthof}, \cmd{\heightof} of een van de rekenvormen van
+        \package{calc} schrijft leunde daarop en houdt nu op met een ongedefinieerd commando. De oplossing
+        is \cmd{\usepackage}\marg{calc} in het document, of \cmd{\RequirePackage}\marg{calc} in een
+        \file{regulatory.cfg} voor een hele map ervan. Deze handleiding is een van de documenten die het
+        betrapte, en vraagt zelf om \package{calc}.%
+    }
+    \item[Markdown] \translation{%
+        the module used to be loaded with the \option{hybrid} option of \package{markdown}, which let every
+        backslash through, and sources written that way wrote their labels and references as \TeX{}.
+        \package{markdown} has deprecated that option. Without it a backslash is \emph{printed} rather than
+        obeyed, so such a source loses its references without a single error being raised. Everything that
+        needed it is written in Markdown now; see \zcref{sec:md}, and read an older source through once.%
+    }{%
+        de module werd geladen met de optie \option{hybrid} van \package{markdown}, die iedere backslash
+        doorliet, en bronnen die zo geschreven waren schreven hun labels en verwijzingen als \TeX{}.
+        \package{markdown} heeft die optie afgeschaft. Zonder haar wordt een backslash \emph{afgedrukt} in
+        plaats van uitgevoerd, dus zo'n bron verliest zijn verwijzingen zonder dat er ook maar iets
+        misgaat. Alles wat die optie nodig had wordt nu in Markdown geschreven; zie \zcref{sec:md}, en lees
+        een oudere bron één keer door.%
+    }
+    \item[\translation{Languages}{Talen}] \translation{%
+        an unsupported language no longer borrows the words of the last language file that happened to be
+        loaded. Measured on the same Spanish document: an earlier release gave it Dutch headings and
+        silently dropped the designations from its references, where 1.0 words everything in English and
+        says once which language it has no definitions for. A document that was quietly relying on the
+        first behaviour looks different and now says why.%
+    }{%
+        een niet-ondersteunde taal leent niet langer de woorden van het taalbestand dat toevallig als
+        laatste geladen was. Gemeten aan hetzelfde Spaanse document: een eerdere uitgave gaf het
+        Nederlandse koppen en liet de benamingen stilzwijgend uit de verwijzingen weg, waar 1.0 alles in
+        het Engels verwoordt en één keer zegt voor welke taal het geen definities heeft. Een document dat
+        stilzwijgend op het eerste leunde ziet er anders uit en zegt nu waarom.%
+    }
+    \item[\translation{Structure}{Structuur}] \translation{%
+        one package became a bundle. Earlier releases shipped a single \file{regulatory.sty}; 1.0 ships
+        eight, of which \package{regulatory} loads six, plus \file{regulatory.4ht} and the language files.
+        A document that says \cmd{\usepackage}\marg{regulatory} notices nothing, and one that installs by
+        hand copies more files.%
+    }{%
+        één pakket werd een bundel. Eerdere uitgaven leverden één \file{regulatory.sty}; 1.0 levert er
+        acht, waarvan \package{regulatory} er zes laadt, plus \file{regulatory.4ht} en de
+        taalbestanden. Een document dat het pakket zoals altijd laadt merkt er niets van, en wie met
+        de hand installeert kopieert meer bestanden.%
+    }
+    \item[\translation{Signatures}{Handtekeningen}] \translation{%
+        \package{regulatory-sign} is where \package{xdp-sign} went. \cmd{\SignatureField} still answers, so
+        a document written for that package keeps working when it moves over. A signature no longer costs
+        the document its PDF/A-2b conformance.%
+    }{%
+        \package{regulatory-sign} is waar \package{xdp-sign} heen ging. \cmd{\SignatureField} luistert nog
+        steeds, zodat een document dat voor dat pakket geschreven is blijft werken wanneer het overkomt.
+        Een handtekening kost het document zijn PDF/A-2b conformiteit niet meer.%
+    }
+    \item[\translation{Source keys}{Bronsleutels}] \translation{%
+        the types and fields of \zcref{sec:sources} are named in English, and every Dutch name is an alias
+        on top of it, so a \file{bib} file written either way is read either way. Two names changed, and
+        they differ in what became of the old one. The option \option{bronstijl} became
+        \option{sourcestyle} and \emph{is} aliased: \option{bronstijl} still answers, and so do the values
+        \texttt{voluit} and \texttt{verkort}, so a document that used it needs no change. The translation
+        key \texttt{subparagraph} became \texttt{point} and is \emph{not} aliased, since nothing outside
+        this bundle had asked for it yet: a document that asked for that translation by name asks for
+        \texttt{point} now.%
+    }{%
+        de types en velden van \zcref{sec:sources} hebben Engelse namen, en iedere Nederlandse naam is
+        daar een alias op, dus een \file{bib}-bestand dat op de ene manier geschreven is wordt op beide
+        manieren gelezen. Twee namen zijn veranderd, en ze verschillen in wat er van de oude geworden is.
+        De optie \option{bronstijl} werd \option{sourcestyle} en heeft \emph{wel} een alias:
+        \option{bronstijl} luistert nog steeds, en de waarden \texttt{voluit} en \texttt{verkort} ook,
+        dus een document dat hem gebruikte hoeft niets te veranderen. De vertaalsleutel
+        \texttt{subparagraph} werd \texttt{point} en heeft \emph{geen} alias, want buiten deze bundel had
+        nog niemand hem opgevraagd: een document dat die vertaling bij naam opvroeg vraagt nu om
+        \texttt{point}.%
+    }
+\end{labeling}
+\clearpage
+
 \section{\translation{Structure}{Structuur}}\label{sec:struct}
 \translation{%
-    This package provides familiar structures without breaking the existing functionalities of \LaTeX{}.
+    This package provides familiar structures without taking anything of \LaTeX{} away.
     The three levels are called \emph{article}, \emph{paragraph} and \emph{point}, after the Dutch
     ``artikel, lid en onderdeel'' this package started out with.\footnote{%
         The English names are shortened where \LaTeX{} already speaks for them: a heading of the second
@@ -354,12 +877,13 @@ lualatex main
         jurisdiction, and neither reading is the one \LaTeX{} means by it.%
     }%
 }{%
-    Dit pakket levert bekende structuren, zonder de bestaande functionaliteiten van \LaTeX{} te breken.
+    Dit pakket levert bekende structuren, zonder iets van \LaTeX{} weg te nemen.
     De drie niveaus heten \emph{artikel}, \emph{lid} en \emph{onderdeel}, waar dit pakket mee begonnen
     is.\footnote{%
         De Engelse namen zijn ingekort waar \LaTeX{} de volledige al bezet houdt: een kop van het tweede
         niveau is \cmd{\para} en niet \cmd{\paragraph}, en zijn lijst heet \texttt{paras} en niet
-        \texttt{paragraphs}.%
+        \texttt{paragraphs}. Welk van de twee woorden `section' en `paragraph' welk niveau aanduidt,
+        verschilt per rechtsorde, en geen van beide lezingen is die welke \LaTeX{} ermee bedoelt.%
     }%
 }\\
 
@@ -374,7 +898,7 @@ lualatex main
 }{%
     \cmd{\article}\marg{titel} en \cmd{\para}\marg{titel} zijn de twee koppen.
     Deze zijn als aparte macro's gedefinieerd en opgemaakt met \package{titlesec}, of, zodra de nieuwe
-    \LaTeX{} kopinterface beschikbaar is, met een \texttt{heading} instantie.
+    \LaTeX{}-kopinterface beschikbaar is, met een \texttt{heading}-instantie.
     Beide doen mee in de inhoudsopgave, op het niveau van subsecties en subsubsecties.%
 }\\
 
@@ -386,7 +910,7 @@ lualatex main
     number of the article it belongs to, and a point is labelled
     \texttt{\textbackslash abalphnum\{\textbackslash arabic*\})}.%
 }{%
-    De \texttt{paras} environment bevat de twee niveaus onder een artikel, gebouwd met \package{enumitem}.
+    De omgeving \texttt{paras} bevat de twee niveaus onder een artikel, gebouwd met \package{enumitem}.
     Een lid krijgt het label \texttt{\textbackslash thearticle.\textbackslash arabic*.}, en herhaalt
     daarmee het nummer van het artikel waar het bij hoort, en een onderdeel het label
     \texttt{\textbackslash abalphnum\{\textbackslash arabic*\})}.%
@@ -395,15 +919,16 @@ lualatex main
 \noindent
 \translation{%
     That \cmd{\abalphnum} comes from \package{fmtcount}\footnote{%
-        The Dutch language definition is now included in \href{https://github.com/Xerdi/fmtcount}{\package{fmtcount}}
-        itself. Be sure to update the package if \texttt{fc-dutch.def} is missing.%
+        The Dutch language definition is part of
+        \href{https://github.com/Xerdi/fmtcount}{\package{fmtcount}} itself now. Update the package when
+        \texttt{fc-dutch.def} is missing.%
     } and is what lets an article run past 26 points: \cmd{\alph} stops there, whereas \cmd{\abalphnum}
     of, say, 125 is `\texttt{du}'.%
 }{%
     Die \cmd{\abalphnum} komt uit \package{fmtcount}\footnote{%
         De Nederlandse taaldefinitie is nu inbegrepen in
         \href{https://github.com/Xerdi/fmtcount}{\package{fmtcount}} zelf.
-        Zorg ervoor dat het pakket up-to-date is als \texttt{fc-dutch.def} mist.%
+            Werk het pakket bij wanneer \texttt{fc-dutch.def} ontbreekt.%
     } en is wat een artikel voorbij 26 onderdelen laat lopen: \cmd{\alph} houdt daar op, terwijl
     \cmd{\abalphnum} van b\ij{}voorbeeld 125 `\texttt{du}' is.%
 }\\
@@ -416,7 +941,7 @@ lualatex main
     stands in rather than within an article, for a text that has one level and no headings of its own.%
 }{%
     Niet ieder document is in artikelen verdeeld.
-    De \texttt{provisions} environment is een vlakke opsomming, genummerd binnen de \cmd{\section}
+    De omgeving \texttt{provisions} is een vlakke opsomming, genummerd binnen de \cmd{\section}
     waarin hij staat in plaats van binnen een artikel, voor een tekst met één niveau en zonder eigen
     koppen.%
 }
@@ -446,27 +971,29 @@ lualatex main
 \end{lstlisting}
 \translation
 {See \zcref{code:example1,code:example2} in \zcref{sec:example} for more \LaTeX{} examples.}
-{Zie \zcref{code:example1,code:example2} in \zcref{sec:example} voor meer \LaTeX{} voorbeelden.}
+{Zie \zcref{code:example1,code:example2} in \zcref{sec:example} voor meer \LaTeX{}-voorbeelden.}
 \clearpage
 
 \section{\translation{Definitions}{Definities}}\label{sec:defs}
 \translation{%
-    For referencing definitions, \package{glossaries-extra} is used.
-    This allows referencing with the \cmd{\gls}\marg{label} macro family.%
+    Definitions are cited with the \cmd{\gls}\marg{label} family of \package{glossaries-extra}, which this
+    module loads and configures.%
 }{%
-    Voor het verwijzen naar definities wordt gebruik gemaakt van \package{glossaries-extra}.
-    Dit zorgt ervoor dat er met de \cmd{\gls}\marg{label} macrofamilie kan worden verwezen.%
+    Definities worden aangehaald met de \cmd{\gls}\marg{label} familie van \package{glossaries-extra}, die
+    deze module laadt en instelt.%
 }\\
 
 \noindent
 \DescribeEnv{definitions}
 \DescribeEnv{externals}
 \translation{%
-    To prevent conflicts between terms, abbreviations, and definitions, this package adds two \texttt{glossary} types.
-    Definitions within the same file are placed under the type \option{definitions}, while definitions from other documents are placed under \option{externals} (see \zcref{sec:extern}).%
+    So that terms, abbreviations and definitions do not collide, this package adds two glossary types.
+    Definitions of this document go under \option{definitions}; definitions of another document go under
+    \option{externals} (see \zcref{sec:extern}).%
 }{%
-    Om conflicten tussen begrippen, afkortingen en definities te voorkomen voegt dit pakket twee \texttt{glossary} types toe.
-    Voor definities binnen hetzelfde bestand worden ze ingedeeld onder het type \option{definitions}, terwijl definities van andere documenten worden ingedeeld onder \option{externals} (zie \zcref{sec:extern}).%
+    Opdat begrippen, afkortingen en definities niet botsen voegt dit pakket twee glossary-types toe.
+    Definities van dit document komen onder \option{definitions}; definities van een ander document onder
+    \option{externals} (zie \zcref{sec:extern}).%
 }\\
 
 \noindent
@@ -487,13 +1014,13 @@ lualatex main
         pull another document's definitions in.
         \emph{Against:} it needs Java and a \texttt{bib2gls} run between the two \LaTeX{} runs.%
     }{%
-        de standaard. \cmd{\loadglsdefs}\marg{src} leest een \BibTeX{} bestand, dat \package{bib2gls}
+        de standaard. \cmd{\loadglsdefs}\marg{src} leest een \BibTeX{}-bestand, dat \package{bib2gls}
         sorteert en waaruit het selecteert.
         \emph{Voor:} één bestand bedient ieder document dat dezelfde begrippen aanhaalt, de opsomming
         wordt gesorteerd tegen het woordenboek van de taal, en alleen de definities die het document
         werkelijk gebruikt verschijnen\,---\,of allemaal met \option{alldefs}. Het is ook wat
         \cmd{\masterdocument} in staat stelt de definities van een ander document binnen te halen.
-        \emph{Tegen:} het vraagt Java en een \texttt{bib2gls} draai tussen de twee \LaTeX{} draaien.%
+        \emph{Tegen:} het vraagt Java en een \texttt{bib2gls} draai tussen de twee \LaTeX{}-draaien.%
     }
     \item[\option{bib2gls=false}] \translation{%
         \cmd{\loadglsdefs}\marg{src} then reads a file of \cmd{\newglossaryentry} instead.
@@ -515,7 +1042,7 @@ lualatex main
     }{%
         \cmd{\newdefinition}\marg{label}\marg{naam}\marg{omschrijving} declareert een definitie in het
         document zelf.
-        \emph{Voor:} geen tweede bestand en geen tweede programma\,---\,één \LaTeX{} draai volstaat.
+        \emph{Voor:} geen tweede bestand en geen tweede programma\,---\,één \LaTeX{}-draai volstaat.
         \emph{Tegen:} de definities horen bij dit document, dus geen ander document kan ze aanhalen, en
         ze worden gezet in de volgorde waarin ze gedeclareerd zijn in plaats van gesorteerd.%
     }
@@ -540,7 +1067,7 @@ lualatex main
     that are already in the order they are to be printed in, which is why \cmd{\printdefs} reaches for a
     different printing command there\,---\,see \zcref{sec:impl}.%
 }{%
-    Alleen de tweede weg vraagt om een programma tussen de \LaTeX{} draaien. De andere twee leveren
+    Alleen de tweede weg vraagt om een programma tussen de \LaTeX{}-draaien. De andere twee leveren
     definities aan die al in de volgorde staan waarin ze gezet moeten worden, en daarom grijpt
     \cmd{\printdefs} daar naar een ander zetcommando\,---\,zie \zcref{sec:impl}.%
 }\\
@@ -584,13 +1111,13 @@ lualatex main
 \noindent
 \DescribeMacro{\printdefs\\\oarg{style}\\\marg{width of text}}
 \translation{%
-    To list definitions, various macros have been added.
-    The most straightforward one, \cmd{\printdefs}\marg{width of text}, enumerates the definitions with a customized style.
-    The argument \marg{width of text} is provided for the alignment of definition labels and descriptions.%
+    \cmd{\printdefs}\marg{width of text} prints the definition list. The \meta{width of text} is the widest
+    name the list has to align on, which is what the \texttt{labeling} style uses; the other styles ignore
+    it.%
 }{%
-    Om definities op te sommen zijn er verscheidene macro's toegevoegd.
-    De meest voor de hand liggende, \cmd{\printdefs}\marg{breedte van tekst}, somt de definities op met een aangepaste stijl.
-    Het argument \marg{breedte van tekst} dient voor de uitlijning van definitielabels en beschrijvingen.%
+    \cmd{\printdefs}\marg{breedte van tekst} drukt de definitielijst af. De \meta{breedte van tekst} is de
+    breedste naam waarop de lijst moet uitlijnen, en dat is wat de stijl \texttt{labeling} gebruikt; de
+    andere stijlen doen er niets mee.%
 }\\
 
 \noindent
@@ -624,53 +1151,54 @@ lualatex main
 \noindent
 \DescribeMacro{\loadglsdefs}
 \translation{%
-    To load definitions, two macros are defined. The \cmd{\loadglsdefs}\marg{src} macro adds BibTeX libraries under the type \option{definitions} and has the category \option{definitions}.
-    Definitions used in these libraries will be listed when \cmd{\printdefs} is called.
-    If the package is given the \option{alldefs} option, then all definitions in those libraries will be listed.
-    The listing is sorted according to the Dutch dictionary.
-    Words not found in it are listed first.%
+    \cmd{\loadglsdefs}\marg{src} reads a \BibTeX{} file into the \option{definitions} type under the
+    \option{definitions} category. The definitions the document uses are listed when \cmd{\printdefs} is
+    called, or all of them with the \option{alldefs} option.
+    The listing is sorted under the Dutch collation, \texttt{nl-NL}, whatever language the document is
+    in\,---\,see \zcref{sec:limits}, which says what to do about it.%
 }{%
-    Om definities in te laden zijn er twee macro's gedefinieerd.
-    De \cmd{\loadglsdefs}\marg{src} macro voegt BibTeX bibliotheken toe onder het type \option{definitions} en heeft als categorie \option{definitions}.
-    Gebruikte definities in deze bibliotheken zullen opgesomd worden wanneer \cmd{\printdefs} wordt aangeroepen.
-    Als bij het pakket de optie \option{alldefs} is meegegeven, dan zullen alle definities in die bibliotheken opgesomd worden.
-    De opsomming wordt gesorteerd aan de hand van het Nederlandse woordenboek.
-    Woorden die niet voorkomen daarin worden als eerste opgesomd.%
+    \cmd{\loadglsdefs}\marg{src} leest een \BibTeX{}-bestand in onder het type \option{definitions} en de
+    categorie \option{definitions}.
+    De definities die het document gebruikt worden opgesomd zodra \cmd{\printdefs} wordt aangeroepen, of
+    allemaal met de optie \option{alldefs}.
+    De opsomming wordt gesorteerd volgens de Nederlandse collatie, \texttt{nl-NL}, in welke taal het
+    document ook geschreven is\,---\,zie \zcref{sec:limits}, waar staat wat eraan te doen is.%
 }\\
 
 \noindent
 \DescribeMacro{\loadextdefs}
 \translation{%
-    For \cmd{\loadextdefs}\oarg{category}\marg{src}, it can be useful to provide a category so that definitions from different sources can be distinguished.
-    However, it is unwise to call this macro directly since \cmd{\masterdocument} is already smartly handling it.
-    This macro is part of \package{regulatory-attachments} and is described in \zcref{sec:extern}.
+    \cmd{\loadextdefs}\oarg{category}\marg{src} reads the definitions of another document, under a category
+    of their own so that definitions from different sources stay apart. \cmd{\masterdocument} calls it with
+    the right category already, so a document rarely calls it itself. It belongs to
+    \package{regulatory-attachments} and is described in \zcref{sec:extern}.
 }{%
-    Voor \cmd{\loadextdefs}\oarg{category}\marg{src} kan het handig zijn om een categorie mee te geven, zodat definities van verschillende bronnen uit elkaar gehouden kunnen worden.
-    Het is echter niet aan te raden deze direct aan te roepen, aangezien \cmd{\masterdocument} hier al slim op in speelt.
-    Deze macro maakt deel uit van \package{regulatory-attachments} en wordt beschreven in \zcref{sec:extern}.
+    \cmd{\loadextdefs}\oarg{categorie}\marg{src} leest de definities van een ander document in, onder een
+    eigen categorie zodat definities uit verschillende bronnen uit elkaar blijven.
+    \cmd{\masterdocument} roept hem al met de juiste categorie aan, dus een document roept hem zelden zelf
+    aan. Hij hoort bij \package{regulatory-attachments} en wordt beschreven in \zcref{sec:extern}.
 }
 \clearpage
 
 \section{\translation{References}{Verwijzingen}}\label{sec:ref}
 \translation{%
-    For referencing articles, members, and parts, \package{zref} is used behind the scenes.
-    All components mentioned in \zcref{sec:struct} are configured for this purpose.
-    However, \package{zref} does not provide as many formatting adjustments as \package{cleveref}.
+    References to articles, paragraphs and points are built on \package{zref}, for which every structure of
+    \zcref{sec:struct} is configured. \package{zref} on its own offers less control over the wording than
+    \package{cleveref} does.
 }{%
-    Voor het verwijzen naar artikelen, leden en onderdelen wordt onder water gebruik gemaakt van \package{zref}.
-    Alle onderdelen genoemd in \zcref{sec:struct} zijn hiervoor ingesteld, echter biedt \package{zref} niet zoveel formaat aanpassingen als \package{cleveref}.
+    Verwijzingen naar artikelen, leden en onderdelen zijn gebouwd op \package{zref}, waarvoor iedere
+    structuur uit \zcref{sec:struct} is ingesteld. \package{zref} zelf biedt minder greep op de bewoording
+    dan \package{cleveref}.
 }
 
 \DescribeMacro{\rref}
 \DescribeMacro{\Rref}
 \translation{%
-    Due to this limitation, it was decided to develop entirely new variants, including \cmd{\rref}\marg{label}.
-    With \cmd{\rref}, one can refer to articles just as is customary for \cmd{\section}, \cmd{\subsection}, and so on.
-    The \cmd{\rref} family consists of a total of four different macros:%
+    That is why this bundle words its own, starting with \cmd{\rref}\marg{label}, which refers to an article
+    the way \cmd{\ref} refers to a \cmd{\section}. The family has four members:%
 }{%
-    Door deze beperking is er voor gekozen om geheel nieuwe varianten te ontwikkelen, waaronder \cmd{\rref}\marg{label}.
-    Er kan dus met \cmd{\rref} verwezen worden naar artikelen net als gebruikelijk is voor \cmd{\section}, \cmd{\subsection}, en dergelijke.
-    De \cmd{\rref} familie kent in totaal vier verschillende macro's:%
+    Daarom verwoordt deze bundel zijn eigen verwijzingen, te beginnen met \cmd{\rref}\marg{label}, die naar
+    een artikel verwijst zoals \cmd{\ref} naar een \cmd{\section} verwijst. De familie heeft vier leden:%
 }
 \begin{labeling}{\textbackslash{}Rref*\quad}
     \cmditem{rref} \translation
@@ -703,24 +1231,24 @@ lualatex main
     \end{tabularx}
 \end{labeling}
 \translation{%
-    In the examples above, a notable difference is already apparent in the alternative \cmd{\zref}, namely the presentation of the reference number/letter/word and a distinct type in the title.
-    For instance, for \texttt{ex1-lid:lorem}, the title is '2.1,' and it is referenced as '(1)'.%
+    The examples above already show where this differs from \cmd{\zref}: a reference is not the number the
+    heading carries. The paragraph \texttt{ex1-lid:lorem} is numbered `2.1' on the page and referred to as
+    \rref*{ex1-lid:lorem}.%
 }{%
-    In de voorbeelden hierboven is al een opmerkelijk verschil te zien tussen alternatief \cmd{\zref}, namelijk de presentatie van de/het verwijsnummer/letter/woord en een afwijkend type in de titel.
-    B\ij{}voorbeeld voor \texttt{ex1-lid:lorem} is de titel `2.1' en wordt aangehaald met `eerste'.%
+    De voorbeelden hierboven laten al zien waarin dit van \cmd{\zref} verschilt: een verwijzing is niet het
+    nummer dat de kop draagt. Het lid \texttt{ex1-lid:lorem} is op de pagina genummerd als `2.1' en wordt
+    aangehaald als \rref*{ex1-lid:lorem}.%
 }\\
 
 \noindent
 \DescribeMacro{\nref}
 \DescribeMacro{\Nref}
 \translation{%
-    To reference with the corresponding designation, the macro family \cmd{\nref}\marg{label} has been developed.
-    This family, like \cmd{\rref}, has four variants.
-    In the following example, for simplicity, we'll only consider \cmd{\Nref}.%
+    The \cmd{\nref}\marg{label} family adds the designation to the number, and has the same four members as
+    \cmd{\rref}. The table below shows \cmd{\Nref} alone.%
 }{%
-    Om te verwijzen met de bijbehorende benaming is er de macrofamilie \cmd{\nref}\marg{label} ontwikkeld.
-    Deze familie heeft net als \cmd{\rref} vier varianten.
-    In het volgende voorbeeld gaan we voor het gemak alleen uit van \cmd{\Nref}.%
+    De familie \cmd{\nref}\marg{label} zet de benaming bij het nummer, en heeft dezelfde vier leden als
+    \cmd{\rref}. De tabel hieronder toont alleen \cmd{\Nref}.%
 }\\
 
 \noindent
@@ -734,38 +1262,41 @@ lualatex main
 
 \noindent
 \translation{%
-    A notable difference with the alternative \cmd{\zcref} is that \cmd{\nref} can take into account the position of the designation.
-    For example, consider the outcome for the point (\meta{designation} \meta{letter}).%
+    Where \cmd{\nref} differs from \cmd{\zcref} is that the designation need not stand in front of its
+    number: Dutch writes a paragraph as \meta{ordinal} \meta{designation} and a point as
+    \meta{designation} \meta{letter}, and the language decides which.%
 }{%
-    Een opmerkelijk verschil tussen het alternatief \cmd{\zcref} is dat \cmd{\nref} rekening kan houden met de positie van de benaming.
-    Kijk bijvoorbeeld naar de uitkomst van het lid (\meta{geschreven ordinaal} \meta{benoeming}).%
+    Waarin \cmd{\nref} van \cmd{\zcref} verschilt, is dat de benaming niet vóór zijn nummer hoeft te staan:
+    het Nederlands schrijft een lid als \meta{rangtelwoord} \meta{benaming} en een onderdeel als
+    \meta{benaming} \meta{letter}, en de taal bepaalt welke van de twee.%
 }\\
 
 \noindent
 \translation{%
-    With the macro families \cmd{\rref} and \cmd{\nref}, a lot is already possible; however, there are still many other factors to consider when it comes to referencing.
-    For example, the \cmd{\nref} macro already includes the correct designation, but when referring to a member, the corresponding article is not mentioned.%
+    \cmd{\rref} and \cmd{\nref} carry one level each. \cmd{\nref} gives a paragraph its designation but not
+    the article it belongs to, and a reference to a paragraph that does not name its article names half of
+    what it means.%
 }{%
-    Met de macrofamilies \cmd{\rref} en \cmd{\nref} is er dus al veel mogelijk, echter zijn er nog veel andere factoren die meespelen als het gaat om verwijzen.
-    Macro \cmd{\nref} doet bijvoorbeeld wel al de juiste benaming erbij, maar bij het verwijzen naar een lid wordt er geen bijbehorend artikel genoemd.%
+    \cmd{\rref} en \cmd{\nref} dragen elk één niveau. \cmd{\nref} geeft een lid zijn benaming maar niet het
+    artikel waar het bij hoort, en een verwijzing naar een lid die zijn artikel niet noemt, noemt de helft
+    van wat ze bedoelt.%
 }
 \DescribeMacro{\aref}
 \DescribeMacro{\Aref}
 \translation{%
-    For complete and automatic references, the \cmd{\aref}\marg{labels...} has been developed.
-    This macro family records all components of the reference.
-    Additionally, \cmd{\aref} accepts multiple labels and connects them in the correct way.
-    This can result in a list enumeration, such as \aref{ex1-sub:lorem,ex1-sub:lorem3,ex1-sub:lorem4}, or a range, like \aref{ex1-sub:lorem,ex1-sub:lorem2,ex1-sub:lorem3,ex1-sub:lorem4}.
-    However, there is one limitation: the \option{nameinlink} option cannot be applied when multiple labels are provided. This limitation does not apply when only one label is given.
-    Another additional feature is that these references are easily translatable into Dutch:%
+    \cmd{\aref}\marg{labels\ldots} writes the whole reference: every level down to the one named, in the
+    order and the wording the language asks for. It takes more than one label and joins them, as a list,
+    \aref{ex1-sub:lorem,ex1-sub:lorem3,ex1-sub:lorem4}, or as a run,
+    \aref{ex1-sub:lorem,ex1-sub:lorem2,ex1-sub:lorem3,ex1-sub:lorem4}. One limitation: with more than one
+    label, \option{nameinlink} has no effect, and the hyperlink is drawn around the numbers alone. The same
+    labels read as the language of the document does:%
 }{%
-    Voor volledige en automatische verwijzingen is de \cmd{\aref}\marg{labels...} ontwikkeld.
-    Deze macrofamilie noteert dus alle onderdelen van de verwijzing.
-    Daarnaast accepteert \cmd{\aref} meerdere labels en koppelt het de labels op de juiste manier.
-    Dit kan een lijst opsomming geven, zoals \aref{ex1-sub:lorem,ex1-sub:lorem3,ex1-sub:lorem4}, of een reeks, zoals \aref{ex1-sub:lorem,ex1-sub:lorem2,ex1-sub:lorem3,ex1-sub:lorem4}.
-    Hierop is alleen één tekortkoming, namelijk, de optie \option{nameinlink} kan niet toegepast worden wanneer er meerdere labels meegegeven worden.
-    Deze tekortkoming geldt niet wanneer er één label wordt meegegeven.
-    Een andere bijkomstigheid is dat deze verwijzingen gemakkelijk te vertalen zijn naar het Engels:%
+    \cmd{\aref}\marg{labels\ldots} schrijft de hele verwijzing uit: ieder niveau tot aan het genoemde, in de
+    volgorde en de bewoording die de taal vraagt. Hij neemt meer dan één label en koppelt ze, als opsomming,
+    \aref{ex1-sub:lorem,ex1-sub:lorem3,ex1-sub:lorem4}, of als reeks,
+    \aref{ex1-sub:lorem,ex1-sub:lorem2,ex1-sub:lorem3,ex1-sub:lorem4}. Eén beperking: bij meer dan één label
+    heeft \option{nameinlink} geen effect en wordt de hyperlink alleen om de nummers getrokken. Dezelfde
+    labels lezen zoals de taal van het document dat doet:%
 }\\
 \begin{lstlisting}[style=tex]
 \selectlanguage{dutch} / \selectlanguage{english}
@@ -780,8 +1311,14 @@ en / and \aref{ex1-sub:lorem,ex1-sub:lorem2,ex1-sub:lorem3,ex1-sub:lorem4}.
     \translation{en}{and} \aref{ex1-sub:lorem,ex1-sub:lorem2,ex1-sub:lorem3,ex1-sub:lorem4}.
 \end{center}
 \translation{\selectlanguage{english}}{\selectlanguage{dutch}}
-\translation{The only limitation that arises is that the reference name for the document isn't translated.
-}{De enige beperking die optreedt is dat de verwijsnaam voor het document niet vertaald is.}
+\translation{%
+    What does not follow the language is the wording that names \emph{another} document: that is the
+    \texttt{ref label} of \zcref{sec:extern}, which is written once and stays as it is written.%
+}{%
+    Wat de taal niet volgt is de verwoording die een \emph{ander} document noemt: dat is de
+    \texttt{ref label} van \zcref{sec:extern}, die één keer geschreven wordt en blijft zoals ze
+    geschreven is.%
+}
 
 \subsection{\translation{Conjunction}{Conjunctie}}
 \DescribeMacro{\setmiddleconjunction\\\marg{format}}
@@ -789,11 +1326,11 @@ en / and \aref{ex1-sub:lorem,ex1-sub:lorem2,ex1-sub:lorem3,ex1-sub:lorem4}.
 \DescribeMacro{\setrangeconjunction}
 \DescribeMacro{\setconjunction\\\marg{middle}\\\marg{last}\\\marg{range}\\}
 \translation{%
-    The linking of labels is done through \package{zref}.
-    However, thanks to the reimplementation, other macros have been written in a similar way as \package{cleveref} does, i.e:%
+    Labels are joined through \package{zref}, and which words join them is set the way \package{cleveref}
+    sets it:%
 }{%
-    Het koppelen van de labels gebeurt via \package{zref}.
-    Er zijn echter dankzij de herimplementatie andere macro's geschreven op een vergelijkbare manier als \package{cleveref} dat doet, namelijk:%
+    Labels worden via \package{zref} gekoppeld, en welke woorden ze koppelen wordt ingesteld zoals
+    \package{cleveref} dat doet:%
 }
 \begin{lstlisting}[style=tex]
 \setmiddleconjunction{, }
@@ -804,179 +1341,262 @@ en / and \aref{ex1-sub:lorem,ex1-sub:lorem2,ex1-sub:lorem3,ex1-sub:lorem4}.
 \DescribeMacro{\setjuncto}
 \DescribeMacro{\unsetjuncto}
 \translation{%
-    There are also macros to easily switch to legacy notation.
-    With \cmd{\setjuncto}, one can switch throughout the document to the conjunction word `\texttt{ jo.\textbackslash\ }'.
-    Using \cmd{\unsetjuncto} restores \cmd{\lastconjunction} back to `\texttt{ and }'.
-    If manual changes have been made to the conjunctions earlier, those changes will be overridden by one of these macros.
-    In that case, use \cmd{\setlastconjunction}\marg{value} instead of \cmd{\unsetjuncto}.
-    The package option \option{legacy} calls \cmd{\setjuncto} right away.
+    Two more switch to the older notation and back. \cmd{\setjuncto} makes the last conjunction
+    `\texttt{ jo.\textbackslash\ }' from that point on, and \cmd{\unsetjuncto} puts `\texttt{ and }' back.
+    Both overwrite whatever \cmd{\setlastconjunction} was given earlier, so a document that set its own
+    wording restores it with \cmd{\setlastconjunction}\marg{value} rather than with \cmd{\unsetjuncto}. The
+    package option \option{legacy} calls \cmd{\setjuncto} at once.
 }{%
-    Er zijn ook macro's om gemakkelijk naar verouderde notatie te schakelen.
-    Met \cmd{\setjuncto} kan er willekeurig in het document omgeschakeld worden naar het koppelwoord `\texttt{ jo.\textbackslash\ }'.
-    Door \cmd{\unsetjuncto} te gebruiken wordt \cmd{\lastconjunction} weer terug gezet naar `\texttt{ en }'.
-    Als eerder handmatig de koppelingen zijn veranderd, dan zijn die wijzigingen door één van deze macro's overschreven.
-    Gebruik dan in plaats van \cmd{\unsetjuncto} \cmd{\setlastconjunction}\marg{waarde}.
-    De pakketoptie \option{legacy} roept \cmd{\setjuncto} direct aan.
+    Twee andere schakelen naar de oudere notatie en terug. \cmd{\setjuncto} maakt het laatste koppelwoord
+    vanaf dat punt `\texttt{ jo.\textbackslash\ }', en \cmd{\unsetjuncto} zet `\texttt{ en }' terug.
+    Beide overschrijven wat er eerder met \cmd{\setlastconjunction} is meegegeven, dus een document dat een
+    eigen bewoording heeft gezet herstelt die met \cmd{\setlastconjunction}\marg{waarde} en niet met
+    \cmd{\unsetjuncto}. De pakketoptie \option{legacy} roept \cmd{\setjuncto} meteen aan.
 }
 \clearpage
 
-\section{\translation{Interdocument References}{Interdocumentaire Verwijzingen}}\label{sec:extern}
-\translation{Referencing Other Documents Generated with the \package{regulatory} Package is Quite Simple.}{Verwijzen naar andere documenten gegenereerd met het \package{regulatory} pakket kan vrij eenvoudig.}
+\section{\translation{Interdocument references}{Interdocumentaire verwijzingen}}\label{sec:extern}
+\translation{%
+    A document written with this package refers to the articles, paragraphs, points and definitions of
+    another one written with it.%
+}{%
+    Een document dat met dit pakket geschreven is verwijst naar de artikelen, leden, onderdelen en
+    definities van een ander document dat daarmee geschreven is.%
+}
+
+\noindent
+\fbox{\parbox{\dimexpr\linewidth-2\fboxsep-2\fboxrule}{%
+    \translation{%
+        \textbf{Before building a document architecture on this.} A document that refers to the
+        provisions of an external document cannot reach \textbf{PDF/A-3}. Every such reference becomes a
+        \texttt{/GoToR} action pointing at a file specification that carries \texttt{/AFRelationship
+        /Unspecified}, has no \texttt{/EF} and is not listed in \texttt{/AF}, which fails ISO 19005-3
+        rule 6.8-4. The specification is written for the link, by the PDF management of \LaTeX{} and not
+        by this package, so the profile stays out of reach until that is settled upstream.
+
+        Measured on the two example documents: \file{example1-nl} makes eleven such references and
+        carries one such specification, and fails PDF/A-3b on that rule; \file{example2-nl} refers to no
+        provisions of another document, \emph{attaches} one and cites its definitions, has no
+        \texttt{/GoToR} at all, and reaches PDF/A-3a. So attaching another document and citing its
+        definitions is not what costs the profile\,---\,referring to its articles, paragraphs and points
+        is. Every other profile in \zcref{sec:conformance} is unaffected either way.%
+    }{%
+        \textbf{Voordat u een documentarchitectuur hierop bouwt.} Een document dat naar de bepalingen
+        van een extern document verwijst haalt \textbf{PDF/A-3} niet. Iedere zo'n verwijzing wordt een
+        \texttt{/GoToR}-actie die naar een bestandsspecificatie wijst die \texttt{/AFRelationship
+        /Unspecified} draagt, geen \texttt{/EF} heeft en niet in \texttt{/AF} staat, wat faalt op regel
+        6.8-4 van ISO 19005-3. Die specificatie wordt voor de link geschreven, door de
+        PDF-administratie van \LaTeX{} en niet door dit pakket, dus het profiel blijft buiten bereik tot
+        dat verderop opgelost is.
+
+        Gemeten aan de twee voorbeelddocumenten: \file{example1-nl} maakt elf van zulke verwijzingen en
+        draagt één zo'n specificatie, en faalt daarop voor PDF/A-3b; \file{example2-nl} verwijst naar
+        geen enkele bepaling van een ander document, \emph{voegt} er een bij en haalt diens definities
+        aan, heeft geen enkele \texttt{/GoToR}, en haalt PDF/A-3a. Een ander document bijvoegen en zijn
+        definities aanhalen kost het profiel dus niet\,---\,naar zijn artikelen, leden en onderdelen
+        verwijzen wel. Ieder ander profiel in \zcref{sec:conformance} blijft hoe dan ook ongemoeid.%
+    }}}\\
+
+\noindent
 \DescribeMacro{\refdocument\\\oarg{prefix}\\\marg{name}\\\marg{opts...}}
 \translation{%
-    After specifying \cmd{\refdocument} in the preamble, it is possible to refer to articles, paragraphs, and points.
-    The macro family \cmd{\aref} continues to work seamlessly, thanks to \cmd{\zexternaldocument} from \package{zref-xr}.
-    To avoid ambiguity, a special \option{prefix} can be added.
-    If a \option{prefix} is omitted, a default \option{prefix} is still applied, namely \texttt{ext-}.
-    For instance, label \texttt{lid:lorem} becomes \texttt{ext-lid:lorem}.
-    Note that the \option{prefix} does not apply when referring to definitions with \cmd{\gls}.%
+    \cmd{\refdocument} in the preamble is what makes the articles, paragraphs and points of another document
+    referable; \cmd{\aref} then reads its labels through \cmd{\zexternaldocument} of \package{zref-xr}.
+    Both documents may well use the same label, so every label of the other one is given a \option{prefix},
+    \texttt{ext-} unless another is named: \texttt{lid:lorem} is referred to as \texttt{ext-lid:lorem}. The
+    prefix is for references and not for definitions, which \cmd{\gls} cites under their own label.%
 }{%
-    Na het opgeven van \cmd{\refdocument} in de preamble kan er naar artikelen, leden en onderdelen verwezen worden.
-    De macro familie \cmd{\aref} blijft dankzij \cmd{\zexternaldocument} van \package{zref-xr} nog steeds werken.
-    Om ambiguïteit te voorkomen kan er een speciale \option{prefix} toegevoegd worden.
-    Bij het weglaten van een \option{prefix} is er alsnog een \option{prefix}, namelijk \texttt{ext-}.
-    Label \texttt{lid:lorem} wordt dan \texttt{ext-lid:lorem}.
-    Let wel dat de \option{prefix} niet geldt voor het verwijzen naar definities met \cmd{\gls}.%
+    \cmd{\refdocument} in de preamble is wat de artikelen, leden en onderdelen van een ander document
+    aanhaalbaar maakt; \cmd{\aref} leest diens labels dan via \cmd{\zexternaldocument} van
+    \package{zref-xr}.
+    Beide documenten kunnen hetzelfde label gebruiken, dus ieder label van het andere krijgt een
+    \option{prefix}, \texttt{ext-} tenzij er een andere genoemd wordt: naar \texttt{lid:lorem} wordt
+    verwezen als \texttt{ext-lid:lorem}. De prefix geldt voor verwijzingen en niet voor definities, die
+    \cmd{\gls} onder hun eigen label aanhaalt.%
 }\\
 
 \noindent
 \DescribeMacro{\masterdocument\\\oarg{prefix}\\\marg{name}\\\marg{opts...}\\}
 \translation{%
-    To create a complete link with other \package{regulatory} documents, the \cmd{\masterdocument} macro is used.
-    A complete link involves:%
+    \cmd{\masterdocument} is the whole link rather than half of one. It does what \cmd{\refdocument} does and
+    three things more:%
 }{%
-    Om een volledige koppeling te maken met andere \package{regulatory} documenten wordt de \cmd{\masterdocument} macro gebruikt.
-    Een volledige koppeling houdt in:%
+    \cmd{\masterdocument} legt de hele koppeling en niet de helft ervan. Hij doet wat \cmd{\refdocument}
+    doet en daarbij nog drie dingen:%
 }
 \begin{enumerate}
-    \item \translation{referring with the \cmd{\aref} family}{verwijzen met de \cmd{\aref} familie};
-    \item \translation{referencing definitions with the \cmd{\gls} family}{verwijzen naar definities met de \cmd{\gls} familie};
-    \item \translation{referring to the associated document}{verwijzen naar het bijbehorende document};
-    \item \translation{a footnote with the document attached as an appendix to the first occurrence of a reference or definition}{een voetnoot met het document als bijlage bij de eerste verschijning van een verwijzing of definitie}.
+    \item \translation{references with the \cmd{\aref} family}{verwijzen met de \cmd{\aref} familie};
+    \item \translation{definitions of that document, cited with the \cmd{\gls} family}{definities van dat document, aangehaald met de \cmd{\gls} familie};
+    \item \translation{the document named in the sentence that cites it}{het document genoemd in de zin die het aanhaalt};
+    \item \translation{a footnote at the first reference or definition, with the document itself embedded in the PDF file as an attachment}{een voetnoot bij de eerste verwijzing of definitie, met het document zelf als bijlage ingesloten in het PDF-bestand}.
 \end{enumerate}
 \translation{%
-    It's even possible for a document to have multiple 'master' documents, as is the case with this document (in Dutch):%
+    A document may have more than one master document, as this manual has:%
 }{%
-    Het kan zelfs dat een document meerdere `master' documenten heeft, zoals dit document:%
+    Een document kan meer dan één masterdocument hebben, zoals deze handleiding:%
 }
+\ifenglishmanual
 \begin{lstlisting}[style=tex]
-\newcommand\definitionlabel[1]{~(zie #1)}
-\masterdocument[ex1-]{example1}{
+\newcommand\definitionlabel[1]{~(see #1)}
+\masterdocument[ex1-]{example1-en}{
+    path=../test/,
     defs=example1,
     author=E. Nijenhuis,
-    subject= Voorbeeld Één,
-    description = Het éérste voorbeeld document,
+    subject=Example One,
+    description=The first example document,
+    ref label=of Example One,
+    def label=\definitionlabel
+}
+
+\masterdocument[ex2-]{example2-en}{
+    path=../test/,
+    defs=example2,
+    author=E. Nijenhuis,
+    subject=Example Two,
+    description=The second example document,
+    ref label=of Example Two,
+    def label=\definitionlabel
+}
+\end{lstlisting}
+\else
+\begin{lstlisting}[style=tex]
+\newcommand\definitionlabel[1]{~(zie #1)}
+\masterdocument[ex1-]{example1-nl}{
+    path=../test/,
+    defs=example1,
+    author=E. Nijenhuis,
+    subject=Voorbeeld Één,
+    description=Het éérste voorbeeld document,
     ref label=van Voorbeeld Één,
     def label=\definitionlabel
 }
 
-\masterdocument[ex2-]{example2}{
+\masterdocument[ex2-]{example2-nl}{
+    path=../test/,
     defs=example2,
     author=E. Nijenhuis,
-    subject= Voorbeeld Twee,
-    description = Het tweede voorbeeld document,
+    subject=Voorbeeld Twee,
+    description=Het tweede voorbeeld document,
     ref label=van Voorbeeld Twee,
     def label=\definitionlabel
 }
 \end{lstlisting}
+\fi
 
 \translation{%
-    Both macros \cmd{\refdocument} and \cmd{\masterdocument} have, as a third argument, a choice among the following options:
+    The third argument of \cmd{\refdocument} and \cmd{\masterdocument} holds the fields below. A field this
+    package does not know is an error where it is given rather than a value stored under a name nothing
+    reads back.
 }{%
-    Beide macro's \cmd{\refdocument} en \cmd{\masterdocument} hebben als derde argument keuze uit de volgende opties:%
+    Het derde argument van \cmd{\refdocument} en \cmd{\masterdocument} bevat de velden hieronder. Een veld
+    dat dit pakket niet kent is een fout waar het gegeven wordt, en niet een waarde die onder een naam
+    wordt opgeslagen die niemand terugleest.%
 }
 \begin{labeling}{\texttt{footnote label}}
     \addtokomafont{labelinglabel}{\ttfamily}
     \item[name] \translation{%
-        by default, the same as the first argument of the macros.%
+        the first argument of the macro by default. It is the name the aux file of the other document is
+        read under.%
     }{%
-        standaard hetzelfde als het eerste argument van de macro's.%
+        standaard het eerste argument van de macro. Het is de naam waaronder het aux-bestand van het andere
+        document gelezen wordt.%
     }
     \item[filename] \translation{%
-        by default, the first argument concatenated with \texttt{.pdf}.
-        This option can be overridden if the name does not correspond to the filename.%
+        the \texttt{name} with \texttt{.pdf} after it by default, for a document whose file is not named
+        after it.%
     }{%
-        standaard het eerste argument met \texttt{.pdf} geconcateneerd.
-        Deze optie kan overschreven worden wanneer de naam niet correspondeerd met de bestandsnaam.%
+        standaard de \texttt{name} met \texttt{.pdf} erachter, voor een document waarvan het bestand niet
+        naar hem genoemd is.%
     }
     \item[path] \translation{%
-        by default \texttt{./}, prepended to both the name and the filename, for documents kept in another
-        directory.%
+        \texttt{./} by default, put in front of both the name and the filename, for documents kept in
+        another directory.%
     }{%
-        standaard \texttt{./}, geplaatst voor zowel de naam als de bestandsnaam, voor documenten die in een
+        standaard \texttt{./}, geplaatst vóór zowel de naam als de bestandsnaam, voor documenten die in een
         andere map staan.%
     }
     \item[ref label] \translation{%
-        by default, this macro has no value, and in that case, the following default value is used in \cmd{\documentlabel}:%
+        the wording that names the other document in a sentence, as in \enquote{article 2 \emph{of the
+        general terms}}. It is empty by default, and \cmd{\documentlabel} then composes one from the
+        \texttt{subject}:%
     }{%
-        standaard heeft deze macro geen waarde en in dat geval wordt er in \cmd{\documentlabel} de volgende standaard waarde gebruikt:%
+        de verwoording die het andere document in een zin noemt, zoals in \enquote{artikel 2 \emph{van de
+        algemene voorwaarden}}. Hij is standaard leeg, en \cmd{\documentlabel} stelt er dan zelf een samen
+        uit de \texttt{subject}:%
     } \lstinline|\GetTranslation{of the} \artifactsubject{#1}|.
     \translation{%
-        This macro receives the \texttt{name} of the document as an argument.%
+        Not every language can compose it; see \zcref{sec:lang}, where German and French say so out loud.%
     }{%
-        Deze macro krijgt als argument de \texttt{name} van het document.%
+        Niet iedere taal kan die samenstellen; zie \zcref{sec:lang}, waar het Duits en het Frans dat hardop
+        zeggen.%
     }
     \item[def label] \translation{%
-        by default, this macro has the following value:%
+        what stands behind a definition that comes from the other document. The default is%
     }{%
-        standaard heeft deze macro de volgende waarde:%
+        wat er achter een definitie staat die uit het andere document komt. De standaardwaarde is%
     } \lstinline|~(\GetTranslation{see} #1)|.
     \translation{%
-        The argument contains the \texttt{subject} with a possible footnote (depending on \texttt{referred}).%
+        Its argument is the \texttt{subject}, with the footnote of the first occurrence attached to it.%
     }{%
-        Het argument bevat de \texttt{subject} met eventueel de footnote (afhankelijk van \texttt{referred}).%
+        Het argument is de \texttt{subject}, met de voetnoot van de eerste verschijning eraan vast.%
     }
     \item[footnote] \translation{%
-        by default, the value is \texttt{true}, so that footnotes are added at the first occurrence.
-        This can be set to \texttt{false} to prevent this.%
+        \texttt{true} by default, so that the first reference or definition carries a footnote with the
+        document attached to it. \texttt{false} leaves the footnote out.%
     }{%
-        standaard is de waarde \texttt{true}, zodat er voetnoten geplaatst worden bij de eerste verschijning.
-        Deze kan naar \texttt{false} gezet worden om dit te voorkomen.%
+        standaard \texttt{true}, zodat de eerste verwijzing of definitie een voetnoot draagt met het
+        document eraan gehecht. Met \texttt{false} blijft de voetnoot achterwege.%
     }
     \item[footnote label] \translation{%
-        This macro receives the attached document with \texttt{subject} as its representation in the text.
-        By default, this macro only prints the first argument.%
+        what that footnote says. Its argument is the attachment, with the \texttt{subject} as the text it
+        is offered under; by default the macro prints that argument and nothing else.%
     }{%
-        deze macro krijgt als argument het bijgevoegde document met \texttt{subject} als weergave in de tekst.
-        Standaard print deze macro enkel het eerste argument.%
-    }
-    \item[url] \translation{%
-        this option is yet to be implemented.
-        The purpose of this option is to indicate the source of the document in the footnote.%
-    }{%
-        deze optie wordt is nog niet geïmplementeerd.
-        De bedoeling van deze optie is om in de voetnoot de vindplaats van het document te duiden.%
-    }
-    \item[referred] \translation{%
-        This option is for internal use.
-        \cmd{\documentfootnote} sets this value to \texttt{true}.%
-    }{%
-        deze optie is voor intern gebruik.
-        \cmd{\documentfootnote} zet deze waarde naar \texttt{true}.%
+        wat die voetnoot zegt. Het argument is de bijlage, met de \texttt{subject} als de tekst waaronder
+        hij wordt aangeboden; standaard drukt de macro dat argument af en verder niets.%
     }
     \item[defs] \translation{%
-        This option is used to load external definition lists under this document.
-        This way, the correct source can be mentioned for first occurrences of definitions.%
+        the definitions of the other document, loaded under it, so that a definition cited from it names
+        where it comes from.%
     }{%
-        deze optie wordt gebruikt om externe definitielijsten in te laden onder dit document.
-        Op deze manier kan bij eerste verschijningen van definities de juiste bron vermeldt worden.%
+        de definities van het andere document, onder dat document ingeladen, zodat een definitie die
+        eruit wordt aangehaald noemt waar hij vandaan komt.%
     }
     \item[author] \translation{%
-        This option is used in \cmd{\documentattachment} for metadata purposes in some PDF viewing applications.%
+        the author of the embedded file, which a PDF viewer shows beside the attachment.%
     }{%
-        deze optie wordt in \cmd{\documentattachment} gebruikt voor metadata t.b.v.\ sommige PDF-weergave applicaties.%
+        de auteur van het ingesloten bestand, die een PDF-viewer bij de bijlage toont.%
     }
     \item[subject] \translation{%
-        This option is used, like \texttt{author}, in the appendix.%
+        the name this document calls the other one by. It is what \texttt{ref label} and \texttt{def label}
+        fall back on, and it is the description of the embedded file.%
     }{%
-        deze optie wordt net als \texttt{author} gebruikt in de bijlage.%
+        de naam waarmee dit document het andere aanduidt. Het is waar \texttt{ref label} en
+        \texttt{def label} op terugvallen, en het is de omschrijving van het ingesloten bestand.%
     }
     \item[description] \translation{%
-        This option is used, like \texttt{author}, in the appendix.%
+        a longer description of the embedded file, shown by a viewer beside the attachment.%
     }{%
-        deze optie wordt net als \texttt{author} gebruikt in de bijlage.%
+        een langere omschrijving van het ingesloten bestand, die een viewer bij de bijlage toont.%
     }
 \end{labeling}
+\translation{%
+    Two more fields are accepted and are not for a document to set;
+    see \zcref{sec:api} for what that means for a release.
+    \texttt{referred} records that an artifact has had its footnote, which \cmd{\documentfootnote} sets and
+    a document that sets it by hand only uses to suppress a footnote it never saw. \texttt{url} is
+    reserved: it is stored, it is readable with \cmd{\artifacturl}, and nothing in this bundle reads it. It
+    was meant to name where the other document may be found, in the footnote beside the attachment, and
+    that is not implemented. The name is kept free for exactly that.%
+}{%
+    Er worden nog twee velden aanvaard die niet door een document gezet horen te worden;
+    zie \zcref{sec:api} voor wat dat voor een uitgave betekent.
+    \texttt{referred} legt vast dat een artefact zijn voetnoot gehad heeft, wat \cmd{\documentfootnote}
+    zet en waarmee een document dat het met de hand zet enkel een voetnoot onderdrukt die het nooit gezien
+    heeft. \texttt{url} is gereserveerd: hij wordt opgeslagen, hij is met \cmd{\artifacturl} te lezen, en
+    niets in deze bundel leest hem. Het was de bedoeling dat hij de vindplaats van het andere document zou
+    noemen, in de voetnoot naast de bijlage, en dat is niet geïmplementeerd. De naam blijft daarvoor
+    vrijgehouden.%
+}
 
 \noindent
 \DescribeMacro{\documentlabel\\\marg{label}}
@@ -984,19 +1604,116 @@ en / and \aref{ex1-sub:lorem,ex1-sub:lorem2,ex1-sub:lorem3,ex1-sub:lorem4}.
 \DescribeMacro{\documentattachment\\\marg{label}\\\marg{link text}}
 \DescribeMacro{\attachdocument\\\oarg{description}\\\marg{filename}\\\marg{link text}}
 \translation{%
-    For both references to definitions and articles, etc., the source is mentioned, and at the first appearance, a footnote is placed with an appendix of the document.
-    Behind the scenes, \cmd{\documentlabel}\footnote{This macro uses the label of references and not definitions.}, \cmd{\documentfootnote}, and \cmd{\documentattachment} are invoked for articles, etc., and definitions.
-    Any other file is attached with \cmd{\attachdocument}, which does not need an artifact of its own.%
+    A reference or a definition that comes from another document names that document, and the first one of
+    either carries a footnote with the document embedded in it. Three commands do that between them:
+    \cmd{\documentlabel}\footnote{This one words the name for a reference and not for a definition, which
+    has a \texttt{def label} of its own.} words the name, \cmd{\documentfootnote} places the footnote, and
+    \cmd{\documentattachment} embeds the file and offers it under the text it is given. Any other file is
+    embedded with \cmd{\attachdocument}, which needs no artifact of its own.%
 }{%
-    Voor zowel verwijzingen naar definities als artikelen e.d.\ wordt de bron vermeldt en wordt er bij de eerste verschijning een voetnoot geplaatst met een bijlage van het exemplaar.
-    Onder water worden \cmd{\documentlabel}\footnote{Deze macro gebruikt het label van verwijzingen en dus niet van definities.} \cmd{\documentfootnote} en \cmd{\documentattachment} aangeroepen voor artikelen e.d.\ en definities.
-    Ieder ander bestand wordt bijgevoegd met \cmd{\attachdocument}, welke geen eigen artefact nodig heeft.%
+    Een verwijzing of een definitie die uit een ander document komt noemt dat document, en de eerste van
+    beide draagt een voetnoot met dat document erin ingesloten. Drie commando's doen dat samen:
+    \cmd{\documentlabel}\footnote{Deze verwoordt de naam voor een verwijzing en niet voor een definitie, die
+    een eigen \texttt{def label} heeft.} verwoordt de naam, \cmd{\documentfootnote} plaatst de voetnoot, en
+    \cmd{\documentattachment} sluit het bestand in en biedt het aan onder de tekst die hij meekrijgt. Ieder
+    ander bestand wordt ingesloten met \cmd{\attachdocument}, die geen eigen artefact nodig heeft.%
 }\\
 
 \noindent
-\translation{These macros can be called manually.}{Deze macro's kunnen ook handmatig uitgevoerd worden.}
-\translation{For example,}{Neem b\ij{}voorbeeld} \lstinline[style=tex]|\documentfootnote{example2}| \translation{, which results in}{wat zou leiden tot}:
+\translation{These commands can also be called by hand.}{Deze commando's kunnen ook met de hand aangeroepen worden.}
+\translation{For example,}{Neem b\ij{}voorbeeld} \lstinline[style=tex]|\documentfootnote{example2}|\translation{, which gives}{, wat geeft}:
 `\documentfootnote{example2-\translation{en}{nl}}'.
+
+\subsection{\translation{Which link opens an attachment}{Welke link een bijlage opent}}\label{sec:attachmentlink}
+\translation{%
+    The \option{attachmentlink} option decides what \cmd{\documentattachment} puts on the page. The file
+    itself is embedded either way and appears in the attachment pane of the viewer, which needs no link at
+    all; what differs is what happens where the text stands.
+
+    \texttt{goto}, the default, makes that text a hyperlink carrying an embedded go-to action, which names
+    a file \emph{inside this document}. That is the thing there is to say, and it is the one action
+    \package{poppler} does not implement. Measured in the shared library rather than read out of a manual:
+    it names \texttt{GoTo}, \texttt{GoToR}, \texttt{Launch} and \texttt{Named} among its actions and
+    \texttt{GoToE} nowhere, and \texttt{FileAttachment} among its annotations. \package{poppler} is the
+    engine under most viewers on a free desktop, so there that link does nothing.
+
+    \option{attachmentlink=annotation} places a file attachment annotation over the same text instead,
+    which Acrobat and \package{poppler} both act on. It shows nothing of its own\,---\,the text stays the
+    only thing on the page\,---\,and it is the annotation that opens.%
+}{%
+    De optie \option{attachmentlink} bepaalt wat \cmd{\documentattachment} op de pagina zet. Het bestand
+    zelf wordt hoe dan ook ingesloten en verschijnt in het bijlagenpaneel van de viewer, dat helemaal geen
+    link nodig heeft; wat verschilt is wat er gebeurt waar de tekst staat.
+
+    \texttt{goto}, de standaard, maakt van die tekst een hyperlink met een embedded go-to action, die een
+    bestand \emph{binnen dit document} noemt. Dat is wat er te zeggen valt, en het is de ene actie die
+    \package{poppler} niet implementeert. Gemeten in de gedeelde bibliotheek in plaats van gelezen in een
+    handleiding: die noemt \texttt{GoTo}, \texttt{GoToR}, \texttt{Launch} en \texttt{Named} onder zijn
+    acties en \texttt{GoToE} nergens, en \texttt{FileAttachment} onder zijn annotaties. \package{poppler}
+    is de motor onder de meeste viewers op een vrij bureaublad, dus daar doet die link niets.
+
+    \option{attachmentlink=annotation} legt in plaats daarvan een file attachment annotatie over dezelfde
+    tekst, waar Acrobat en \package{poppler} allebei gehoor aan geven. Hij laat zelf niets zien\,---\,de
+    tekst blijft het enige op de pagina\,---\,en de annotatie is wat opent.%
+}
+
+\begin{center}
+    \begin{tabular}{@{}lll@{}}
+        & \texttt{goto} & \texttt{annotation} \\
+        \hline
+        \translation{PDF construct}{PDF-constructie}
+            & \translation{embedded go-to action}{embedded go-to action}
+            & \translation{file attachment annotation}{file attachment annotatie} \\
+        \translation{opens in Acrobat}{opent in Acrobat}            & \translation{yes}{ja}   & \translation{yes}{ja} \\
+        \translation{opens in \package{poppler}}{opent in \package{poppler}} & \translation{no}{nee} & \translation{yes}{ja} \\
+        \translation{in the attachment pane}{in het bijlagenpaneel} & \translation{yes}{ja}   & \translation{yes}{ja} \\
+        \translation{structure element}{structuurelement}           & \texttt{Link}           & \texttt{Annot} \\
+        \translation{link text inside it}{linktekst erin}           & \translation{yes}{ja}   & \translation{no, beside it}{nee, ernaast} \\
+        \translation{measured PDF/A-4f}{gemeten PDF/A-4f}           & \translation{pass}{slaagt} & \translation{pass}{slaagt} \\
+        \translation{measured PDF/UA-2}{gemeten PDF/UA-2}           & \translation{pass}{slaagt} & \translation{pass}{slaagt} \\
+    \end{tabular}
+\end{center}
+\noindent
+\translation{%
+    The two viewer rows are what the two constructs are; the two structure rows are measured, and they are
+    why the default did not change for this release. A file attachment is a markup annotation, and PDF/UA
+    asks that one be enclosed in an \texttt{Annot} structure element. The annotation route puts it there,
+    and the text it stands beside remains a sibling of it rather than its content, where the \texttt{goto}
+    route makes that text the content of its \texttt{Link} element. Measured on the same document:
+    \texttt{goto} gives a \texttt{Link} with two kids, the marked content of the text and the object
+    reference; \texttt{annotation} gives an \texttt{Annot} with one. Joining the two on the annotation
+    route is a job of its own and is not in this release.
+
+    Do not take a validator's word for that either way. The veraPDF this manual is measured with reported
+    nothing when the \texttt{Annot} element was missing altogether and an older one did, so the suite reads
+    the structure tree out of the PDF file itself rather than asking for a verdict; \zcref{sec:checks} has
+    that assertion.
+
+    What is left is a question about documents rather than about PDF. A reference a reader meets in the
+    flow of a sentence is not the same offer as one that stands beside it, and \texttt{goto} is the route
+    that makes the offer in the sentence. A document whose readers are on a free desktop and who are meant
+    to open the attachment from the page says \option{attachmentlink=annotation} and gets the other trade.%
+}{%
+    De twee viewerregels zijn wat de twee constructies zijn; de twee structuurregels zijn gemeten, en zij
+    zijn de reden dat de standaard voor deze uitgave niet veranderd is. Een bijlage-annotatie is een
+    markup-annotatie, en PDF/UA vraagt dat zo een in een \texttt{Annot}-structuurelement zit. De
+    annotatieroute zet hem daarin, en de tekst waar hij naast staat blijft daarvan een broer in plaats van
+    zijn inhoud, terwijl de route \texttt{goto} van die tekst juist de inhoud van zijn
+    \texttt{Link}-element maakt. Gemeten aan hetzelfde document: \texttt{goto} geeft een \texttt{Link} met
+    twee kinderen, de gemarkeerde inhoud van de tekst en de objectverwijzing; \texttt{annotation} geeft een
+    \texttt{Annot} met één. Die twee op de annotatieroute samenbrengen is een klus op zich en zit niet in
+    deze uitgave.
+
+    Neem een validator daarin niet op zijn woord, welke kant ook op. De veraPDF waarmee deze handleiding
+    gemeten is meldde niets toen het \texttt{Annot}-element helemaal ontbrak en een oudere meldde het wel,
+    dus de suite leest de structuurboom zelf uit het PDF-bestand in plaats van om een oordeel te vragen;
+    \zcref{sec:checks} bevat die controle.
+
+    Wat overblijft is een vraag over documenten en niet over PDF. Een verwijzing die een lezer in de loop
+    van een zin tegenkomt is een ander aanbod dan een die ernaast staat, en \texttt{goto} is de route die
+    het aanbod in de zin doet. Een document waarvan de lezers op een vrij bureaublad zitten en de bijlage
+    vanaf de pagina horen te openen zegt \option{attachmentlink=annotation} en krijgt de andere ruil.%
+}
 
 \clearpage
 
@@ -1038,6 +1755,15 @@ en / and \aref{ex1-sub:lorem,ex1-sub:lorem2,ex1-sub:lorem3,ex1-sub:lorem4}.
     de engine. Een document dat geen van beide biedt krijgt een waarschuwing en een getekend kader zonder
     veld: een lijn om op papier te tekenen, maar niets om in een viewer te ondertekenen.%
 }
+\ifenglishmanual
+\begin{lstlisting}[style=tex]
+\article{Signatures}
+\begin{paras}
+    \item The client signs below.\\
+        \signaturefield[Signature of the client]{client}{6cm}{2cm}
+\end{paras}
+\end{lstlisting}
+\else
 \begin{lstlisting}[style=tex]
 \article{Ondertekening}
 \begin{paras}
@@ -1045,6 +1771,7 @@ en / and \aref{ex1-sub:lorem,ex1-sub:lorem2,ex1-sub:lorem3,ex1-sub:lorem4}.
         \signaturefield[Handtekening van de opdrachtgever]{opdrachtgever}{6cm}{2cm}
 \end{paras}
 \end{lstlisting}
+\fi
 \translation{%
     \cmd{\SignatureField} is the name this command had in \package{xdp-sign} and still answers to, so a
     document written for that package keeps working when it moves over.
@@ -1069,7 +1796,7 @@ en / and \aref{ex1-sub:lorem,ex1-sub:lorem2,ex1-sub:lorem3,ex1-sub:lorem4}.
     verschijning, die ze allemaal delen: de lijn om op te tekenen wordt op de pagina gezet en niet door de
     annotatie, dus een verschijning die iets tekende zou het dubbel tekenen, en een ondertekentool vervangt
     de normale verschijning door de zijne zodra het veld getekend wordt. Het geval staat in de tabel van
-    \zcref{sec:conformance} en slaagt; de harnas maakt van een onverwacht geslaagd geval een fout, en zo
+    \zcref{sec:conformance} en slaagt; het harnas maakt van een onverwacht geslaagd geval een fout, en zo
     heeft dit geval zich gemeld.%
 }
 \clearpage
@@ -1077,37 +1804,100 @@ en / and \aref{ex1-sub:lorem,ex1-sub:lorem2,ex1-sub:lorem3,ex1-sub:lorem4}.
 \section{\translation{External sources}{Externe bronnen}}\label{sec:sources}
 \translation{%
     A regulatory document cites instruments that are not this document: a statute, a regulation of the
-    Union. \package{regulatory-sources} holds the ones a document cites, so that the wording of a citation
-    is a property of the document rather than of the sentence it happens to stand in.
+    Union. \package{regulatory-sources} holds the ones a document cites and words the citations of them,
+    so that how a citation reads is a property of the source and of the document rather than of the
+    sentence it happens to stand in.
 
-    This module reads and holds; the wording of a citation is the next module and is not here yet.%
+    The module does three things. It \emph{reads} sources, from a \file{bib} file
+    (\cmd{\loadsources}) or from the document itself (\cmd{\newsource}), and holds them against the fields
+    their type requires. It \emph{stores} them, so that \cmd{\srcfield} and \cmd{\srctype} give back what
+    was declared. And it \emph{words} a citation of one, whole or down to a provision, with
+    \cmd{\srcref}\,---\,which is where the citation registers below come in.
+
+    Two things are deliberately elsewhere. The registers themselves live in the language definition files
+    of \zcref{sec:lang}, since how a legal order words a citation is the same knowledge as what that
+    language calls a paragraph. And no legislation ships with this bundle: a citation title changes on its
+    own clock and a package on CTAN does not.%
 }{%
     Een regulatoir document haalt instrumenten aan die dit document niet zijn: een wet, een verordening
-    van de Unie. \package{regulatory-sources} houdt de bronnen bij die een document aanhaalt, zodat de
-    bewoording van een verwijzing een eigenschap van het document is en niet van de zin waar hij toevallig
-    in staat.
+    van de Unie. \package{regulatory-sources} houdt de bronnen bij die een document aanhaalt en verwoordt
+    de aanhalingen ervan, zodat hoe een aanhaling luidt een eigenschap is van de bron en van het document
+    en niet van de zin waar hij toevallig in staat.
 
-    Deze module leest en bewaart; de bewoording van een verwijzing is de volgende module en zit er nog
-    niet in.%
+    De module doet drie dingen. Hij \emph{leest} bronnen, uit een \file{bib}-bestand
+    (\cmd{\loadsources}) of uit het document zelf (\cmd{\newsource}), en legt ze naast de velden die hun
+    type vereist. Hij \emph{bewaart} ze, zodat \cmd{\srcfield} en \cmd{\srctype} teruggeven wat er
+    gedeclareerd is. En hij \emph{verwoordt} een aanhaling ervan, in zijn geheel of tot op een bepaling,
+    met \cmd{\srcref}\,---\,en daar komen de citeerregisters hieronder bij kijken.
+
+    Twee dingen staan met opzet elders. De registers zelf staan in de taaldefinitiebestanden van
+    \zcref{sec:lang}, aangezien hoe een rechtsorde een aanhaling verwoordt dezelfde kennis is als wat die
+    taal een lid noemt. En er komt geen regelgeving met deze bundel mee: een citeertitel verandert op zijn
+    eigen klok en een pakket op CTAN niet.%
 }\\
 
 \noindent
 \DescribeMacro{\loadsources\\\marg{file}}
 \translation{%
     Reads \meta{file}\texttt{.bib}. The reader is this module's own, so that a document needs no second
-    program for a handful of records, and it accepts the shape a \file{bib} file has when a person writes
-    it: an entry opens with \texttt{@}\meta{type}\texttt{\{}\meta{key}\texttt{,} on a line of its own, a
-    field reads \meta{name}~\texttt{= \{}\meta{value}\texttt{\},} on a line of its own, the entry closes
-    with a brace of its own, and a line that is empty or starts with \texttt{\%} is a comment. A line that
-    is none of those stops the run and names the file and the line.%
+    program for a handful of records\,---\,and it is \textbf{not a \BibTeX{} parser}. It reads a file line
+    by line and knows four shapes, each of which is a whole line:%
 }{%
     Leest \meta{bestand}\texttt{.bib}. De lezer is van deze module zelf, zodat een document voor een
-    handvol records geen tweede programma nodig heeft, en hij accepteert de vorm die een \file{bib}
-    bestand heeft wanneer een mens hem schrijft: een entry opent met
-    \texttt{@}\meta{type}\texttt{\{}\meta{sleutel}\texttt{,} op een eigen regel, een veld luidt
-    \meta{naam}~\texttt{= \{}\meta{waarde}\texttt{\},} op een eigen regel, de entry sluit met een eigen
-    accolade, en een lege regel of een regel die met \texttt{\%} begint is commentaar. Een regel die geen
-    van die vier is stopt de run, met het bestand en het regelnummer erbij.%
+    handvol records geen tweede programma nodig heeft\,---\,en hij is \textbf{geen \BibTeX{}-parser}. Hij
+    leest een bestand regel voor regel en kent vier vormen, die elk een hele regel beslaan:%
+}
+\begin{labeling}{\translation{entry header}{entry-kop}}
+    \item[\translation{comment}{commentaar}] \translation{%
+        an empty line, or one whose first non-blank character is \texttt{\%}. That character is this
+        reader's, not \BibTeX{}'s, which has no comment character at all.%
+    }{%
+        een lege regel, of een regel waarvan het eerste niet-blanco teken \texttt{\%} is. Dat teken is van
+        deze lezer en niet van \BibTeX{}, dat helemaal geen commentaarteken kent.%
+    }
+    \item[\translation{entry header}{entry-kop}]
+        \texttt{@}\meta{type}\texttt{\{}\meta{key}\texttt{,} \translation{%
+        and nothing after it on the line. The key holds no comma, no space and no brace.%
+    }{%
+        en verder niets op die regel. De sleutel bevat geen komma, geen spatie en geen accolade.%
+    }
+    \item[\translation{field}{veld}]
+        \meta{name} \texttt{= \{}\meta{value}\texttt{\},} \translation{%
+        and nothing after it on the line. The value is between braces, and the comma at the end is
+        optional.%
+    }{%
+        en verder niets op die regel. De waarde staat tussen accolades, en de komma aan het eind is
+        optioneel.%
+    }
+    \item[\translation{closing brace}{sluitaccolade}] \texttt{\}} \translation{%
+        alone on a line, which ends the entry.%
+    }{%
+        alleen op een regel, wat de entry afsluit.%
+    }
+\end{labeling}
+\translation{%
+    A line that is none of the four stops the run and names the file, the line number and the line itself.
+    That is the point of the restriction: a reader that skips what it cannot read leaves a citation empty
+    in a document that is otherwise fine, and \zcref{sec:testdocs} has the two documents that hold it to
+    that.
+
+    So these, all of which are ordinary \BibTeX{}, are rejected here: a value in double quotes
+    (\texttt{title = "X"}); a bare value (\texttt{year = 2024}); a whole entry on one line; a field spread
+    over several lines; anything after the closing brace of a value on the same line; \texttt{@string}
+    abbreviations and \texttt{\#} concatenation; and \texttt{@comment} blocks. A value is stored as it
+    stands and is never expanded, so a macro written in a file comes back as that macro.%
+}{%
+    Een regel die geen van de vier is stopt de draai, met het bestand, het regelnummer en de regel zelf
+    erbij. Dat is de bedoeling van de beperking: een lezer die overslaat wat hij niet lezen kan laat een
+    aanhaling leeg in een document dat er verder goed uitziet, en \zcref{sec:testdocs} bevat de twee
+    documenten die hem daaraan houden.
+
+    Dit wordt hier dus geweigerd, terwijl het allemaal gewoon \BibTeX{} is: een waarde tussen dubbele
+    aanhalingstekens (\texttt{title = "X"}); een kale waarde (\texttt{year = 2024}); een hele entry op één
+    regel; een veld over meerdere regels; iets achter de sluitaccolade van een waarde op dezelfde regel;
+    \texttt{@string}-afkortingen en samenvoeging met \texttt{\#}; en \texttt{@comment}-blokken. Een waarde
+    wordt bewaard zoals hij er staat en wordt nooit geëxpandeerd, dus een macro die in een bestand staat
+    komt als die macro terug.%
 }
 \begin{lstlisting}[style=tex]
 @regulation{bw6,
@@ -1159,7 +1949,7 @@ en / and \aref{ex1-sub:lorem,ex1-sub:lorem2,ex1-sub:lorem3,ex1-sub:lorem4}.
     Declareert een type, de velden waar een entry van dat type niet zonder kan, en het register waarin zijn
     verwijzingen verwoord worden. Er zijn er twee gedeclareerd: \texttt{regulation}, dat een
     \texttt{citetitle} nodig heeft, en \texttt{euact}, dat een \texttt{kind} en een \texttt{number} nodig
-    heeft. Een bron die er één mist stopt de run, en
+    heeft. Een bron die er één mist stopt de draai, en
     dat is precies wat alles verderop toestaat een veld te lezen zonder te vragen of het er is.%
 }\\
 
@@ -1179,10 +1969,17 @@ en / and \aref{ex1-sub:lorem,ex1-sub:lorem2,ex1-sub:lorem3,ex1-sub:lorem4}.
 \translation{%
     A citation of legislation is a citation of a \emph{version} of it: the same article read a year apart
     is not necessarily the same article, and the Juriconnect standard carries the date in the reference for
-    that reason. This bundle does not print the date and does not build the link yet, but it does not let a
-    document leave it unsaid, because the alternative is a citation that silently means \enquote{whenever
-    this was last typeset}. \cmd{\sourcedate} says it for the whole document; one citation may say its own
-    with \texttt{date=\meta{YYYY-MM-DD}}, which also answers to \texttt{datum}.
+    that reason.
+
+    What this release does with that, exactly, so that nothing here is read as more than it is. It
+    \textbf{records} as of when a document cites, with \cmd{\sourcedate} for the whole document or
+    \texttt{date=\meta{YYYY-MM-DD}} for one citation, which also answers to \texttt{datum}. It
+    \textbf{warns} when a document says neither, and when a document speaks as of a later date than the
+    \texttt{valid} field of a source it cites. It does \textbf{not} print that date in a citation, and it
+    does \textbf{not} build a Juriconnect URI or a link to one. A \texttt{bwbid} or a \texttt{celex} field
+    is stored and can be read back with \cmd{\srcfield}; nothing in this bundle turns one into a reference.
+    So: \package{regulatory}~1.0 has the date discipline a Juriconnect citation needs and not Juriconnect
+    output.
 
     A document that says neither is told once, as a warning and not an error: citing without a date is
     defective, but it is not broken, and a package that cannot be added to an existing document without
@@ -1203,10 +2000,17 @@ en / and \aref{ex1-sub:lorem,ex1-sub:lorem2,ex1-sub:lorem3,ex1-sub:lorem4}.
 }{%
     Een aanhaling van regelgeving is een aanhaling van een \emph{versie} ervan: hetzelfde artikel een jaar
     later gelezen is niet per se hetzelfde artikel, en de Juriconnect-standaard draagt de datum daarom in
-    de verwijzing zelf. Deze bundel drukt de datum niet af en bouwt de link nog niet, maar laat een document
-    hem niet ongezegd, want het alternatief is een aanhaling die stilzwijgend \enquote{wanneer dit voor het
-    laatst gezet is} betekent. \cmd{\sourcedate} zegt het voor het hele document; één aanhaling mag zijn
-    eigen datum geven met \texttt{date=\meta{JJJJ-MM-DD}}, wat ook naar \texttt{datum} luistert.
+    de verwijzing zelf.
+
+    Wat deze uitgave daar precies mee doet, zodat niets hier voor meer wordt gelezen dan het is. Zij
+    \textbf{legt vast} per wanneer een document aanhaalt, met \cmd{\sourcedate} voor het hele document of
+    met \texttt{date=\meta{JJJJ-MM-DD}} voor één aanhaling, wat ook naar \texttt{datum} luistert. Zij
+    \textbf{waarschuwt} wanneer een document geen van beide zegt, en wanneer een document spreekt per een
+    latere datum dan het veld \texttt{valid} van een bron die het aanhaalt. Zij drukt die datum
+    \textbf{niet} af in een aanhaling, en zij bouwt \textbf{geen} Juriconnect-URI en geen link daarnaartoe.
+    Een veld \texttt{bwbid} of \texttt{celex} wordt opgeslagen en is met \cmd{\srcfield} terug te lezen;
+    niets in deze bundel maakt daar een verwijzing van. Kortom: \package{regulatory}~1.0 heeft de
+    datumdiscipline die een Juriconnect-aanhaling vraagt en geen Juriconnect-uitvoer.
 
     Een document dat geen van beide zegt krijgt dat eenmalig te horen, als waarschuwing en niet als fout:
     aanhalen zonder datum is gebrekkig, maar niet stuk, en een pakket dat niet aan een bestaand document
@@ -1237,27 +2041,44 @@ en / and \aref{ex1-sub:lorem,ex1-sub:lorem2,ex1-sub:lorem3,ex1-sub:lorem4}.
     mistaken for it.%
 }{%
     Haalt een bron aan, in zijn geheel of tot op een van zijn bepalingen. Het optionele argument bevat de
-    bepaling\,---\,\texttt{article}, \texttt{paragraph}, \texttt{point} en \texttt{subpoint}, welke ook naar
+    bepaling\,---\,\texttt{article}, \texttt{paragraph}, \texttt{point} en \texttt{subpoint}, die ook naar
     \texttt{artikel}, \texttt{lid}, \texttt{onderdeel} en \texttt{onder} luisteren\,---\,en staat
     vóór de sleutel, zoals bij \cmd{\cite}, zodat een blokhaak in de zin ná een verwijzing er niet voor
     wordt aangezien.%
 }
 \begin{lstlisting}[style=tex]
-\srcref[artikel=96, lid=2, onderdeel=c]{bw6}
+\srcref[article=96, paragraph=2, point=c]{bw6}
     artikel 96, tweede lid, onderdeel c, van Boek 6 van het Burgerlijk Wetboek
-\srcref[artikel=3.126, lid=1, onderdeel={c,d}]{wetib}
-    artikel 3.126, eerste lid, onderdelen c en d, van de Wet IB 2001
-\srcref[artikel={162--164}]{bw6}
+\srcref[article=3.126, paragraph=1, point={c,d}]{wetib}
+    artikel 3.126, eerste lid, onderdelen c en d, van de Wet inkomstenbelasting 2001
+\srcref[article={162--164}]{bw6}
     artikelen 162 tot en met 164, van Boek 6 van het Burgerlijk Wetboek
-\srcref*[artikel={162--164}]{bw6}
+\srcref*[article={162--164}]{bw6}
     art. 6:162-164 BW
-\srcref*[artikel=96, lid=2, onderdeel=c]{bw6}
+\srcref*[article=96, paragraph=2, point=c]{bw6}
     art. 6:96 lid 2 onder c BW
-\srcref[artikel=6, lid=1, onderdeel=a]{avg}
-    artikel 6, lid 1, punt a), van de Algemene verordening gegevensbescherming
 \srcref{avg}
     de Algemene verordening gegevensbescherming
+\srcref[article=6, paragraph=1, point=a]{avg}
+    artikel 6, lid 1, punt a), van de Algemene verordening gegevensbescherming
+\srcref[article=6, paragraph=1, point=a]{avgen}
+    point (a) of Article 6(1) of the General Data Protection Regulation
 \end{lstlisting}
+\translation{%
+    The keys are the same in every line and the wording is not: what changes is the source, and with it
+    the register it is cited in. The last two are the same provision of the same regulation, entered as
+    \texttt{avg} with the Dutch register and as \texttt{avgen} with the English one\,---\,both stand in
+    \zcref{code:source-example}. The Dutch key names \texttt{artikel}, \texttt{lid}, \texttt{onderdeel} and
+    \texttt{onder} are aliases of these and produce the same citation word for word, which
+    \zcref{sec:checks} reads back.%
+}{%
+    De sleutels zijn in iedere regel dezelfde en de bewoording niet: wat verandert is de bron, en daarmee
+    het register waarin hij wordt aangehaald. De laatste twee zijn dezelfde bepaling van dezelfde
+    verordening, ingevoerd als \texttt{avg} met het Nederlandse register en als \texttt{avgen} met het
+    Engelse\,---\,beide staan in \zcref{code:source-example}. De Nederlandse sleutelnamen \texttt{artikel},
+    \texttt{lid}, \texttt{onderdeel} en \texttt{onder} zijn aliassen van deze en leveren woord voor woord
+    dezelfde aanhaling op, wat \zcref{sec:checks} terugleest.%
+}
 \translation{%
     Two things decide how that reads, and neither of them is the language of the document.
 
@@ -1288,7 +2109,7 @@ en / and \aref{ex1-sub:lorem,ex1-sub:lorem2,ex1-sub:lorem3,ex1-sub:lorem4}.
     voetnoot is verkort, en een verwijzing die in de lopende tekst tussen haakjes staat ook. De optie
     \option{sourcestyle} zet welke van de twee een document gebruikt, met \texttt{full} of
     \texttt{short}, en de ster vraagt om de andere. De
-    voluit-vorm is die welke de Aanwijzingen voor de regelgeving voor regelingen zelf voorschrijven\,---\,
+    voluit-vorm is de vorm die de Aanwijzingen voor de regelgeving voor regelingen zelf voorschrijven\,---\,
     hier een model en geen voorschrift, want die aanwijzingen binden ministeries en geen
     contracten\,---\,en de verkorte is die van de Leidraad voor juridische auteurs.%
 }\\
@@ -1311,12 +2132,63 @@ en / and \aref{ex1-sub:lorem,ex1-sub:lorem2,ex1-sub:lorem3,ex1-sub:lorem4}.
 \noindent
 \DescribeMacro{\newsourceregister\\\marg{name}\\\marg{full}\\\marg{short}}
 \translation{%
-    Declares a register: eight keys for the full form and eight for the shortened one. Five are declared
-    already: \texttt{dutch} for a Dutch regulation, and \texttt{dutch\_eu}, \texttt{german\_eu},
-    \texttt{french\_eu} and \texttt{english\_eu} for an act of the Union cited in Dutch, German, French or
-    English. A register is not a language: the same
-    document may cite in more than one, and it does so the moment it cites a Dutch statute next to a
-    regulation of the Union.
+    Declares a register: a set of keys for the full form and the same set for the shortened one. A register
+    is not a language: the same document may cite in more than one, and it does so the moment it cites a
+    Dutch statute next to a regulation of the Union. Five are shipped, each in the definition file of the
+    language it belongs to and under the key it is named by here:%
+}{%
+    Declareert een register: een stel sleutels voor de voluit-vorm en hetzelfde stel voor de verkorte. Een
+    register is geen taal: hetzelfde document kan in meer dan één aanhalen, en doet dat zodra het naast een
+    Nederlandse wet een verordening van de Unie noemt. Er worden er vijf meegeleverd, elk in het
+    definitiebestand van de taal waar hij bij hoort en onder de sleutel waarmee hij hier genoemd wordt:%
+}
+\begin{labeling}{\texttt{german\_eu}}
+    \addtokomafont{labelinglabel}{\ttfamily}
+    \item[dutch] \translation{%
+        a Dutch national instrument, cited in Dutch. In full it is the form the Aanwijzingen voor de
+        regelgeving lay down for regulations themselves; shortened it is the form of the Leidraad voor
+        juridische auteurs. It is the register the type \texttt{regulation} takes when an entry names
+        none. Declared in \file{regulatory-dutch.def}.%
+    }{%
+        een Nederlands nationaal instrument, aangehaald in het Nederlands. Voluit is het de vorm die de
+        Aanwijzingen voor de regelgeving voor regelingen zelf voorschrijven; verkort die van de Leidraad
+        voor juridische auteurs. Het is het register dat het type \texttt{regulation} krijgt wanneer een
+        entry er geen noemt. Gedeclareerd in \file{regulatory-dutch.def}.%
+    }
+    \item[dutch\_eu] \translation{%
+        an act of the Union, cited in Dutch, which is a register of its own and not a variant of the
+        first. It is the register the type \texttt{euact} takes by default. Declared in
+        \file{regulatory-dutch.def}.%
+    }{%
+        een handeling van de Unie, aangehaald in het Nederlands, wat een eigen register is en geen
+        variant van het eerste. Het is het register dat het type \texttt{euact} standaard krijgt.
+        Gedeclareerd in \file{regulatory-dutch.def}.%
+    }
+    \item[german\_eu] \translation{%
+        an act of the Union, cited in German. Declared in \file{regulatory-german.def}.%
+    }{%
+        een handeling van de Unie, aangehaald in het Duits. Gedeclareerd in \file{regulatory-german.def}.%
+    }
+    \item[french\_eu] \translation{%
+        an act of the Union, cited in French. Declared in \file{regulatory-french.def}.%
+    }{%
+        een handeling van de Unie, aangehaald in het Frans. Gedeclareerd in \file{regulatory-french.def}.%
+    }
+    \item[english\_eu] \translation{%
+        an act of the Union, cited in English, and the one of the five arranged the other way round.
+        Declared in \file{regulatory-english.def}.%
+    }{%
+        een handeling van de Unie, aangehaald in het Engels, en de enige van de vijf die andersom is
+        opgebouwd. Gedeclareerd in \file{regulatory-english.def}.%
+    }
+\end{labeling}
+\translation{%
+    Those are the whole set, and the suite holds that list against the code: the registers a run declares
+    are read back and compared with these five, so one added, renamed or lost fails a test rather than
+    only this page. Two of the five are what a document gets without asking, since they are the defaults of
+    the two shipped types; the other three are asked for with a \texttt{register} field on the entry.
+    There is no national register for English, German or French\,---\,see the last paragraph of this
+    section.
 
     The three of the Union were each measured in the text of the same regulation in that language, and
     they differ where it matters: German writes no commas and calls the lettered point a
@@ -1347,11 +2219,12 @@ en / and \aref{ex1-sub:lorem,ex1-sub:lorem2,ex1-sub:lorem3,ex1-sub:lorem4}.
     \texttt{\S~5 Abs.~2 Nr.~3 BGB}, which is another construction and not a translation of this one, and
     there is nobody here who could check the result.%
 }{%
-    Declareert een register: acht sleutels voor de voluit-vorm en acht voor de verkorte. Er zijn er vijf
-    gedeclareerd: \texttt{nl} voor een Nederlandse regeling, en \texttt{nl\_eu}, \texttt{de\_eu} en
-    \texttt{fr\_eu} voor een handeling van de Unie die in het Nederlands, Duits of Frans wordt aangehaald.
-    Een register is geen taal: hetzelfde document kan in meer dan één aanhalen, en doet dat zodra het
-    naast een Nederlandse wet een verordening van de Unie noemt.
+    Dat is de hele verzameling, en de suite legt die lijst naast de code: de registers die een draai
+    declareert worden teruggelezen en met deze vijf vergeleken, zodat er één toevoegen, hernoemen of
+    kwijtraken een test laat falen in plaats van alleen deze bladzijde. Twee van de vijf krijgt een
+    document zonder erom te vragen, want het zijn de standaardwaarden van de twee meegeleverde types; om
+    de andere drie wordt gevraagd met een veld \texttt{register} op de entry. Er is geen nationaal register
+    voor het Engels, het Duits of het Frans\,---\,zie de laatste alinea van dit onderdeel.
 
     De drie van de Unie zijn elk gemeten in de tekst van dezelfde verordening in die taal, en ze
     verschillen waar het uitmaakt: het Duits schrijft geen komma's en noemt het geletterde onderdeel een
@@ -1398,16 +2271,138 @@ en / and \aref{ex1-sub:lorem,ex1-sub:lorem2,ex1-sub:lorem3,ex1-sub:lorem4}.
 }
 \clearpage
 
-\section{\translation{Language Support}{Taalondersteuning}}\label{sec:lang}
+\section{\translation{Language support}{Taalondersteuning}}\label{sec:lang}
 \translation{%
-    Initially, this package only provided support for Dutch.
-    When English was implemented, certain macros were added to facilitate easy switching between languages.
-    The notation of references in English and Dutch differs to an extent that setting the language can be quite complex, but this may make it adjustable for other languages as well.%
+    This package began in Dutch. English came second, and the two word a reference so differently\,---\,
+    \enquote{artikel 2, tweede lid, onderdeel b} against \enquote{Article 2(2), point (b)}\,---\,that
+    wording one had to become a set of decisions rather than a set of words. That is what makes a third
+    language possible, and it is also why a language file is more than a translation.
+
+    Four languages ship, and they are not equally far along. What a language file holds is three separate
+    things, and German and French have two of the three:%
 }{%
-    In beginsel bood dit pakket alleen ondersteuning voor Nederlands.
-    Toen Engels geïmplementeerd werd zijn er bepaalde macro's bij gekomen, zodat er makkelijk geschakeld kan worden tussen talen.
-    De notatie van verwijzingen in het Engels en Nederlands verschilt dusdanig dat de instelling van een taal enigszins complex kan zijn.
-    Echter, dit maakt het mogelijk aanpasbaar voor andere talen.%
+    Dit pakket begon in het Nederlands. Het Engels kwam als tweede, en de twee verwoorden een verwijzing
+    zo verschillend\,---\,\enquote{artikel 2, tweede lid, onderdeel b} tegenover \enquote{Article 2(2),
+    point (b)}\,---\,dat er een stel beslissingen van moest worden in plaats van een stel woorden. Dat is
+    wat een derde taal mogelijk maakt, en het is ook waarom een taalbestand meer is dan een vertaling.
+
+    Er worden vier talen meegeleverd, en ze zijn niet even ver. Wat een taalbestand bevat zijn drie
+    losse dingen, en het Duits en het Frans hebben er twee van de drie:%
+}
+
+\begin{center}
+    \begin{tabular}{@{}llll@{}}
+        & \translation{\textbf{Designations}}{\textbf{Benamingen}}
+        & \translation{\textbf{Internal references}}{\textbf{Interne verwijzingen}}
+        & \translation{\textbf{Citation register}}{\textbf{Citeerregister}} \\
+        \hline
+        \translation{Dutch}{Nederlands}   & \translation{full}{volledig} & \translation{full}{volledig}
+            & \texttt{dutch}, \texttt{dutch\_eu} \\
+        \translation{English}{Engels}     & \translation{full}{volledig} & \translation{full}{volledig}
+            & \texttt{english\_eu} \\
+        \translation{German}{Duits}       & \translation{full}{volledig} & \translation{not measured}{niet gemeten}
+            & \texttt{german\_eu} \\
+        \translation{French}{Frans}       & \translation{full}{volledig} & \translation{not measured}{niet gemeten}
+            & \texttt{french\_eu} \\
+    \end{tabular}
+\end{center}
+
+\noindent
+\translation{%
+    \textbf{Dutch and English are complete.} Every designation, every reference format and both citation
+    registers of Dutch are measured, and the wording of forty citations is read back by the suite
+    (\zcref{sec:checks}).
+
+    \textbf{German and French are covered in part, and the part that is missing shows.} What this bundle
+    has of them was measured in the German and French texts of the General Data Protection Regulation: the
+    words a provision is called by, and how an act of the Union is cited in that language. What it does not
+    have is the wording of an \emph{internal} reference\,---\,the \cmd{\rref@setup} below\,---\,which was
+    not measured, and which is left to whoever can check the result rather than guessed at. So:%
+}{%
+    \textbf{Het Nederlands en het Engels zijn compleet.} Iedere benaming, ieder verwijsformaat en beide
+    citeerregisters van het Nederlands zijn gemeten, en de bewoording van veertig aanhalingen wordt door de
+    suite teruggelezen (\zcref{sec:checks}).
+
+    \textbf{Het Duits en het Frans zijn ten dele gedekt, en het deel dat ontbreekt is zichtbaar.} Wat deze
+    bundel ervan heeft is gemeten in de Duitse en de Franse tekst van de Algemene verordening
+    gegevensbescherming: de woorden waarmee een bepaling wordt aangeduid, en hoe een handeling van de Unie
+    in die taal wordt aangehaald. Wat hij er niet van heeft is de verwoording van een \emph{interne}
+    verwijzing\,---\,de \cmd{\rref@setup} hieronder\,---\,die niet gemeten is, en die wordt overgelaten
+    aan wie de uitkomst kan toetsen in plaats van dat ernaar geraden wordt. Dus:%
+}
+\begin{itemize}
+    \item \translation{%
+        \cmd{\article} and \cmd{\para} carry German or French headings, and \cmd{\gls} and
+        \cmd{\printdefs} are labelled in that language.%
+    }{%
+        \cmd{\article} en \cmd{\para} dragen Duitse of Franse koppen, en \cmd{\gls} en \cmd{\printdefs}
+        zijn in die taal benoemd.%
+    }
+    \item \translation{%
+        \cmd{\srcref} words a citation of an act of the Union correctly, in the register of that language.
+        A \emph{national} German or French instrument has no register here at all; see below.%
+    }{%
+        \cmd{\srcref} verwoordt een aanhaling van een handeling van de Unie correct, in het register van
+        die taal. Een \emph{nationaal} Duits of Frans instrument heeft hier helemaal geen register; zie
+        hieronder.%
+    }
+    \item \translation{%
+        \cmd{\rref}, \cmd{\nref} and \cmd{\aref} fall back on the English \emph{arrangement} with German or
+        French \emph{words}. A German document therefore reads \enquote{Artikel 2(2), Buchstabe (b)}, which
+        is German vocabulary in an English construction. It is visibly wrong rather than invisibly wrong,
+        and nothing warns about it, since the words are in place.%
+    }{%
+        \cmd{\rref}, \cmd{\nref} en \cmd{\aref} vallen terug op de Engelse \emph{opbouw} met Duitse of
+        Franse \emph{woorden}. Een Duits document leest daarom \enquote{Artikel 2(2), Buchstabe (b)}, wat
+        Duitse woordenschat in een Engels bouwsel is. Het is zichtbaar fout in plaats van onzichtbaar fout,
+        en er wordt niet voor gewaarschuwd, want de woorden staan er.%
+    }
+    \item \translation{%
+        A reference to \emph{another document} cannot be worded at all in either language, and that one
+        does warn. German inflects the noun a connective governs\,---\,\enquote{der Verordnung} but
+        \enquote{des Vertrags}\,---\,and French fuses the preposition with an article chosen by gender, so
+        neither can compose the phrase from a subject. Both declare their connective empty, and
+        \cmd{\documentlabel} then says so once per artifact and asks for a \texttt{ref label}
+        (\zcref{sec:extern}). Giving one is the fix, and it is a line per document.%
+    }{%
+        Een verwijzing naar een \emph{ander document} is in geen van beide talen te verwoorden, en dáár
+        wordt wel voor gewaarschuwd. Het Duits verbuigt het woord dat een voegwoord regeert\,---\,
+        \enquote{der Verordnung} maar \enquote{des Vertrags}\,---\,en het Frans versmelt het voorzetsel met
+        een lidwoord dat het geslacht bepaalt, dus geen van beide kan de wending uit een onderwerp
+        samenstellen. Beide declareren hun voegwoord leeg, en \cmd{\documentlabel} zegt dat dan één keer per
+        artefact en vraagt om een \texttt{ref label} (\zcref{sec:extern}). Er een geven is de oplossing, en
+        dat is een regel per document.%
+    }
+    \item \translation{%
+        There is no national German or French citation register, on purpose: German federal law writes
+        \texttt{\S~5 Abs.~2 Nr.~3 BGB}, which is another construction and not a translation of this one.
+        A citation of such an instrument with the type \texttt{regulation} is worded in the Dutch national
+        register, since that is what that type defaults to, and that is wrong. Until such a register exists,
+        say so with a \texttt{register} field rather than letting the default stand.%
+    }{%
+        Er is geen nationaal Duits of Frans citeerregister, met opzet: het Duitse federale recht schrijft
+        \texttt{\S~5 Abs.~2 Nr.~3 BGB}, een ander bouwsel en geen vertaling van dit. Een aanhaling van zo'n
+        instrument met het type \texttt{regulation} wordt verwoord in het Nederlandse nationale register,
+        want dat is de standaardwaarde van dat type, en dat is fout. Zolang zo'n register er niet is, zeg
+        dat dan met een veld \texttt{register} in plaats van de standaardwaarde te laten staan.%
+    }
+\end{itemize}
+\translation{%
+    A language this bundle has no file for at all is a fifth case, and the mildest one: everything falls
+    back on English, and the document is told so once at the start, with the language named. Nothing fails
+    there\,---\,the references are simply worded in English, which is the only way it shows.
+
+    So \emph{supported} means Dutch and English. German and French are usable for what was measured and are
+    not the same claim, and this manual names which is which rather than counting four.%
+}{%
+    Een taal waar deze bundel helemaal geen bestand voor heeft is een vijfde geval, en het mildste: alles
+    valt terug op het Engels, en het document krijgt dat één keer te horen aan het begin, met de taal
+    erbij. Er faalt in dat geval niets\,---\,de verwijzingen worden in het Engels verwoord, en dat is ook de
+    enige manier waarop het opvalt.
+
+    \emph{Ondersteund} betekent dus Nederlands en Engels. Het Duits en het Frans zijn bruikbaar voor wat er
+    gemeten is en zijn niet dezelfde belofte, en deze handleiding zegt van iedere taal wat ze is in
+    plaats van er vier te tellen.%
 }\\
 
 \noindent
@@ -1427,8 +2422,8 @@ en / and \aref{ex1-sub:lorem,ex1-sub:lorem2,ex1-sub:lorem3,ex1-sub:lorem4}.
     Iedere ondersteunde taal heeft een eigen definitiebestand \texttt{regulatory-\meta{taal}.def},
     vergelijkbaar met de \texttt{fc-\meta{taal}.def} bestanden van \package{fmtcount}.
     Aan het eind van de preamble wordt het definitiebestand geladen van iedere taal die \package{babel} of
-    \package{polyglossia} geladen heeft, samen met \texttt{regulatory-english.def}, welke de standaard
-    waarden bevat waar iedere andere taal op voortbouwt.
+    \package{polyglossia} geladen heeft, samen met \texttt{regulatory-english.def}, dat de
+    standaardwaarden bevat waar iedere andere taal op voortbouwt.
     Een taal zonder definitiebestand valt terug op het Engels.
     Documenten die hun taal op een andere manier kiezen kunnen een definitiebestand expliciet laden met
     \cmd{\RegulatoryLoadLanguage}\marg{taal}.
@@ -1437,30 +2432,51 @@ en / and \aref{ex1-sub:lorem,ex1-sub:lorem2,ex1-sub:lorem3,ex1-sub:lorem4}.
 }\\
 
 \noindent
-\DescribeMacro{\rref@setup\\\marg{lang}\\\marg{article opts...}\\\marg{para opts...}\\\marg{sub opts...}}
+\DescribeMacro{\rref@setup\\\marg{lang}\\\marg{article opts...}\\\marg{para opts...}\\\marg{point opts...}}
 \translation{%
-    The \cmd{\rref@setup} macro takes the \meta{language} as first argument.
-    The other three arguments accept multiple options, namely:%
+    \cmd{\rref@setup} declares how \meta{lang} words an internal reference, and configures its three levels
+    at once. It is \textbf{extension API}: it is meant to be called, it is meant to be called from a
+    language definition file, and it is supported as it stands for the whole of 1.x.
+
+    The at sign in the name is not a slip and it is not a plan to rename. A definition file is read with
+    the at sign made a letter\,---\,\cmd{\RegulatoryLoadLanguage} sets its category code and restores it
+    afterwards\,---\,which is the same convention the kernel's own \file{.def} files and the
+    \file{fc-\meta{language}.def} files of \package{fmtcount} are written under. Inside such a file the
+    name needs nothing. A document that declares a language in its own preamble instead wraps the call in
+    \cmd{\makeatletter} and \cmd{\makeatother}, which is what an at sign asks of a preamble anywhere.
+
+    The other three arguments take the keys below, one set per level:%
 }{%
-    De \cmd{\rref@setup} macro heeft als eerste argument \meta{de taal} die moet worden ingesteld.
-    De andere drie argumenten accepteren meerdere opties, namelijk:%
+    \cmd{\rref@setup} declareert hoe \meta{taal} een interne verwijzing verwoordt, en stelt zijn drie
+    niveaus in één keer in. Het is \textbf{extension API}: hij is bedoeld om aangeroepen te worden, hij is
+    bedoeld om vanuit een taaldefinitiebestand aangeroepen te worden, en hij wordt zoals hij is ondersteund
+    voor de hele 1.x-reeks.
+
+    Het apenstaartje in de naam is geen vergissing en geen voornemen tot hernoemen. Een definitiebestand
+    wordt gelezen met het apenstaartje als letter\,---\,\cmd{\RegulatoryLoadLanguage} zet de categoriecode
+    en herstelt hem daarna\,---\,en dat is dezelfde conventie waaronder de \file{.def} bestanden van de
+    kernel zelf en de \file{fc-\meta{taal}.def} bestanden van \package{fmtcount} geschreven zijn. Binnen
+    zo'n bestand vraagt de naam nergens om. Een document dat een taal in zijn eigen preamble declareert zet
+    de aanroep tussen \cmd{\makeatletter} en \cmd{\makeatother}, wat een apenstaartje overal in een preamble
+    vraagt.
+
+    De andere drie argumenten nemen de sleutels hieronder, één stel per niveau:%
 }
 \begin{labeling}{\texttt{group conjunction}}
     \addtokomafont{labelinglabel}{\ttfamily}
     \item[name]
     \translation{%
-        the designation in lower case.
-        For example `article', `art.', `par', et cetera.
-        Default for%
+        the designation in lower case: `article', `paragraph', `point'. The default of each level is the
+        translation of its own name,%
     }{%
-        de benaming in kleine letters, b\ij{}voorbeeld `artikel', `art.', `onderdeel', enzovoort.
-        Standaard voor%
+        de benaming in kleine letters: `artikel', `lid', `onderdeel'. De standaardwaarde van ieder niveau
+        is de vertaling van zijn eigen naam,%
     }\\\GetTranslation{article} \lstinline|\GetTranslation{article}|, \\\GetTranslation{paragraph} \lstinline|\GetTranslation{paragraph}| \GetTranslation{and} \\\GetTranslation{point} \lstinline|\GetTranslation{point}|.%
     \item[Name] \translation{%
-        the designation starting with a capital letter. For example, 'Article'. Like \texttt{name}, this option defaults to using \cmd{\GetTranslation}, but with an initial capital letter.%
+        the same designation with an initial capital, and it defaults to the same translation with one.%
     }{%
-        de benaming beginnend met een hoofdletter, b\ij{}voorbeeld `Artikel'.
-        Net als \texttt{name} gebruikt deze optie standaard \cmd{\GetTranslation}, maar dan met een hoofdletter.%
+        dezelfde benaming met een beginhoofdletter, en de standaardwaarde is dezelfde vertaling met er
+        een.%
     }
     \item[names, Names] \translation{%
         the designation of a reference that names more than one structure: \enquote{articles 1 and 2},
@@ -1476,75 +2492,76 @@ en / and \aref{ex1-sub:lorem,ex1-sub:lorem2,ex1-sub:lorem3,ex1-sub:lorem4}.
         rangtelwoorden staat.%
     }
     \item[ref format] \translation{%
-        a macro with one argument, namely the current number.
-        For example, a Dutch paragraph is written as an ordinal, for which \cmd{\ordinalstringnum} is used, and a point is lettered.
-        In such cases, it is important to consider case sensitivity using \cmd{\@ifrrefcap}.
-        Example:%
+        a macro of one argument, the number itself. Dutch writes a paragraph as an ordinal, for which
+        \cmd{\ordinalstringnum} is used, and a point as a letter. A format that produces a word has to
+        answer \cmd{\Nref} as well as \cmd{\nref}, which \cmd{\@ifrrefcap} is for:%
     }{%
-        een macro met één argument, namelijk het huidige nummer.
-        Een lid wordt bijvoorbeeld als rangtelwoord geschreven, waarvoor \cmd{\ordinalstringnum} gebruikt is, en een onderdeel met een letter.
-        In zo'n geval is het belangrijk om rekening te houden met hoofdletter gevoeligheid d.m.v.\ \cmd{\@ifrrefcap}.
-        Voorbeeld:%
+        een macro met één argument, het nummer zelf. Het Nederlands schrijft een lid als rangtelwoord,
+        waarvoor \cmd{\ordinalstringnum} gebruikt is, en een onderdeel als letter. Een formaat dat een woord
+        oplevert moet zowel \cmd{\Nref} als \cmd{\nref} bedienen, en daar is \cmd{\@ifrrefcap} voor:%
     } \lstinline[style=tex]|\@ifrrefcap{\Ordinalstringnum{...}}{\ordinalstringnum{...}}|.
     \item[label format] \translation{%
-        the order of the reference and the name.
-        This macro takes two arguments, namely the \texttt{name} and the result of \texttt{ref format}.
-        For example, for an article in Dutch, the order is \texttt{\{\#1 \#2\}}, for a paragraph in Dutch \texttt{\{\#2 \#1\}}, and for a paragraph/lid in English \texttt{\textbackslash@gobble\{\#1\}\#2}\footnote{\texttt{\textbackslash@gobble} processes the argument but does not print anything.}.
-        Note that you need to specify a macro.
-        In the first example, you would pass \cmd{\mylabelformat} as an option and define it as:
+        a macro of two arguments\,---\,the \texttt{name} and the result of \texttt{ref format}\,---\,which
+        decides the order of the two. A Dutch article is \texttt{\{\#1 \#2\}}, a Dutch paragraph
+        \texttt{\{\#2 \#1\}}, and an English paragraph
+        \texttt{\textbackslash@gobble\{\#1\}\#2}\footnote{\texttt{\textbackslash@gobble} takes its argument
+        and prints nothing, which is how the designation is dropped where the number stands alone.}. The
+        value is a macro and not the text itself, so the first of those is passed as
+        \cmd{\mylabelformat}, defined as:
     }{%
-        de volgorde van de verwijzing en de naam.
-        Deze macro krijgt twee argumenten mee, namelijk de \texttt{name} en het resultaat van \texttt{ref format}.
-        Voor bijvoorbeeld een artikel is de volgorde \texttt{\{\#1 \#2\}}, voor een lid \texttt{\{\#2 \#1\}}, en voor een paragraph/lid in het engels \texttt{\textbackslash@gobble\{\#1\}\#2}\footnote{\texttt{\textbackslash@gobble} verwerkt het argument maar print niks uit.}.
-        Let wel dat je een macro dient op te geven.
-        Bij het eerste voorbeeld zou je \cmd{\mylabelformat} als optie meegeven en zou gedefinieerd zijn als:
+        een macro met twee argumenten\,---\,de \texttt{name} en het resultaat van \texttt{ref
+        format}\,---\,die de volgorde van die twee bepaalt. Een Nederlands artikel is \texttt{\{\#1 \#2\}},
+        een Nederlands lid \texttt{\{\#2 \#1\}}, en een Engels lid
+        \texttt{\textbackslash@gobble\{\#1\}\#2}\footnote{\texttt{\textbackslash@gobble} neemt zijn argument
+        en drukt niets af, en zo verdwijnt de benaming waar het nummer alleen staat.}. De waarde is een
+        macro en niet de tekst zelf, dus de eerste daarvan wordt meegegeven als \cmd{\mylabelformat},
+        gedefinieerd als:
     }\lstinline[style=tex]|\newcommand\mylabelformat[2]{#1 #2}|.
     \item[group conjunction] \translation{%
-        This value indicates how it should be linked to the parent part.
-        For example (Dutch), in ``artikel\Vtextvisiblespace1\textcolor{red}{,\Vtextvisiblespace}eerste\Vtextvisiblespace lid,'' the \texttt{group conjunction} is set to \lstinline|{,~}| for the article.%
+        what joins this level to the one above it. In
+        ``artikel\Vtextvisiblespace1\textcolor{red}{,\Vtextvisiblespace}eerste\Vtextvisiblespace lid'' the
+        article has a \texttt{group conjunction} of \lstinline|{,~}|.%
     }{%
-        deze waarde geeft aan hoe het dient gekoppeld te worden aan het bovenliggende onderdeel.
-        Bijvoorbeeld, in ``artikel\Vtextvisiblespace1\textcolor{red}{,\Vtextvisiblespace}eerste\Vtextvisiblespace lid'' is de \texttt{group conjunction} bij de instelling van het artikel gelijk aan \lstinline|{,~}|.%
+        wat dit niveau aan het niveau erboven koppelt. In
+        ``artikel\Vtextvisiblespace1\textcolor{red}{,\Vtextvisiblespace}eerste\Vtextvisiblespace lid'' heeft
+        het artikel een \texttt{group conjunction} van \lstinline|{,~}|.%
     }
     \item[group format] \translation{%
-        This option accepts a macro with one argument.
-        The first argument contains all subparts.
-        A language that wants the parent parts of a reference set apart\,---\,\texttt{{[}Article 1(6),{]} point (a)}\,---\,gives the point \cmd{\rref@group@braced}, which is what this bundle did for English until the European style guides settled the question the other way.
+        a macro of one argument, which holds the levels above this one. A language that sets those
+        apart\,---\,\texttt{{[}Article 1(6),{]} point (a)}\,---\,gives the point
+        \cmd{\rref@group@braced}, which is what this bundle did for English until the European style
+        guides settled the question the other way.
     }{%
-        deze optie accepteert een macro met één argument.
-        Het eerste argument bevat alle onderliggende onderdelen.
-        Een taal die de bovenliggende delen van een verwijzing apart wil zetten\,---\,\texttt{{[}Article 1(6),{]} point (a)}\,---\,geeft het onderdeel \cmd{\rref@group@braced} mee, wat deze bundel voor het Engels deed tot de Europese stijlgidsen die vraag anders beslechtten.
+        een macro met één argument, dat de niveaus boven dit niveau bevat. Een taal die ze apart
+        zet\,---\,\texttt{{[}Article 1(6),{]} point (a)}\,---\,geeft het onderdeel
+        \cmd{\rref@group@braced} mee, wat deze bundel voor het Engels deed tot de Europese stijlgidsen die
+        vraag anders beslechtten.
     }
 \end{labeling}
 \translation{%
-    These options can vary for each article, paragraph, and point.
-    When defining a new language, it is worth reading \texttt{regulatory-english.def} first: it states
-    every value in full, and it is the configuration any language without one of its own falls back on.%
+    Every key can differ per level. When writing a new language, read \file{regulatory-english.def} first:
+    it states every value in full, and it is the configuration a language without one of its own falls back
+    on.%
 }{%
-    Deze opties kunnen verschillen per artikel, lid en onderdeel.
-    Bij het definiëren van een nieuwe taal loont het om eerst \texttt{regulatory-english.def} te lezen:
-    die geeft iedere waarde voluit op, en is de configuratie waar een taal zonder eigen configuratie op
-    terugvalt.%
+    Iedere sleutel kan per niveau verschillen. Lees bij het schrijven van een nieuwe taal eerst
+    \file{regulatory-english.def}: dat geeft iedere waarde voluit op, en is de configuratie waar een taal
+    zonder eigen configuratie op terugvalt.%
 }
 
 \translation{%
-    The definition files of the four languages this bundle ships follow.
-    They are the source a translation starts from, so they are printed here rather than among the modules
-    of \zcref{sec:impl}.
-    Two of them are half a language: German and French carry the designations and the citation register
-    that were measured, and not the wording of an internal reference, which was not.%
-}{%
-    Een document dat een taal kiest waar deze bundel geen definities voor heeft, krijgt dat één keer te
-    horen aan het begin van het document, met de taal erbij. Er faalt in dat geval niets: de verwijzingen
-    worden in het Engels verwoord, en dat is ook de enige manier waarop het opvalt\,---\,in een document
-    dat in een andere taal geschreven is leest dat gemakkelijk voorbij.
+    The definition files of the four languages this bundle ships follow. They are the source a translation
+    starts from, so they are printed here rather than among the modules of \zcref{sec:impl}. Their comments,
+    like the code, are in English.
 
-    Hieronder volgen de definitiebestanden van de vier meegeleverde talen.
-    Ze vormen de bron waar een vertaling mee begint, dus staan ze hier en niet tussen de modules van
-    \zcref{sec:impl}.
-    De toelichting erin is, net als de broncode, in het Engels gesteld.
-    Twee ervan zijn half: het Duits en het Frans dragen de benamingen en het citeerregister die gemeten
-    zijn, en niet de verwoording van een interne verwijzing, die dat niet is.%
+    Each of them states in its own words what it holds and what it does not, which is where the table at the
+    head of this section comes from.%
+}{%
+    Hieronder volgen de definitiebestanden van de vier meegeleverde talen. Ze vormen de bron waar een
+    vertaling mee begint, dus staan ze hier en niet tussen de modules van \zcref{sec:impl}. De toelichting
+    erin is, net als de broncode, in het Engels gesteld.
+
+    Elk van hen zegt in eigen woorden wat het bevat en wat niet, en daar komt de tabel aan het begin van dit
+    onderdeel vandaan.%
 }
 
 % The language definition files are sources of their own, so that translators do
@@ -1575,24 +2592,34 @@ en / and \aref{ex1-sub:lorem,ex1-sub:lorem2,ex1-sub:lorem3,ex1-sub:lorem4}.
     error being raised, so a document converted from an older source is worth reading through once.
     Everything that used to need it is written in Markdown below.%
 }{%
-    De \package{regulatory-md} module vertaalt de onderdelen van een Markdown bron naar de structuren
+    De \package{regulatory-md} module vertaalt de onderdelen van een Markdown-bron naar de structuren
     uit \zcref{sec:struct}.
     Deze wordt geladen zodra \package{markdown} dat is, ongeacht de volgorde van beide pakketten, en de
     pakketoptie \option{md} laadt \package{markdown} zelf.
     Die optie is de veilige weg, aangezien \package{markdown} vóór \package{enumitem} geladen moet worden
     om de lijsten van dit pakket heel te laten.
-    Een Markdown bron is daarmee beperkt tot de onderdelen die hier beschreven staan; hoofdstukken en de
+    Een Markdown-bron is daarmee beperkt tot de onderdelen die hier beschreven staan; hoofdstukken en de
     overige onderdelen van een documentklasse hebben geen tegenhanger.
-    Kijk naar \zcref{code:example-md} voor een Markdown voorbeeld en naar \zcref{code:md-example} hoe zo'n
-    Markdown bron uiteindelijk gebruikt kan worden vanuit \LaTeX{} (\zcref{sec:example}).
+    Kijk naar \zcref{code:example-md} voor een Markdown-voorbeeld en naar \zcref{code:md-example} hoe zo'n
+    Markdown-bron uiteindelijk gebruikt kan worden vanuit \LaTeX{} (\zcref{sec:example}).
 
-    Een Markdown bron bevat geen \TeX{}. De module werd geladen met de optie \option{hybrid} van
+    Een Markdown-bron bevat geen \TeX{}. De module werd geladen met de optie \option{hybrid} van
     \package{markdown}, die iedere backslash doorliet, en de voorbeelden van deze bundel schreven hun
     labels en verwijzingen op die manier; \package{markdown} heeft die optie afgeschaft. Zonder haar wordt
     een backslash afgedrukt in plaats van uitgevoerd, en een bron die er nog één bevat verliest zijn
     verwijzingen zonder dat er ook maar iets misgaat, dus een document dat uit een oudere bron komt is het
     waard één keer doorgelezen te worden.
     Alles wat die optie nodig had wordt hieronder in Markdown geschreven.%
+}
+
+\translation{%
+    The Markdown listings below are in Dutch in both manuals, and deliberately so: they are the
+    constructs of \file{example.md}, which is a test fixture of this bundle and is read back by the suite
+    (\zcref{sec:checks}). Nothing in this section depends on the language of the text.%
+}{%
+    De Markdown-listings hieronder staan in beide handleidingen in het Nederlands, en dat is met opzet:
+    het zijn de constructies uit \file{example.md}, een testfixture van deze bundel die door de suite
+    wordt teruggelezen (\zcref{sec:checks}). Niets in dit onderdeel hangt af van de taal van de tekst.%
 }
 
 \subsection{\translation{Labels and references}{Labels en verwijzingen}}
@@ -1611,7 +2638,7 @@ en / and \aref{ex1-sub:lorem,ex1-sub:lorem2,ex1-sub:lorem3,ex1-sub:lorem4}.
 2. [Sed do eiusmod tempor incididunt.]{#lid:lorem2}
 \end{lstlisting}
 \translation{%
-    A reference is a link whose target starts with \texttt{\#}, and the three shapes a Markdown link can
+    A reference is a link whose target starts with \texttt{\#}, and the three shapes a Markdown-link can
     take are the three references of \zcref{sec:ref}:%
 }{%
     Een verwijzing is een link waarvan het doel met \texttt{\#} begint, en de drie vormen die een Markdown
@@ -1696,7 +2723,7 @@ en / and \aref{ex1-sub:lorem,ex1-sub:lorem2,ex1-sub:lorem3,ex1-sub:lorem4}.
     nothing in the prose can perturb it, and the one to reach for when the definitions are maintained
     apart from the text:%
 }{%
-    De andere manier is het \textsc{yaml} blok waarmee een Markdown bron mag beginnen, waar een definitie
+    De andere manier is het \textsc{yaml} blok waarmee een Markdown-bron mag beginnen, waar een definitie
     een record met benoemde velden is in plaats van een onderdeel van de tekst. Dat is de steviger van de
     twee, aangezien niets in de lopende tekst hem kan verstoren, en de aangewezen manier wanneer de
     definities los van de tekst worden bijgehouden:%
@@ -1736,7 +2763,7 @@ De volgende begrippen worden in deze overeenkomst gebruikt.
 }{%
     Een divisie zonder inhoud wordt niet herkend door \package{markdown}, dus er hoort een regel tekst in.
     Wanneer er definities gedeclareerd worden en de lijst nooit wordt afgedrukt, zegt de module dat aan
-    het eind van de run.
+    het eind van de draai.
 
     Een definitie wordt aangehaald zoals naar al het andere verwezen wordt, met een link:
     \texttt{<\#onderhands>} drukt de naam van de entry af en \texttt{[een onderhandse
@@ -1779,7 +2806,7 @@ De volgende begrippen worden in deze overeenkomst gebruikt.
     the \LaTeX{} list code and leaves \package{tex4ht} nothing to turn a \texttt{paras} item
     into: measured on \zcref{code:example1}, twelve list elements with the declaration absent
     and none with it present. \package{tex4ht} defines \cmd{\HCode} before it reads the
-    document, which is what the examples test on:%
+    document, which is what the examples test on\,---\,see \zcref{code:metadata}.%
 }{%
     Dit pakket is voor PDF geschreven, zoals \zcref{sec:usage} zegt, maar een regulatoir document
     dat op een website terechtkomt is een gangbare genoeg wens.
@@ -1793,12 +2820,10 @@ De volgende begrippen worden in deze overeenkomst gebruikt.
     lijstcode van \LaTeX{} binnenhaalt en \package{tex4ht} niets laat om een \texttt{paras}
     onderdeel in om te zetten: gemeten aan \zcref{code:example1} twaalf lijstelementen zonder die
     declaratie en geen enkele met. \package{tex4ht} definieert \cmd{\HCode} voordat het het
-    document leest, en daar toetsen de voorbeelden op:%
+    document leest, en daar toetsen de voorbeelden op\,---\,zie \zcref{code:metadata}.%
 }\\
 
-\begin{lstlisting}[style=tex]
-\ifdefined\HCode\else\IfDocumentMetadataTF{}{\DocumentMetadata{}}\fi
-\end{lstlisting}
+\noindent
 \translation{%
     Both of these are said out loud rather than left to the result. A run that converts with PDF
     management active is told that the list markup goes away, and a run in which the configuration of this
@@ -1944,7 +2969,7 @@ De volgende begrippen worden in deze overeenkomst gebruikt.
     \file{out/pdflatex} voor de engines, \file{out/html} voor de omzetting uit
     \zcref{sec:html} en \file{out/conformance} voor de standaarden.
     Ze overschrijven elkaar daardoor niet, en wat een suite opleverde blijft achteraf staan, wat
-    de HTML van een run tot iets maakt dat je kunt openen en bekijken.
+    de HTML van een draai tot iets maakt dat je kunt openen en bekijken.
     Dat ze niets delen is ook wat ze tegelijk laat draaien, wat \texttt{make test} doet; ieder
     van hen is los op te vragen als \texttt{make suite-lualatex}, \texttt{make suite-html}
     enzovoort.
@@ -1960,27 +2985,26 @@ De volgende begrippen worden in deze overeenkomst gebruikt.
     Every suite therefore ends in a set of assertions that read the run back, described in
     \zcref{sec:checks}, and two of the documents are there to fail.%
 }{%
-    Dat er een document uitkomt is de kleinste helft van wat een run vaststelt. Vrijwel alles
+    Dat er een document uitkomt is de kleinste helft van wat een draai vaststelt. Vrijwel alles
     wat dit pakket verkeerd kan doen komt er evengoed als document uit\,---\,een verwijzing die
     in het verkeerde register geschreven is, een definitie die stilzwijgend niet aankwam, een
-    label dat nergens heen wees. Iedere suite eindigt daarom in een reeks controles die de run
+    label dat nergens heen wees. Iedere suite eindigt daarom in een reeks controles die de draai
     naleest, beschreven in \zcref{sec:checks}, en twee van de documenten staan er om te falen.%
 }
 
 \subsection{\translation{The test documents}{De testdocumenten}}\label{sec:testdocs}
 \translation{%
-    Nine documents are typeset, of which two exist in both languages, so a suite makes ten of
-    them per engine and four in the conversion of \zcref{sec:html}. One of the nine is converted
-    only, since what it is for is only read under \package{tex4ht}.
-    them. Every one of them is a driver that sets the language, declares the artifacts and loads
-    the definitions, and that leaves the body to a file of its own, so that both language
-    versions share one text:%
+    Ten documents stand in that directory. Two of them exist in both languages and one of them is
+    converted rather than typeset, since what it is for is only read under \package{tex4ht}, so a
+    suite typesets eleven files per engine and converts four. Every one of them is a driver that
+    sets the language, declares the artifacts and loads the definitions, and that leaves the body
+    to a file of its own, so that both language versions share one text:%
 }{%
-    Er worden negen documenten gezet, waarvan twee in beide talen bestaan, zodat een suite er
-    tien per engine maakt en vier in de omzetting van \zcref{sec:html}. Eén van de negen wordt
-    alleen omgezet, want waar het voor is wordt alleen onder \package{tex4ht} gelezen. Ieder daarvan is een driver die de taal instelt, de artefacten declareert en de
-    definities inlaadt, en die de inhoud overlaat aan een eigen bestand, zodat beide taalversies
-    één tekst delen:%
+    Er staan tien documenten in die map. Twee ervan bestaan in beide talen en één wordt omgezet in
+    plaats van gezet, want waar het voor is wordt alleen onder \package{tex4ht} gelezen, zodat een
+    suite elf bestanden per engine zet en er vier omzet. Ieder daarvan is een driver die de taal
+    instelt, de artefacten declareert en de definities inlaadt, en die de inhoud overlaat aan een
+    eigen bestand, zodat beide taalversies één tekst delen:%
 }
 \begin{labeling}{\file{example1-nl.tex}}
     \addtokomafont{labelinglabel}{\ttfamily}
@@ -1988,7 +3012,7 @@ De volgende begrippen worden in deze overeenkomst gebruikt.
         and \file{example1-en.tex}, both of which read \file{example1.tex} and load the
         definitions of \file{example1.bib}.%
     }{%
-        en \file{example1-en.tex}, welke beide \file{example1.tex} lezen en de definities van
+        en \file{example1-en.tex}, die beide \file{example1.tex} lezen en de definities van
         \file{example1.bib} inladen.%
     }
     \item[example2-nl.tex] \translation{%
@@ -1997,7 +3021,7 @@ De volgende begrippen worden in deze overeenkomst gebruikt.
         with the \texttt{description} style, so that both routes of \zcref{sec:defs} that need no
         second program are covered.%
     }{%
-        en \file{example2-en.tex}, welke op dezelfde manier \file{example2.tex} en
+        en \file{example2-en.tex}, die op dezelfde manier \file{example2.tex} en
         \file{example2.bib} lezen. Ze voegen met \cmd{\newdefinition} een eigen definitie toe en
         zetten de lijst met de stijl \texttt{description}, waarmee beide routes uit
         \zcref{sec:defs} die geen tweede programma nodig hebben gedekt zijn.%
@@ -2006,7 +3030,7 @@ De volgende begrippen worden in deze overeenkomst gebruikt.
         which reads \file{example.md} with \cmd{\markdownInput} instead, and loads the
         definitions of \file{example1.bib}. It exists in Dutch only.%
     }{%
-        welke in plaats daarvan \file{example.md} leest met \cmd{\markdownInput}, en de
+        dat in plaats daarvan \file{example.md} leest met \cmd{\markdownInput}, en de
         definities van \file{example1.bib} inlaadt. Deze bestaat alleen in het Nederlands.%
     }
     \item[sign-example.tex] \translation{%
@@ -2016,7 +3040,7 @@ De volgende begrippen worden in deze overeenkomst gebruikt.
         write on, and the frame is what shows on paper how far the area reaches that a viewer
         offers.%
     }{%
-        welke de handtekeningvelden van \zcref{sec:sign} plaatst en helemaal geen definities
+        dat de handtekeningvelden van \zcref{sec:sign} plaatst en helemaal geen definities
         heeft. Het wordt ongecomprimeerd geschreven, zodat de annotatie over een veld zonder
         PDF-gereedschap uit het PDF-bestand terug te lezen is. Het omkadert elk veld zelf: de
         module tekent een schrijflijn, en het kader laat op papier zien tot waar het vlak reikt
@@ -2028,11 +3052,22 @@ De volgende begrippen worden in deze overeenkomst gebruikt.
         \texttt{makeindex} does the sorting. It is the only document that needs a program between the
         runs other than \texttt{bib2gls}, and until it was written that route had no coverage at all.%
     }{%
-        welke de tweede definitieroute van \zcref{sec:defs} neemt: \option{bib2gls=false}, zodat
+        dat de tweede definitieroute van \zcref{sec:defs} neemt: \option{bib2gls=false}, zodat
         \cmd{\loadglsdefs} het bestand \file{index-defs.tex} met \cmd{\newglossaryentry} leest en
         \texttt{makeindex} het sorteren doet. Het is het enige document dat een ander programma dan
-        \texttt{bib2gls} tussen de runs nodig heeft, en tot het geschreven werd had die route geen
+        \texttt{bib2gls} tussen de draaien nodig heeft, en tot het geschreven werd had die route geen
         enkele dekking.%
+    }
+    \item[attach-example.tex] \translation{%
+        which is the only document that asks for \option{attachmentlink=annotation}
+        (\zcref{sec:attachmentlink}), so without it that value would ship untested. It is tagged on
+        purpose and written uncompressed, so that the annotation and its place in the structure tree
+        can both be read out of the PDF file without a PDF tool.%
+    }{%
+        het enige document dat om \option{attachmentlink=annotation} vraagt
+        (\zcref{sec:attachmentlink}), zodat die waarde er zonder dit document ongetest uit zou gaan.
+        Het is met opzet getagd en ongecomprimeerd geschreven, zodat zowel de annotatie als haar plek
+        in de structuurboom zonder PDF-gereedschap uit het PDF-bestand te lezen zijn.%
     }
     \item[nolang-example.tex] \translation{%
         which names no language at all and is converted rather than typeset. Every other document
@@ -2042,7 +3077,7 @@ De volgende begrippen worden in deze overeenkomst gebruikt.
         other document and is undefined in this one, which is how a call to
         \cmd{\providetranslation} survived in that file.%
     }{%
-        welke helemaal geen taal noemt en omgezet wordt in plaats van gezet. Ieder ander document
+        dat helemaal geen taal noemt en omgezet wordt in plaats van gezet. Ieder ander document
         hier laadt \package{babel}, en een bijgehouden taal is wat \package{tracklang} een
         \file{glossaries-\meta{taal}.ldf} laat laden en daarmee \package{translator}. Alles in
         \file{regulatory.4ht} dat naar een commando van dat pakket grijpt werkt daarom in ieder
@@ -2053,7 +3088,7 @@ De volgende begrippen worden in deze overeenkomst gebruikt.
         which cites without saying as of when, and then cites a source whose data was checked
         before the date it gives. It is the second of the two documents that are meant to warn.%
     }{%
-        welke aanhaalt zonder te zeggen per wanneer, en daarna een bron aanhaalt waarvan de
+        dat aanhaalt zonder te zeggen per wanneer, en daarna een bron aanhaalt waarvan de
         gegevens nagelopen zijn vóór de datum die het opgeeft. Het is het tweede van de twee
         documenten die horen te waarschuwen.%
     }
@@ -2062,7 +3097,7 @@ De volgende begrippen worden in deze overeenkomst gebruikt.
         \zcref{sec:sources}. It declares two sources in the document itself as well, so that
         both routes into the reader are covered.%
     }{%
-        welke \file{sources.bib} inlaadt en aanhaalt wat daarin staat, in ieder register van
+        dat \file{sources.bib} inlaadt en aanhaalt wat daarin staat, in ieder register van
         \zcref{sec:sources}. Het declareert daarnaast twee bronnen in het document zelf, zodat
         beide routes de lezer in gedekt zijn.%
     }
@@ -2103,8 +3138,8 @@ De volgende begrippen worden in deze overeenkomst gebruikt.
     \file{example2-nl} names \file{example1-nl} with \cmd{\masterdocument} instead, which
     additionally loads its definitions and attaches the document itself.
     Both together therefore cover a reference in both directions, and the pair of them is
-    declared once more by this manual, which is how the appendix below can refer to their
-    articles and attach their PDF files.
+    declared once more by this manual, which is how the listing of \zcref{sec:example} can refer to
+    their articles and embed their PDF files.
     \file{example1-nl} finally attaches a file that is not a PDF at all with
     \cmd{\attachdocument}, which is the case the PDF standards disagree about most:%
 }{%
@@ -2115,8 +3150,8 @@ De volgende begrippen worden in deze overeenkomst gebruikt.
     \file{example2-nl} noemt \file{example1-nl} juist met \cmd{\masterdocument}, wat daarnaast
     diens definities inlaadt en het document zelf als bijlage hecht.
     Samen dekken ze daarmee een verwijzing in beide richtingen, en het paar wordt nog eens
-    gedeclareerd door deze handleiding, wat de reden is dat de opsomming hieronder naar hun
-    artikelen kan verwijzen en hun PDF-bestanden kan bijvoegen.
+    gedeclareerd door deze handleiding, en daarom kan de opsomming van \zcref{sec:example} naar hun
+    artikelen verwijzen en hun PDF-bestanden insluiten.
     \file{example1-nl} hecht tenslotte met \cmd{\attachdocument} een bestand dat helemaal geen
     PDF is, het geval waar de PDF-standaarden het meest over van mening verschillen:%
 }
@@ -2169,7 +3204,7 @@ De volgende begrippen worden in deze overeenkomst gebruikt.
 }{%
     De andere zes zijn ook getekend, elk op het ene waar hij voor staat. Ze houden de vormen van
     de tekening hierboven aan en voegen er drie toe: een grijze kader is een programma dat tussen
-    twee \LaTeX{} draaien loopt, een kader met scherpe hoeken iets dat letterlijk uitgeschreven
+    twee \LaTeX{}-draaien loopt, een kader met scherpe hoeken iets dat letterlijk uitgeschreven
     staat\,---\,sleutels in een document, een object in het PDF-bestand\,---\,en een dubbele
     kader de controle uit \zcref{sec:checks} die de uitkomst naleest.%
 }
@@ -2237,7 +3272,7 @@ De volgende begrippen worden in deze overeenkomst gebruikt.
     first and \emph{Authentieke} second, so a file that comes back the other way round is the only
     evidence anywhere in the run that \texttt{makeindex} did anything at all.%
 }{%
-    De wegen van \zcref{sec:defs} verschillen in wat er tussen de twee \LaTeX{} draaien moet
+    De wegen van \zcref{sec:defs} verschillen in wat er tussen de twee \LaTeX{}-draaien moet
     lopen, en dat is wat de documenten hieronder uit elkaar houdt. \file{index-example} is de
     enige op de tweede weg en de enige die om een ander programma dan \package{bib2gls} vraagt.
     Zijn controle leest niet de lijst maar de volgorde: het document declareert \emph{Onderhandse}
@@ -2275,7 +3310,7 @@ De volgende begrippen worden in deze overeenkomst gebruikt.
         {helemaal geen tweede programma}};
 
     \node[note,anchor=south] at (11.4, 2.6) {\translation{between the two \LaTeX{} runs}%
-        {tussen de twee \LaTeX{} draaien}};
+        {tussen de twee \LaTeX{}-draaien}};
     \node[note,anchor=north] at (11.4, 1.0) {\translation{hands back .glstex}{geeft .glstex terug}};
     \node[note,anchor=north] at (12.0,-3.6) {\translation{sorted: authentiek before onderhands, the only\\%
         evidence in the file that the program did anything}%
@@ -2503,17 +3538,17 @@ De volgende begrippen worden in deze overeenkomst gebruikt.
 
 \subsection{\translation{What the suite reads back}{Wat de suite naleest}}\label{sec:checks}
 \translation{%
-    Every engine suite ends in nine sets of assertions, each of which prints what it counted and
+    Every engine suite ends in ten sets of assertions, each of which prints what it counted and
     stops the build when it is wrong. They are written the other way round from a test that
     checks a result: each of them exists because something once failed without failing, and its
     job is to make that same silence audible next time. Every one of them has been broken on
     purpose to see it bite\,---\,an assertion that has never failed has not established
     anything yet.%
 }{%
-    Iedere engine-suite eindigt in negen reeksen controles, die elk opschrijven wat ze geteld
+    Iedere engine-suite eindigt in tien reeksen controles, die elk opschrijven wat ze geteld
     hebben en de bouw stoppen zodra het niet klopt. Ze zijn andersom geschreven dan een test die
     een uitkomst nakijkt: ieder van hen bestaat omdat er ooit iets faalde zonder te falen, en
-    zijn taak is om diezelfde stilte de volgende keer hoorbaar te maken. Alle negen zijn expres
+    zijn taak is om diezelfde stilte de volgende keer hoorbaar te maken. Alle tien zijn expres
     gebroken om te zien dat ze bijten\,---\,een controle die nooit gefaald heeft, heeft nog
     niets vastgesteld.%
 }
@@ -2550,6 +3585,22 @@ De volgende begrippen worden in deze overeenkomst gebruikt.
         staat het pakket geen enkele waarschuwing toe. Wat dit pakket zegt over een document
         waarover het niets te klagen heeft is een defect, en een waarschuwing die niemand leest
         is een waarschuwing die niet geschreven is.%
+    }
+    \item[attach-checks] \translation{%
+        reads the annotation of \option{attachmentlink=annotation} out of the PDF file: that it is
+        placed and registered on the page, that it carries the file and an appearance, that no go-to
+        link survived beside it, and that it sits in an \texttt{Annot} structure element as the
+        reference beside it sits in a \texttt{Link} one. That last pair is asserted here rather than
+        left to veraPDF because the validator this suite is pinned to does not report the missing
+        element and an older one did: the object is the evidence and the verdict is not.%
+    }{%
+        leest de annotatie van \option{attachmentlink=annotation} uit het PDF-bestand: dat hij
+        geplaatst en op de pagina geregistreerd is, dat hij het bestand en een verschijning draagt,
+        dat er geen go-to-link naast overleefd heeft, en dat hij in een
+        \texttt{Annot}-structuurelement zit zoals de verwijzing ernaast in een \texttt{Link}-element
+        zit. Dat laatste paar wordt hier gecontroleerd en niet aan veraPDF overgelaten, want de
+        validator waarop deze suite gepind is meldt het ontbrekende element niet en een oudere deed
+        dat wel: het object is het bewijs en het oordeel niet.%
     }
     \item[md-checks] \translation{%
         reads the intermediate file the Markdown conversion writes and requires that no raw
@@ -2593,7 +3644,7 @@ De volgende begrippen worden in deze overeenkomst gebruikt.
         leest terug dat de geïndexeerde route genomen is, dat beide definities in het bestand
         geschreven zijn dat \texttt{makeindex} leest, en dat ze in een andere volgorde terugkomen dan
         waarin ze gedeclareerd zijn\,---\,het enige bewijs in het resultaat dat het programma tussen
-        de runs iets gedaan heeft. De woordenlijstbestanden worden vóór de run weggegooid: gemeten,
+        de draaien iets gedaan heeft. De woordenlijstbestanden worden vóór de draai weggegooid: gemeten,
         met de \texttt{makeglossaries}-stap er expres uit slaagden de controles nog steeds, omdat het
         gesorteerde bestand van de vorige bouw er nog lag.%
     }
@@ -2709,30 +3760,48 @@ De volgende begrippen worden in deze overeenkomst gebruikt.
     One case is \texttt{xfail}. It fails
     ISO 19005-3 rule 6.8-4 on a file specification for the external
     document: it carries \texttt{/AFRelationship /Unspecified}, has no \texttt{/EF} and is not
-    listed in \texttt{/AF}. It is written for the hyperlink to that document, not by this package,
-    so PDF/A-3 stays out of reach for a document that refers to the provisions of another one until
-    that is settled upstream.
+    listed in \texttt{/AF}. It is written for the hyperlink to that document, by the PDF management
+    of \LaTeX{} and not by this package, so PDF/A-3 stays out of reach for a document that refers to
+    the provisions of another one until that is settled upstream. \zcref[S]{sec:extern} says so where a
+    reader meets the feature.
 
     The second document reached PDF/A-3a when the citation of a definition that lives elsewhere
     stopped being a hyperlink to that document. That link went to an anchor which is not in this
     file, so it led nowhere in any case; withdrawing it took the file specification with it.
-    Measured: the offending specification is gone from the one document and still present in the
-    other.%
+    Measured on the two documents as they stand: \file{example1-nl} carries eleven \texttt{/GoToR}
+    actions and the one specification without an \texttt{/EF}; \file{example2-nl} carries no
+    \texttt{/GoToR} at all, and its one specification for the document it attaches has an
+    \texttt{/EF} and \texttt{/AFRelationship /Source}.%
 }{%
-    Eén geval staat op \texttt{xfail}. Het faalt op regel 6.8-4 van ISO 19005-3, op een bestandsspecificatie voor
-    het externe document: die draagt \texttt{/AFRelationship /Unspecified}, heeft geen \texttt{/EF}
-    en staat niet in \texttt{/AF}. Hij wordt geschreven voor de hyperlink naar dat document en niet
-    door dit pakket, dus PDF/A-3 blijft buiten bereik voor een document dat naar de bepalingen van
-    een ander verwijst, tot dat verderop opgelost is.
+    Eén geval staat op \texttt{xfail}. Het faalt op regel 6.8-4 van ISO 19005-3, op een
+    bestandsspecificatie voor het externe document: die draagt \texttt{/AFRelationship /Unspecified},
+    heeft geen \texttt{/EF} en staat niet in \texttt{/AF}. Zij wordt geschreven voor de hyperlink naar
+    dat document, door de PDF-administratie van \LaTeX{} en niet door dit pakket, dus PDF/A-3 blijft
+    buiten bereik voor een document dat naar de bepalingen van een ander verwijst, tot dat verderop
+    opgelost is. \zcref[S]{sec:extern} zegt dat waar een lezer de functie tegenkomt.
 
     Het tweede document haalde PDF/A-3a op het moment dat de aanhaling van een definitie die elders
     staat geen hyperlink naar dat document meer werd. Die link wees naar een anker dat niet in dit
     bestand staat, dus hij ging sowieso nergens heen; hem intrekken nam de bestandsspecificatie mee.
-    Gemeten: de bewuste specificatie is weg uit het ene document en staat nog in het andere.%
+    Gemeten aan de twee documenten zoals ze er staan: \file{example1-nl} draagt elf
+    \texttt{/GoToR}-acties en die ene specificatie zonder \texttt{/EF}; \file{example2-nl} draagt geen
+    enkele \texttt{/GoToR}, en zijn ene specificatie voor het document dat het bijvoegt heeft wél een
+    \texttt{/EF} en \texttt{/AFRelationship /Source}.%
 }
 \clearpage
 
 \subsection{\translation{The test files}{De testbestanden}}\label{sec:example}
+\translation{%
+    The sources of the examples the suite builds, listed here and attached to this manual as PDF files.
+    They are one set of fixtures and both manuals print the same one, so the ones with a text of their own
+    are in Dutch either way; \file{example1-en.tex} and \file{example2-en.tex} are the English drivers over
+    the same bodies.%
+}{%
+    De bronnen van de voorbeelden die de suite bouwt, hier afgedrukt en als PDF-bestand aan deze
+    handleiding gehecht. Het is één stel fixtures en beide handleidingen drukken hetzelfde stel af, dus
+    die met een eigen tekst staan hoe dan ook in het Nederlands; \file{example1-en.tex} en
+    \file{example2-en.tex} zijn de Engelse drivers over dezelfde inhoud.%
+}
 \lstset{numbers=left,frame=single}
 \lstinputlisting[style=tex,numbers=left,caption={example1.tex},label={code:example1}]{example1.tex}
 \exampleresult{example1-\translation{en}{nl}}
@@ -2764,14 +3833,21 @@ De volgende begrippen worden in deze overeenkomst gebruikt.
 
 \section{\translation{Implementation}{Implementatie}}\label{sec:impl}
 \translation{%
-    The four modules of the bundle are documented below, in the order they are loaded.
+    The seven modules of the bundle are documented below, in the order they are loaded: the six that
+    \package{regulatory} loads, and \package{regulatory-md}, which joins them as soon as \package{markdown}
+    is loaded. The Markdown syntax extension and the \package{tex4ht} configuration follow, which are not
+    modules but are generated from sources of their own all the same.
     Every module is written as a \texttt{.dtx} file, from which both this chapter and the module itself are
-    generated.%
+    generated. The commentary, like the code, is in English.%
 }{%
-    De vier modules van de bundel worden hieronder toegelicht, in de volgorde waarin ze geladen worden.
+    De zeven modules van de bundel worden hieronder toegelicht, in de volgorde waarin ze geladen worden: de
+    zes die \package{regulatory} laadt, en \package{regulatory-md}, die zich daarbij voegt zodra
+    \package{markdown} geladen is. Daarna volgen de Markdown-syntaxuitbreiding en de
+    \package{tex4ht}-configuratie, die geen modules zijn maar evengoed uit een eigen bron gegenereerd
+    worden.
     Iedere module is geschreven als een \texttt{.dtx} bestand, waaruit zowel dit hoofdstuk als de module
     zelf gegenereerd wordt.
-    De toelichting zelf is, net als de broncode, in het Engels gesteld.%
+    De toelichting is, net als de broncode, in het Engels gesteld.%
 }
 
 \DocInput{regulatory-struct.dtx}
@@ -2787,3 +3863,22 @@ De volgende begrippen worden in deze overeenkomst gebruikt.
 % The tex4ht configuration is no package, but it is generated from a source of
 % its own all the same, so it is documented with the modules.
 \DocInput{regulatory-html.dtx}
+
+\clearpage
+\IndexPrologue{%
+    \section*{\translation{Index}{Register}}%
+    \addcontentsline{toc}{section}{\translation{Index}{Register}}%
+    \markboth{\translation{Index}{Register}}{\translation{Index}{Register}}%
+    \translation{%
+        Every command and environment of this bundle, with the page it is described on in
+        \emph{italics} and the page it is defined on \underline{underlined}. Which of the three
+        kinds of name a command is\,---\,public, extension or internal\,---\,is settled in
+        \zcref{sec:api}.%
+    }{%
+        Ieder commando en iedere omgeving van deze bundel, met de bladzijde waarop hij
+        beschreven wordt \emph{cursief} en de bladzijde waarop hij gedefinieerd wordt
+        \underline{onderstreept}. Welke van de drie soorten namen een commando is\,---\,publiek,
+        uitbreiding of intern\,---\,staat in \zcref{sec:api}.%
+    }%
+}
+\PrintIndex

@@ -85,11 +85,13 @@
 %
 % \subsubsection{The bundle}
 %
-% The \package{regulatory} package itself is nothing more than a wrapper around the modules that are
+% The \package{regulatory} package itself is nothing more than a wrapper around the six modules that are
 % always loaded. \package{regulatory-sign} is among them: it defines two commands and emits nothing until
-% one of them is used, and a document that needs a signature field is exactly the kind this bundle is for. Every option is handed over to \package{regulatory-struct}, which administers the options for the
-% whole bundle. Both other modules request their prerequisites themselves, so the order below merely
-% documents the dependency chain.
+% one of them is used, and a document that needs a signature field is exactly the kind this bundle is for.
+% \package{regulatory-md} is the seventh and is not loaded here; a hook pulls it in as soon as
+% \package{markdown} is. Every option is handed over to \package{regulatory-struct}, which administers the
+% options for the whole bundle. Every other module requests its own prerequisites, so the order below
+% merely documents the dependency chain.
 % \iffalse
 %<*wrapper>
 % \fi
@@ -354,10 +356,12 @@
 \@ifundefined{ParseLaTeXeHeading}{%
     \RequirePackage{titlesec}%
     \titleclass{\article}[0]{straight}%
-    \titleformat{\article}{\normalfont\color{arttitle}}{\bfseries\color{artlabel}\GetTranslation{Article} \thearticle.\quad}{1em}{}%
+    \titleformat{\article}{\normalfont\color{arttitle}}
+        {\bfseries\color{artlabel}\GetTranslation{Article} \thearticle.\quad}{1em}{}%
     \titlespacing*{\article}{0pt}{3.5ex plus 1ex minus .2ex}{5pt}%
     \titleclass{\para}{straight}[\article]%
-    \titleformat{\para}{\normalfont\color{paratitle}}{\normalfont\color{paralabel}\thearticle.\thepara.\quad}{1em}{}%
+    \titleformat{\para}{\normalfont\color{paratitle}}
+        {\normalfont\color{paralabel}\thearticle.\thepara.\quad}{1em}{}%
     \titlespacing*{\para}{0pt}{3.5ex plus 1ex minus .2ex}{5pt}%
 }{%
     \DeclareInstance{heading}{regulatory-article}{display}{

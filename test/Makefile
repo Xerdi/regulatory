@@ -280,6 +280,13 @@ log-checks: $(addsuffix .pdf,$(EXAMPLES))
 	     echo "log: a run hit an undefined control sequence; see the example logs" >&2; exit 1; \
 	 fi
 
+# The registers are in that list for a reason of their own. The manual names each
+# of them and says which legal order it words, and nothing else in this suite would
+# see one added, renamed or lost: a document cites the registers it names, so a
+# register nobody cites is a register nobody misses. The line is the whole set, in
+# the order the language files declare them, so an addition fails here as loudly as
+# a removal -- which is the point, since the manual has to name that one too.
+#
 # The reader of bib files is the one place in this bundle where we own a parser,
 # so it is asserted from both sides. The wording of a citation is asserted word for
 # word as well: every one of these forms comes from a source that prescribes it,
@@ -326,7 +333,8 @@ SOURCE_EXPECT = 'SRC bw6 type = regulation' \
                 'CITE en-bereik-punten = points~(a)~to~(c) of Article~58(2) of the General Data Protection Regulation' \
                 'CITE en-bereik-leden = paragraphs~1~to~3 of the General Data Protection Regulation' \
                 'CITE en-leden = Article~6(1), (2)~and~(3) of the General Data Protection Regulation' \
-                'CITE en-verdrag = Article~6 of the Treaty on the Functioning of the European Union'
+                'CITE en-verdrag = Article~6 of the Treaty on the Functioning of the European Union' \
+                'REGISTERS = english_eu, dutch, dutch_eu, german_eu, french_eu'
 
 source-checks: source-example.pdf
 	@missing=0; read_back=0; \

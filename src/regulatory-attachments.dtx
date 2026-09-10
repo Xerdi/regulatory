@@ -82,6 +82,18 @@
 % property list, keyed by \meta{name} and field, and the fields a document may give are listed rather than
 % left open: a field this package does not know is a misspelling of one that it does, and it used to be
 % stored under the wrong name and read back as nothing.
+%
+% Two of the fields are not for a document to set, and they are held apart from the ones that are. They are
+% accepted, because a document written against an earlier release may give one and stopping such a document
+% would be the worse of the two errors, and they are left out of the list the error message offers, because
+% that list is read as an invitation.
+%
+% \texttt{referred} is set by \cmd{\documentfootnote} to record that an artifact has had its footnote, and
+% a document that sets it by hand suppresses a footnote it never saw. \texttt{url} is reserved: it is
+% stored and readable with \cmd{\artifacturl}, and nothing in this bundle reads it. It was meant to name
+% where the document may be found, in the footnote beside the attachment, and that is not implemented. It
+% is kept rather than removed so that the name stays free for exactly that, and it is documented as
+% reserved rather than as an option, since an option that does nothing is a promise.
 %    \begin{macrocode}
 \newcommand\artifact@footnote@noop[1]{#1}
 \newcommand\artifact@def@label@default[1]{~(\GetTranslation{see} #1)}
@@ -96,8 +108,10 @@
 \clist_const:Nn \c__regulatory_artifact_keys_clist
   {
     name , filename , path , ref~label , def~label , footnote , footnote~label ,
-    url , referred , defs , author , subject , description
+    defs , author , subject , description
   }
+
+\clist_const:Nn \c__regulatory_artifact_reserved_clist { url , referred }
 
 \cs_new_protected:Npn \__regulatory_artifact_put:nnn #1#2#3
   { \prop_gput:Nen \g__regulatory_artifact_prop { #1 / #2 } { #3 } }
@@ -106,7 +120,14 @@
   {
     \clist_if_in:NnTF \c__regulatory_artifact_keys_clist { #2 }
       { \__regulatory_artifact_put:nnn { #1 } { #2 } { #3 } }
-      { \msg_error:nnnn { regulatory-attachments } { unknown-field } { #1 } { #2 } }
+      {
+        \clist_if_in:NnTF \c__regulatory_artifact_reserved_clist { #2 }
+          { \__regulatory_artifact_put:nnn { #1 } { #2 } { #3 } }
+          {
+            \msg_error:nnnn { regulatory-attachments } { unknown-field }
+              { #1 } { #2 }
+          }
+      }
   }
 
 \cs_new_protected:Npn \__regulatory_artifact_bare:nn #1#2
@@ -174,6 +195,10 @@
 \newcommand\artifactfilename[1]{\@aget{#1}{filename}}
 \newcommand\artifactfullfilename[1]{\@aget{#1}{path}\@aget{#1}{filename}}
 \newcommand\artifactfootnote[1]{\@aget{#1}{footnote}}
+%    \end{macrocode}
+% The reader of the reserved \texttt{url} field. It gives back what was stored and nothing else reads it;
+% see \cmd{\newartifact} above.
+%    \begin{macrocode}
 \newcommand\artifacturl[1]{\@aget{#1}{url}}
 \newcommand\artifactreferred[1]{\@aget{#1}{referred}}
 \newcommand\artifactdefs[1]{\@aget{#1}{defs}}

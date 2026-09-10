@@ -60,11 +60,22 @@
 \newcommand\citereport[2]{#1\typeout{CITE #2 = \regulatory@src@last}}
 \makeatother
 
+% Which registers this bundle ships. The manual names them one by one and says
+% which legal order each of them words, so the list is a claim like any other: a
+% register added or renamed without the manual following would go unnoticed, since
+% no document cites a register that is not there. Written in the order they were
+% declared, which is the order the language files are read in.
+\ExplSyntaxOn
+\NewDocumentCommand \registerreport { }
+  { \iow_term:e { REGISTERS~=~\seq_use:Nn \g__regulatory_src_registers_seq { ,~ } } }
+\ExplSyntaxOff
+
 \begin{document}
     \begin{center}
         \Huge Voorbeeld Bronnen
     \end{center}
 
+    \registerreport
     \typeout{SRC bw6 type = \srctype{bw6}}
     \report{bw6}{citeertitel}
     \report{bw6}{afkorting}

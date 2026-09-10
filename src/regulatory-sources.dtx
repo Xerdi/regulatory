@@ -493,6 +493,13 @@
 \ExplSyntaxOn
 \prop_new:N \g__regulatory_src_register_store_prop
 \cs_generate_variant:Nn \prop_item:Nn { Ne }
+%    \end{macrocode}
+% Which registers were declared, in the order they were, so that the set of them can be read back. The
+% store above is keyed by register, system and key at once, so it answers what a register says and not
+% which registers there are, and the manual names them one by one. This is what lets the suite hold that
+% list against the code rather than against the last time somebody looked.
+%    \begin{macrocode}
+\seq_new:N \g__regulatory_src_registers_seq
 
 \cs_new_protected:Npn \__regulatory_src_register_put:nnnn #1#2#3#4
   { \prop_gput:Nnn \g__regulatory_src_register_store_prop { #1 / #2 / #3 } { #4 } }
@@ -508,6 +515,8 @@
 
 \NewDocumentCommand \newsourceregister { m m m }
   {
+    \seq_if_in:NnF \g__regulatory_src_registers_seq { #1 }
+      { \seq_gput_right:Nn \g__regulatory_src_registers_seq { #1 } }
     \keyval_parse:nnn
       { \__regulatory_src_register_bare:nnn { #1 } { full } }
       { \__regulatory_src_register_put:nnnn { #1 } { full } }
@@ -1124,7 +1133,9 @@
     Line~#1~of~'#2'~is~none~of~the~four~shapes~this~reader~knows:\\
     ~~#3\\
     An~entry~opens~with~an~at~sign,~the~type~and~the~key;~a~field~reads~
-    name~=~value~in~braces;~an~entry~closes~with~a~brace~of~its~own.
+    name~=~{value};~an~entry~closes~with~a~brace~of~its~own.~Each~of~the~three~
+    stands~on~a~line~of~its~own,~and~a~value~is~in~braces~and~not~in~quotes:~
+    this~is~a~restricted~syntax~and~not~a~BibTeX~parser.
   }
 \ExplSyntaxOff
 %    \end{macrocode}

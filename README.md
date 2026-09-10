@@ -1,7 +1,7 @@
 # Regulatory
 ![CTAN Version](https://img.shields.io/ctan/v/regulatory)
 
-A LaTeX package which provides macro's for crafting regulatory documents.
+A LaTeX package that provides the structures, references and citations a regulatory document is built from.
 
 ## Installation
 A fresh clone holds no package files: everything in [tex](tex) is generated from the
@@ -29,12 +29,14 @@ The package is written as a set of `.dtx` files in the [src](src) directory:
 | `regulatory-defs.dtx` | `regulatory-defs.sty` | the definition lists, in four routes: `bib2gls`, a glossaries file, `\newdefinition` in the document, or written out by hand |
 | `regulatory-ref.dtx` | `regulatory-ref.sty` | the `\rref`, `\nref` and `\aref` families, the conjunctions and the language mechanism |
 | `regulatory-attachments.dtx` | `regulatory-attachments.sty` | interdocument references and PDF attachments |
+| `regulatory-sign.dtx` | `regulatory-sign.sty` | signature fields |
+| `regulatory-sources.dtx` | `regulatory-sources.sty` | external sources and the wording of a citation |
 | `regulatory-md.dtx` | `regulatory-md.sty` | the Markdown renderers, loaded as soon as `markdown` is |
 | `regulatory-html.dtx` | `regulatory.4ht` | the `tex4ht` configuration, for HTML output |
 
-Loading `regulatory` loads the first four modules; each of them can be loaded on its own as well,
+Loading `regulatory` loads the first six modules; each of them can be loaded on its own as well,
 where `regulatory-attachments` requires `regulatory-ref`, which requires `regulatory-struct`.
-The fourth, `regulatory-md`, is pulled in by a hook whenever the `markdown` package is loaded.
+The seventh, `regulatory-md`, is pulled in by a hook whenever the `markdown` package is loaded.
 
 Run `make generate` to write all of them into the [tex](tex) directory with `docstrip`,
 or `make build-docs` to generate the package and both manuals.
@@ -44,6 +46,9 @@ the `fc-<language>.def` files of `fmtcount`. Those are written by hand rather th
 generated, so a translator never has to open a `.dtx` file: copy
 `src/regulatory-english.def` to `src/regulatory-<language>.def`, translate the right hand
 side of every `\DeclareTranslation`, and `make generate` puts it next to the package.
+Dutch and English are complete; German and French carry the designations and the citation
+register of an act of the Union and not the wording of an internal reference. The manual's
+*Language support* chapter says exactly what that costs.
 
 The files are literate all the same -- comments in `doc`'s markup, code in
 `macrocode` -- so they are printed in the language support chapter of the manual.
@@ -55,9 +60,9 @@ it a conversion with `make4ht` succeeds and produces a document with no headings
 sections at all; the manual's *HTML* chapter has the measurements.
 
 ## Tests
-The example documents live in [test](test). They are the input of the appendix of the
-manual, which lists them, refers to their articles and definitions, and attaches their
-PDF files, so `make build-docs` builds them along the way.
+The example documents live in [test](test). The manual lists them, refers to their articles
+and definitions, and embeds their PDF files as attachments, so `make build-docs` builds them
+along the way.
 
 `make test` runs two suites, both of which need nothing beyond a TeX installation:
 

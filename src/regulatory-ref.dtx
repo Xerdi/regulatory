@@ -289,6 +289,15 @@
 % \begin{macro}{\rref@setup}
 % Declares \meta{language} and configures its three types at once. The declaration itself is recorded, so
 % that \cmd{\rref@lang} can tell a supported language from an unsupported one.
+%
+% This is extension API and not an internal: it is what a language definition file calls, and it is
+% supported as it stands for the whole of 1.x. The at sign is deliberate. A definition file is read with
+% the at sign made a letter\,---\,\cmd{\RegulatoryLoadLanguage} sets the category code and restores it
+% afterwards\,---\,which is the convention the kernel's own \file{.def} files and the
+% \file{fc-\meta{language}.def} files of \package{fmtcount} are written under, and inside such a file the
+% name asks for nothing. A document that declares a language in its own preamble puts the call between
+% \cmd{\makeatletter} and \cmd{\makeatother}. The format commands it is given\,---\,\cmd{\rref@refformat@}
+% and \cmd{\rref@label@} below, and \cmd{\rref@group@braced}\,---\,are part of the same interface.
 %    \begin{macrocode}
 \newcommand\rref@setup[4]{%
     \expandafter\gdef\csname rref@declared@#1\endcsname{}%

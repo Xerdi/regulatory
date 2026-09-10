@@ -39,8 +39,19 @@ examples:
 	bib2gls $*
 
 # Twice, because the page references of the appendix and of the attachments only
-# settle on the run after the one that wrote them.
+# settle on the run after the one that wrote them. makeindex comes after those two
+# and before a third: the index is written from the idx file of the run before it,
+# so that file has to come from a run whose page numbers had already settled, and the
+# index itself is at the end of the document, where it shifts nothing in front of it.
+# gind.ist is what reads back the separators doc.sty writes into an idx file.
+#
+# And a run after that one, because the index puts its own line in the table of
+# contents: that line is written by the run that typesets the index and read by the
+# one after it.
 %.pdf: %.glstex
+	$(COMPILER) $*
+	$(COMPILER) $*
+	makeindex -q -s gind.ist $*
 	$(COMPILER) $*
 	$(COMPILER) $*
 

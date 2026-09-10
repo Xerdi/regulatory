@@ -17,6 +17,10 @@
 % regulatory-struct.dtx.
 % PDF management has to be active for the attachments of regulatory-attachments.
 \DocumentMetadata{}
+% Before the class, because regulatory loads hyperref and this has to reach it:
+% hyperref would otherwise encapsulate every index entry a second time and
+% makeindex would write an empty index. See regulatory-preamble.tex.
+\PassOptionsToPackage{hyperindex=false}{hyperref}
 \documentclass[10pt,dutch]{ltxdoc}
 
 %! suppress = InclusionLoop

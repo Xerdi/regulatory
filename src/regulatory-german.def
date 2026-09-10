@@ -23,12 +23,12 @@
 % \subsection{\translation{German definitions}{Duitse definities}}\label{sec:germandef}
 % \setcounter{CodelineNo}{0}
 %
-% This file is half a language. What is here was measured in the German text of the General Data
-% Protection Regulation: the words a provision is called by, and the register an act of the Union is cited
-% in. What is not here is how German words an \emph{internal} reference\,---\,the \cmd{\rref@setup} of
-% \zcref{sec:lang}\,---\,which was not measured and is left to whoever can check it. A German document
-% therefore gets German designations in the English arrangement, which is visible and wrong rather than
-% invisible and wrong.
+% This file covers part of what a language file holds, and says which part. What is here was measured in
+% the German text of the General Data Protection Regulation: the words a provision is called by, and the
+% register an act of the Union is cited in. What is not here is how German words an \emph{internal}
+% reference\,---\,the \cmd{\rref@setup} of \zcref{sec:lang}\,---\,which was not measured, and which is
+% left to whoever can check the result rather than guessed at. A German document therefore gets German
+% designations in the English arrangement, which is visible and wrong rather than invisible and wrong.
 %
 % The connective before the name of a document is a different matter, and German is the language that
 % decides it for all of them. It is a genitive, and the genitive reshapes the word it governs: counted in

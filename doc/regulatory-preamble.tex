@@ -20,7 +20,99 @@
 % is gone from the bundle because nothing in it used a command of xifthen that plain
 % ifthen does not have. The manual does use one, so the manual asks for it.
 \usepackage{calc}
-\usepackage{gitinfo-lua}
+% The index of \DescribeMacro, \DescribeEnv and the macro environments of the
+% implementation. ltxdoc.cfg of the packaging tree only arranges this for a manual
+% that does not load hyperref itself, and this one does -- through the package it
+% documents -- so it is arranged here.
+%
+% \PageIndex rather than \CodelineIndex, and that is not a preference: every module
+% resets CodelineNo, so a code line number would name nine different lines at once.
+% What is done below is \PageIndex without its \makeindex, since imakeidx wants the
+% index declared with its own options: gind.ist is what reads back the separators
+% doc.sty writes into the idx file.
+%
+% \DisableCrossrefs, because the alternative is an index of every control sequence
+% on every line of the implementation. What is indexed is where something is
+% described and where it is defined, which is what a reader of this manual is
+% looking one up for.
+% makeindex is run by doc/Makefile between the runs, the way bib2gls is, rather than
+% by a package that shells out: this build already has a step for a program between
+% two runs, and one that answers for its own output is one less thing to explain.
+\PageIndex
+\DisableCrossrefs
+% Why the drivers pass hyperindex=false to hyperref: that option makes hyperref wrap
+% every index entry in \hyperpage, and doc.sty has already put |usage or |main there.
+% Two encapsulators is one too many -- makeindex rejects the line with ``Extra `|' at
+% position ...'' and writes an empty index without the build failing. Measured: 150
+% entries in and none out. It has to be passed before hyperref is loaded, which this
+% manual does not do itself -- the package it documents does -- so it is passed in
+% front of \documentclass rather than here. The page numbers of the index are
+% therefore not links, which is what is given up for having an index at all.
+% \DescribeMacro is given a whole signature in this manual -- \foo\\\marg{x} -- so
+% that the margin note shows one. \SpecialMacroIndex applies \string to the first
+% token of what it gets and passes the rest through, so the signature ends up in the
+% index key, which makeindex then cannot sort either. The margin note keeps the
+% signature; the index is given the part in front of the first line break.
+% An index entry is a macro name set with \verb, which is one unbreakable box, and
+% the longest names of this bundle -- \markdownRendererFencedDivAttributeContextBegin
+% is forty-six characters -- are wider than a column of a two-column index. Measured
+% before this: they ran straight across the gutter into the next column.
+%
+% So \verb is given a version of its own inside the index, and only there: it reads
+% the same characters with the same catcodes and offers a break between them. Not
+% between just any two, which would put a line end after a backslash: before a capital
+% and before an at sign, which are where the parts of these names begin. The first two
+% characters are emitted before the loop starts, so `\Aref' and `\ProvidesRegulatory-
+% Language' keep their backslash.
+\makeatletter
+\def\reg@idx@endmark{}
+\def\reg@idx@verb{%
+    \begingroup
+        \let\do\@makeother \dospecials
+        \verbatim@font \@noligs
+        \@ifstar\reg@idx@verb@delim\reg@idx@verb@delim}
+% Gobbles the opening delimiter, then reads to the closing one.
+\def\reg@idx@verb@delim#1{\reg@idx@verb@body}
+\def\reg@idx@verb@body#1+{%
+    \reg@idx@verb@two#1\reg@idx@endmark\reg@idx@endmark\endgroup}
+\def\reg@idx@verb@two#1#2{#1#2\reg@idx@verb@loop}
+\def\reg@idx@verb@loop#1{%
+    \ifx#1\reg@idx@endmark
+    \else
+        \reg@idx@verb@break{#1}%
+        #1%
+        \expandafter\reg@idx@verb@loop
+    \fi}
+% \uccode of an uppercase letter is itself; of a lowercase letter its capital; of
+% anything else zero. So this one test picks out the capitals, and the at sign is
+% named beside it.
+% Penalty 700 rather than 0, because \pfill offers a break of its own between the two
+% runs of dots at 500: a name that fits on the line but leaves no room for its page
+% number should break there and not in the middle of itself.
+\def\reg@idx@verb@break#1{%
+    \ifnum\uccode`#1=`#1\relax\penalty700 \else
+        \ifnum`#1=`\@ \penalty700 \fi
+    \fi}
+% And a smaller hanging indent than doc.sty's 30pt, which is a sixth of a column of
+% this index: the continuation line of a broken name is where the room is needed.
+\g@addto@macro\IndexParms{%
+    \let\verb\reg@idx@verb
+    \def\@idxitem{\par\hangindent 12pt}}
+\def\reg@indexhead#1#2\\#3\relax{\@nameuse{Special#1Index}{#2}}
+\def\@doc@describe#1#2{%
+    \ifdoc@noprint\else
+      \marginpar{\raggedleft
+                 \strut
+                 \doc@providetarget
+                 \@nameuse{PrintDescribe#1}{#2}}%
+    \fi
+    \ifdoc@noindex\else
+      \reg@indexhead{#1}#2\\\relax
+    \fi
+  \@esphack
+  \endgroup
+  \ignorespaces}
+\makeatother
 \usepackage{listings}
 % The Markdown syntax extension is Lua, not TeX, so it is not documented with
 % docstrip but from its own comments, as a listing with prose in between.
@@ -158,6 +250,15 @@
     showtabs=true
 }
 
+% A doc element for the package options, so that the index answers for them as well.
+% They stand in a labeling list rather than beside a margin note, so the entries are
+% asked for with [noprint]: the same mechanism that indexes a macro, without the note.
+\NewDocElement[macrolike = false ,
+               idxtype   = option ,
+               idxgroup  = options ,
+               printtype = \textnormal{(option)}
+              ]{Option}{docoption}
+
 \newcommand\package{\texttt}
 \newcommand\file{\texttt}
 \newcommand\option{\texttt}
@@ -194,8 +295,19 @@
     \translation{The result of this example is}{Het resultaat van dit voorbeeld is}
     \documentattachment{#1}{\file{\artifactfilename{#1}}}.\par}
 
-\def\packagedate{\gitdate}
-\def\packageversion{\gitversion}
+% The release the manual belongs to, taken from the package it documents rather than
+% stated here or read out of the repository. \ProvidesPackage in regulatory-struct.dtx
+% is the one place the bundle names its version, and \GetFileInfo hands back what the
+% loaded regulatory.sty declared, so a manual can no longer carry a release the files
+% beside it do not. It used to come from gitinfo-lua, which describes the checkout:
+% between two tags that is the previous tag plus a commit count, so the manual of a
+% release built before its tag existed said 0.0.4-48-g<hash>.
+\GetFileInfo{regulatory.sty}
+% \filedate is LaTeX's YYYY/MM/DD. Every other date in this bundle is written the way
+% a `valid' field is, so this one is too.
+\def\isodate#1/#2/#3\relax{#1-#2-#3}
+\edef\packagedate{\expandafter\isodate\filedate\relax}
+\let\packageversion\fileversion
 
 %\def\cmd{\lstinline[style=tex]}
 \def\cmditem#1{\item[\ttfamily\textbackslash{}#1]}
